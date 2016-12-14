@@ -31,7 +31,14 @@ As noted by Lebret et al. (2015), two foci of multivariate approaches related to
 ## GETTING STARTED
 
 ### Dependencies
-R and packages Rmixmod, bgmm, labdsv, cluster, etc.
+- The R software environment (available from download mirrors from The Comprehensive R Archive Network (CRAN) such as https://cloud.r-project.org)
+Several R packages, including:
+- [bgmm](https://cran.r-project.org/web/packages/bgmm/index.html)
+- [Rmixmod](https://cran.r-project.org/web/packages/Rmixmod/index.html)
+- [StatMatch](https://cran.r-project.org/web/packages/StatMatch/index.html)
+- [MASS](https://cran.r-project.org/web/packages/MASS/index.html)
+- [ggfortify](https://cran.r-project.org/web/packages/ggfortify/index.html)
+- [labdsv](https://cran.r-project.org/web/packages/labdsv/index.html)
 [More info coming soon.]
 
 # USAGE
