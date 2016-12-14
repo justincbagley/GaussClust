@@ -34,7 +34,7 @@ As noted by Lebret et al. (2015), two foci of multivariate approaches related to
 R and packages Rmixmod, bgmm, labdsv, cluster, etc.
 [More info coming soon.]
 
-# Usage
+# USAGE
 ````
 ## Assuming GaussClust.sh is present in the current working directory, display usage for the script by simply entering its name at the command line:
 $ ./GaussClust.sh
