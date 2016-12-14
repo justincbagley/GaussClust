@@ -3,11 +3,11 @@
 ##########################################################################################
 #                             GaussClust v1.0, December 2016                             #
 #   SHELL SCRIPT FOR AUTOMATING GAUSSIAN MIXTURE MODELING ON CONTINUOUS, DISCRETE, OR    #
-#   COMBINED GENETIC/MORPHOLOGICAL/ECOLOGICAL DATA, FOR SPECIES CLUSTERING AND/OR        #
-#   SPECIES DELIMITATION                                                                 #
+#   COMBINED GENETIC/MORPHOLOGICAL/ECOLOGICAL DATA, FOR SPECIES DELIMITATION AND/OR      #
+#   CLASSIFICATION                                                                       #
 #   Copyright (c)2016 Justin C. Bagley, Universidade de Brasília, Brasília, DF, Brazil.  #
 #   See the README and license files on GitHub (http://github.com/justincbagley) for     #
-#   further information. Last update: December 13, 2016. For questions, please email     #
+#   further information. Last update: December 14, 2016. For questions, please email     #
 #   jcbagley@unb.br.                                                                     #
 ##########################################################################################
 
@@ -95,13 +95,16 @@ regular GMM or bgmm modeling (except see other option available using -n flag ab
 corresponds to 'k' or the number of columns in 'B', based on definitions in the bgmm 
 documentation.
 
-Input file: Script expects as inputFile a single plain text data table with a first column 
-containing the code names or IDs of each individual (preferably with a species-specific 
-abbreviation followed by a museum voucher number or individual code) and subsequent columns 
-containing categorical or discrete data for different morphological characters measured for 
-the sample. The input file contains a header with four-letter codes for each column. Individual 
-names in the first 'samples' column should not include hyphen characters or spaces. The second 
-column should be headed 'group' and specify whether each individual ID is 'known' or 'unknown'.
+Input file: Script expects as inputFile a single plain-text data table with a header and 
+several columns of information followed by columns containing categorical or discrete data
+(e.g. for different morphological characters measured) for the sample. The first column 
+will be named 'samples' and contain code names or IDs for each individual (preferably with 
+a species-specific abbreviation followed by a museum voucher number or individual code). 
+The second column is headed as 'type' and specifies whether each individual ID is 'known'
+or 'unknown'. The third column contains integer values corresponding to codes/numbers (1 
+to k, where k is total number of components/clusters) assigning each individual to a 
+species (usually, 1 species = 1 cluster). The example input file contains a header with 
+four-letter codes for each column, but users can make the names a little longer if needed.
 "
 
   exit 1
@@ -115,13 +118,13 @@ MY_PATH=`pwd -P`
 # MY_PATH=$(pwd)
 
 ##--FIX some issues with echoing shell text to R below:
-## Make points variable with '$points' text for R...
+## Make points variable with '$points' text for Rscript...
 MY_POINTS_VAR=$(echo "\$points")
-## Make group variable with "$group" text for R...
-MY_GROUP_VAR=$(echo "\$group")
-## Same as above but for "$samples"...
+## Make type variable with '$type' text for Rscript...
+MY_TYPE_VAR=$(echo "\$type")
+## Same as above but for '$samples'...
 MY_SAMP_VAR=$(echo "\$samples")
-## Same as above but for "$species"...
+## Same as above but for '$species'...
 MY_SPECIES_VAR=$(echo "\$species")
 
 
@@ -156,7 +159,7 @@ library(labdsv)
 ##--Read in the data:
 mydata_names <- read.table('$MY_INPUT_FILE', h=T)
 str(mydata_names)
-mydata <- mydata_names[,-c(1:2)]
+mydata <- mydata_names[,-c(1:3)]
 str(mydata)
 
 ##--Graph of pairwise data plots when there are small numbers of characters (else basic R 
@@ -205,15 +208,15 @@ nmds_dims_df = data.frame(nmds_1, nmds_2, nmds_3, nmds_4)
 ##--Make data frame containing the individual sample names as well as columns of points
 ##--from NMDS dimensions retained during STEP I above. Also save the new data frame(s) to
 ##--file(s) in the working dir; we may want it handy in case we need it later...
-species <- mydata_names[,1]
-group <- mydata_names[,2]
-mydata_names_4bgmm_df <- data.frame(species, group, nmds_1, nmds_2, nmds_3, nmds_4)
+sample_names <- mydata_names[,1]
+type <- mydata_names[,2]
+mydata_names_4bgmm_df <- data.frame(sample_names, type, nmds_1, nmds_2, nmds_3, nmds_4)
 write.table(mydata_names_4bgmm_df, file='mydata_names_4bgmm_df.txt')
 
 ##--Subset the NMDS points by 'known' and 'unknown' individuals, for bgmm. Also write the
 ##--resulting new data frames back to file in working dir--in case of subsequent checks: 
 attach(mydata_names_4bgmm_df)
-known_0 <- mydata_names_4bgmm_df[ which(mydata_names_4bgmm_df$MY_GROUP_VAR=='known'), ]
+known_0 <- mydata_names_4bgmm_df[ which(mydata_names_4bgmm_df$MY_TYPE_VAR=='known'), ]
 detach(mydata_names_4bgmm_df)
 row.names(known_0) <- known_0[,1]
 known_0 <- known_0[,-c(1:2)]
@@ -224,7 +227,7 @@ str(known_0)
 knowns <- known_0
 #
 attach(mydata_names_4bgmm_df)
-unknown_0 <- mydata_names_4bgmm_df[ which(mydata_names_4bgmm_df$MY_GROUP_VAR=='unknown'), ]
+unknown_0 <- mydata_names_4bgmm_df[ which(mydata_names_4bgmm_df$MY_TYPE_VAR=='unknown'), ]
 detach(mydata_names_4bgmm_df)
 row.names(unknown_0) <- unknown_0[,1]
 unknown_0 <- unknown_0[,-c(1:2)]
@@ -235,7 +238,7 @@ str(unknown_0)
 ##--read in the belief matrix (B) containing prior probabilities for the knowns, with 0.95 
 ##--probability for 'known' labeled individuals and all other cells receiving probs of
 ##--0.05/k (where k is number of components or clusters, and number of columns in B). 
-##--***IMPORTANT***: matrix B is generated by the user prior to running this script, and
+##--***IMPORTANT***: matrix B is generated by the user prior to running this script and
 ##--ONLY contains individuals classified as 'knowns'.
 row.names(unknown_0) <- c(1:dim(unknown_0)[1])
 unknowns <- unknown_0
@@ -250,11 +253,12 @@ B <- B[,-c(1)]
 B
 dim(B)
 #
-x=0.95
-B2 <- (matrix(x,nrow = 206, ncol = 15))
+##--Here, let's make a couple of arbitrary belief matrices, to analyze and compare:
+p1=0.95
+B2 <- (matrix(p1, nrow = 206, ncol = 15))
 row.names(B2) <- row.names(knowns)
-y=0.066666666666667
-B3 <- (matrix(y,nrow = 206, ncol = 15))
+p2=0.066666666666667
+B3 <- (matrix(p2, nrow = 206, ncol = 15))
 row.names(B3) <- row.names(knowns)
 
 
@@ -265,8 +269,8 @@ date()
 print('Conducting unsupervised GMM analysis of the data using Rmixmod... ')
 mydata_gower_gmm <-mixmodCluster(nmds_dims_df, nbCluster=$NUM_RANGE_GMM_NBCLUSTERS)
 summary(mydata_gower_gmm)
-pdf('gower_gmm_result.pdf')
-plot(mydata_gower_gmm)	## SAVE THESE PLOTS--THEY'RE AWESOME!!!
+pdf('gower_gmm_result.pdf')  ## SAVE THESE PLOTS--THEY'RE AWESOME!!!
+plot(mydata_gower_gmm)
 plot(mydata_gower_gmm, c(1, 2))
 plot(mydata_gower_gmm, c(1, 3))
 plot(mydata_gower_gmm, c(1, 4))
@@ -281,35 +285,18 @@ print('WARNING: Something went wrong deciding whether or not to call unsupervise
 
 
 ####### IV. (SEMI-)SUPERVISED GMM ANALYSIS IN RMIXMOD:
-##--(1) Make new table with a column headed with 'species' and containing integer values 
-##--corresponding to codes/numbers (1 to k, where k is total number of components/clusters) 
-##--assigning each individual to a species (1 species = 1 cluster, usually). I made this
-##--new datafile in Excel, saved ast txt and named it 'mydata_names_clusters.txt'. After
-##--making this/similar file, read it into R.
-##--(2) Next, make a new 'knowns_1' object by subsetting the new datafile in #1 by 'known' 
-##--values. This will have the wrong contents for reg analysis itself in Rmixmod or bgmm,
-##--but it will have the right length and the subsetted column of 'knownLabels' for
-##--species as the third column.
-##--(3) Now, you can use the existing 'knowns' object created above to conduct supervised
-##--GMM analysis in Rmixmod, which can be supervised or partially supervised and has two
-##--steps: (3A) Learning (learn discriminant rule for groups using the knowns only, and
-##--this will prepare you to use it to classify uknowns) and (3B) Prediction (perform 
-##--predictions on the unknowns and compare the predictions with knowns).
-##--In 3A and 3B above, you get a results summary of the best model, and you can visualize
-##--the results using the plot() function.
- 
 if( $CALL_SUPERMIXMOD == '0' ){print('Skipping semi-supervised or supervised GMM analysis in Rmixmod... ')} else {if($CALL_SUPERMIXMOD == '1' ){
 ## (1):
 mydata_names_clusters <- read.table('mydata_names_clusters.txt', h=T)
 str(mydata_names_clusters)
 ## (2):
-known_1 <- mydata_names_clusters[ which(mydata_names_4bgmm_df$MY_GROUP_VAR=='known'), ]
+known_1 <- mydata_names_clusters[ which(mydata_names_4bgmm_df$MY_TYPE_VAR=='known'), ]
 ## (3):
 ##    (3A):
 mydata_known_learn <- mixmodLearn(knowns, known_1$MY_SPECIES_VAR, nbCVBlocks = nrow(mydata_names_4bgmm_df))
 mydata_known_learn['bestResult']
-pdf('superRmixmod_learn_results.pdf')
-plot(mydata_known_learn)   ## SAVE THESE PLOTS--THEY'RE AWESOME!!!
+pdf('superRmixmod_learn_results.pdf')   ## SAVE THESE PLOTS--THEY'RE AWESOME!!!
+plot(mydata_known_learn)
 plot(mydata_known_learn, c(1, 2))
 plot(mydata_known_learn, c(1, 3))
 plot(mydata_known_learn, c(1, 4))
@@ -322,29 +309,29 @@ dev.off()
 ## My prior experience with this (supervised prediction on lizard morphological data)
 ## suggests that prediction success when going from a set of knowns (1:1 or partial coverage)
 ## to unknowns is usually not so good. Nevertheless, here goes:
-unknown_1 <- mydata_names_clusters[ which(mydata_names_4bgmm_df$MY_GROUP_VAR=='unknown'), ]
+unknown_1 <- mydata_names_clusters[ which(mydata_names_4bgmm_df$MY_TYPE_VAR=='unknown'), ]
 mydata_unknown_prediction <- mixmodPredict(data = X, classificationRule = mydata_known_learn['bestResult'])
 summary(mydata_unknown_prediction)
 mean(as.integer(unknown_1$MY_SPECIES_VAR) == mydata_unknown_prediction['partition'])
 	}
 }
 
-##### bgmm MODELING STEPS
+####### V. BGMM MODELING STEPS (IN PROGRESS):
 modelSoft1 <- soft(X=X, knowns=knowns, P=B2)
-pdf('bgmm_modelSoft1_result.pdf')
-plot(modelSoft1)  ## SAVE THIS PLOT!
+pdf('bgmm_modelSoft1_result.pdf')  ## SAVE THIS PLOT!
+plot(modelSoft1)
 dev.off()
 
 modelSoft2 <- soft(X=X, knowns=knowns, P=B3)
-pdf('bgmm_modelSoft2_result.pdf')
-plot(modelSoft2)  ## SAVE THIS PLOT!
+pdf('bgmm_modelSoft2_result.pdf')  ## SAVE THIS PLOT!
+plot(modelSoft2)
 dev.off()
 
 quartz()
-pdf('bgmm_modelSoft1_vs_modelSoft2_2x1.pdf')
+pdf('bgmm_modelSoft1_vs_modelSoft2_2x1.pdf')  ## SAVE THIS PLOT!
 par(mfrow=c(2,1))
 plot(modelSoft1)
-plot(modelSoft2)  ## SAVE THIS PLOT!
+plot(modelSoft2)
 dev.off()
 
 
