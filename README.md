@@ -53,16 +53,16 @@ INFO      | Wed Dec 14 09:03:11 CST 2016 | STEP #1: SETUP. SETTING OPTIONS AND P
 
 Usage: ./GaussClust.sh [options] inputFile
   
-Options: -d numNMDSDimensions (specify number of dimensions, k, to retain during NMDS on Gower distances) | -r regGMM (0=no unsupervised GMM is carried out; 1=conduct unsupervised GMM using 'Rmixmod' R pacakge, for comparative or individual purposes) | -n numGMMClusters (optional numeric listing of a range, x:y, of the number of clusters to be modeled over during unsupervised GMM in Rmixmod) | -s superGMM (0=no (semi-)supervised GMM is carried out in Rmixmod; 1=conduct (semi-)supervised GMM in Rmixmod) | -b beliefBasedMM (0=no mixture modeling is carried out using the 'bgmm' R package; the following other options conduct different kinds of mixture modeling using separate functions available in bgmm: belief, soft, semisupervised, supervised) | -c numComponents (specify number of components (e.g. Gaussian components) or 'clusters' to assign individuals to during regular GMM (single value, rather than a range; see -n above) or bgmm modeling) 
+Options: -k nmdsDimensions (specify number of dimensions, k, to retain during NMDS on Gower distances) | -u unsuperGMM (0=no unsupervised GMM is carried out; 1=conduct unsupervised GMM using 'Rmixmod' R pacakge, for comparative or individual purposes) | -n numGMMClusters (optional numeric listing of a range, x:y, of the number of clusters to be modeled over during unsupervised GMM in Rmixmod) | -d ssDiscrimGMM (0=no (semi-)supervised GMM is carried out in Rmixmod; 1=conduct (semi-)supervised GMM in Rmixmod) | -b beliefBasedMM (0=no mixture modeling is carried out using the 'bgmm' R package; the following other options conduct different kinds of mixture modeling using separate functions available in bgmm: belief, soft, semisupervised, supervised) | -c numComponents (specify number of components (e.g. Gaussian components) or 'clusters' to assign individuals to during regular GMM (single value, rather than a range; see -n above) or bgmm modeling) | -l mixmodLearn (0=discriminant analysis with mixmodLearn in Rmixmod is not called; 1=conduct discriminant analysis)
 
-The -d flag sets the number of k dimensions to be retained during NMDS, which affects both
+The -k flag sets the number of k dimensions to be retained during NMDS, which affects both
 regular Gaussian mixture modeling and also the different models that are implemented in
 the bgmm R package. Like file name, there is no default value; however, k=4 is recommended
 by the authors based on discussion in Edwards and Knowles (Proc. Roy. Soc. B. 2014) and 
 Hausdorf and Hennig (Syst. Biol. 2014). (By contrast, k=2 would be normal for most other
 ecological data, but may not contain sufficient information for interspecific datasets.)
 
-The -r flag calls the unsupervised Gaussian mixture modeling method implemented in the 
+The -u flag calls the unsupervised Gaussian mixture modeling method implemented in the 
 'mixmodCluster' function of the Rmixmod R package. See the Rmixmod R site and documentation
 for additional information on this package (available at: 
 https://cran.r-project.org/web/packages/Rmixmod/index.html). Set this flag to '0' to
@@ -75,9 +75,12 @@ and select the best model using the Bayesian information criterion (BIC). If a r
 values is not specified for -n, then a GMM analysis in Rmixmod will use the number of 
 components/clusters specified using the -c flag (see below).
 
-The -s flag calls the (semi-)supervised Gaussian mixture modeling method implemented in
-the 'mixmodLearn' and 'mixmodPredict' functions of Rmixmod. Set this flag to '0' to
-skip this analysis.
+The -d flag calls the supervised or semi-supervised discriminant analysis method implemented 
+in the 'mixmodLearn' and 'mixmodPredict' functions of Rmixmod. The discriminant analysis is
+based on GMMs and is conducted in a two-step (A, Learning; B, Prediction) procedure, which 
+estimates a discriminant function from known labeled data and uses it to predict (classify) 
+unknown samples that correspondto the same knowns, i.e. species or clusters. Set this flag 
+to '0' to skip this analysis.
 
 The -b flag allows users to request the Gaussian mixture modeling or belief-based mixture
 modeling options available in the 'bgmm' R package. You may call four different models,
@@ -106,9 +109,9 @@ four-letter codes for each column, but users can make the names a little longer 
 ````
 
 ## Real-world example #1:
-Here, (1) we specify to keep 4 NMDS dimensions; (2) conduct a regular unsupervised GMM analysis in Rmixmod, using multiple models across 5-20 clusters, which are compared to identify the best model using BIC; (3) call supervised GMM analysis in Rmixmod; (4) attempt semisupervised analysis in bgmm; and (4) specify that analyses (where needed) specify 15 clusters. Output is not redirected (e.g. '> output.txt' at the end, so all output from the script (but NOT from parts conducted in R) are output to screen.
+Here, (1) we specify to keep 4 NMDS dimensions; (2) conduct a regular unsupervised GMM analysis in Rmixmod, using multiple models across 5-20 clusters, which are compared to identify the best model using BIC; (3) call supervised GMM analysis in Rmixmod; (4) attempt semisupervised analysis in bgmm; and (4) specify that analyses (where needed) specify 14 clusters. Output is not redirected (e.g. '> output.txt' at the end, so all output from the script are printed to screen (except for steps conducted in R).
 ````
-./GaussClust.sh -d 4 -r 1 -n 5:20 -s 1 -b semisupervised -p B_206.txt -c 15 ./mydata_names.txt
+./GaussClust.sh -k 4 -u 1 -n 5:20 -d 1 -b semisupervised -p B_206.txt -c 14 ./mydata.txt
 ````
 
 ## REFERENCES
@@ -117,8 +120,7 @@ Here, (1) we specify to keep 4 NMDS dimensions; (2) conduct a regular unsupervis
 - Lebret R, Iovleff S, Langrognet F, Biernacki C, Celeux G, Govaert G (2015) Rmixmod: the R package of the model-based unsupervised, supervised, and semi-supervised classification Mixmod Library. Journal of Statistical Software, 67(6). doi:10.18637/jss.v067.i06
 
 ## TODO
-- Fix two input file problem (get code down to single file).
-- Make script do more with bgmm, including semisupervised analysis.
+- Make script do more with bgmm, including semisupervised analysis using belief probs matrix.
 - Change Usage section to include code for working with example files.
 
 December 14, 2016
