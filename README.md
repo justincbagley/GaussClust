@@ -92,7 +92,7 @@ several columns of information followed by columns containing categorical or dis
 (e.g. for different morphological characters measured) for the sample. The first column 
 will be named 'samples' and contain code names or IDs for each individual (preferably with 
 a species-specific abbreviation followed by a museum voucher number or individual code). 
-The second column is headed as 'group' and specifies whether each individual ID is 'known'
+The second column is headed as 'type' and specifies whether each individual ID is 'known'
 or 'unknown'. The third column contains integer values corresponding to codes/numbers (1 
 to k, where k is total number of components/clusters) assigning each individual to a 
 species (usually, 1 species = 1 cluster). The example input file contains a header with 
