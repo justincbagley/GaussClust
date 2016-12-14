@@ -1,9 +1,9 @@
 #!/bin/sh
 
 ##########################################################################################
-#                             GaussClust v1.0, December 2016                             #
+#                             GaussClust v1.1, December 2016                             #
 #   SHELL SCRIPT FOR AUTOMATING GAUSSIAN MIXTURE MODELING ON CONTINUOUS, DISCRETE, OR    #
-#   COMBINED GENETIC/MORPHOLOGICAL/ECOLOGICAL DATA, FOR SPECIES DELIMITATION AND/OR      #
+#   COMBINED GENETIC/MORPHOLOGICAL/ECOLOGICAL DATA, FOR SPECIES DELIMITATION AND         #
 #   CLASSIFICATION                                                                       #
 #   Copyright (c)2016 Justin C. Bagley, Universidade de Brasília, Brasília, DF, Brazil.  #
 #   See the README and license files on GitHub (http://github.com/justincbagley) for     #
@@ -13,7 +13,7 @@
 
 echo "
 ##########################################################################################
-#                             GaussClust v1.0, December 2016                             #
+#                             GaussClust v1.1, December 2016                             #
 ##########################################################################################
 "
 echo "INFO      | $(date) | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... "
@@ -21,18 +21,18 @@ echo "INFO      | $(date) | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE...
 ############ SCRIPT OPTIONS
 ## OPTION DEFAULTS ##
 NUM_NMDS_DIMS=4
-MY_PROBS_MATRIX=probs.txt
-CALL_REG_GMM=1
-CALL_SUPERMIXMOD=1
+CALL_UNSUPERGMM=1
+CALL_DISCRIMINANT=1
 CALL_BGMM=0
+MY_PROBS_MATRIX=probs.txt
 
 ## PARSE THE OPTIONS ##
-while getopts 'd:r:n:s:b:p:c:' opt ; do
+while getopts 'k:u:n:d:b:p:c:' opt ; do
   case $opt in
-    d) NUM_NMDS_DIMS=$OPTARG ;;
-    r) CALL_REG_GMM=$OPTARG ;;
+    k) NUM_NMDS_DIMS=$OPTARG ;;
+    u) CALL_UNSUPERGMM=$OPTARG ;;
     n) NUM_RANGE_GMM_NBCLUSTERS=$OPTARG ;;
-    s) CALL_SUPERMIXMOD=$OPTARG ;;
+    d) CALL_DISCRIMINANT=$OPTARG ;;
     b) CALL_BGMM=$OPTARG ;;
     p) MY_PROBS_MATRIX=$OPTARG ;;
     c) NUM_COMPONENTS=$OPTARG ;;
@@ -46,25 +46,26 @@ if [ $# -lt 1 ]; then
   echo "
 Usage: $0 [options] inputFile
   "
-  echo "Options: -d numNMDSDimensions (specify number of dimensions, k, to retain during NMDS \
-on Gower distances) | -r regGMM (0=no unsupervised GMM is carried out; 1=conduct unsupervised GMM \
+  echo "Options: -k nmdsDimensions (specify number of dimensions, k, to retain during NMDS \
+on Gower distances) | -u unsuperGMM (0=no unsupervised GMM is carried out; 1=conduct unsupervised GMM \
 using 'Rmixmod' R pacakge, for comparative or individual purposes) | -n numGMMClusters (optional \
 numeric listing of a range, x:y, of the number of clusters to be modeled over during unsupervised GMM \
-in Rmixmod) | -s superGMM (0=no (semi-)supervised GMM is carried out in Rmixmod; 1=conduct (semi-)\
+in Rmixmod) | -d ssDiscrimGMM (0=no (semi-)supervised GMM is carried out in Rmixmod; 1=conduct (semi-)\
 supervised GMM in Rmixmod) | -b beliefBasedMM (0=no mixture modeling is carried out using the 'bgmm' \
 R package; the following other options conduct different kinds of mixture modeling using separate \
 functions available in bgmm: belief, soft, semisupervised, supervised) | -c numComponents (specify \
 number of components (e.g. Gaussian components) or 'clusters' to assign individuals to during regular \
-GMM (single value, rather than a range; see -n above) or bgmm modeling) 
+GMM (single value, rather than a range; see -n above) or bgmm modeling) | -l mixmodLearn (0=\
+discriminant analysis with mixmodLearn in Rmixmod is not called; 1=conduct discriminant analysis)
 
-The -d flag sets the number of k dimensions to be retained during NMDS, which affects both
+The -k flag sets the number of k dimensions to be retained during NMDS, which affects both
 regular Gaussian mixture modeling and also the different models that are implemented in
 the bgmm R package. Like file name, there is no default value; however, k=4 is recommended
 by the authors based on discussion in Edwards and Knowles (Proc. Roy. Soc. B. 2014) and 
 Hausdorf and Hennig (Syst. Biol. 2014). (By contrast, k=2 would be normal for most other
 ecological data, but may not contain sufficient information for interspecific datasets.)
 
-The -r flag calls the unsupervised Gaussian mixture modeling method implemented in the 
+The -u flag calls the unsupervised Gaussian mixture modeling method implemented in the 
 'mixmodCluster' function of the Rmixmod R package. See the Rmixmod R site and documentation
 for additional information on this package (available at: 
 https://cran.r-project.org/web/packages/Rmixmod/index.html). Set this flag to '0' to
@@ -77,9 +78,12 @@ and select the best model using the Bayesian information criterion (BIC). If a r
 values is not specified for -n, then a GMM analysis in Rmixmod will use the number of 
 components/clusters specified using the -c flag (see below).
 
-The -s flag calls the (semi-)supervised Gaussian mixture modeling method implemented in
-the 'mixmodLearn' and 'mixmodPredict' functions of Rmixmod. Set this flag to '0' to
-skip this analysis.
+The -d flag calls the supervised or semi-supervised discriminant analysis method implemented 
+in the 'mixmodLearn' and 'mixmodPredict' functions of Rmixmod. The discriminant analysis is
+based on GMMs and is conducted in a two-step (A, Learning; B, Prediction) procedure, which 
+estimates a discriminant function from known labeled data and uses it to predict (classify) 
+unknown samples that correspondto the same knowns, i.e. species or clusters. Set this flag 
+to '0' to skip this analysis.
 
 The -b flag allows users to request the Gaussian mixture modeling or belief-based mixture
 modeling options available in the 'bgmm' R package. You may call four different models,
@@ -215,12 +219,15 @@ attach(mydata_names_4bgmm_df)
 known_0 <- mydata_names_4bgmm_df[ which(mydata_names_4bgmm_df$MY_TYPE_VAR=='known'), ]
 detach(mydata_names_4bgmm_df)
 row.names(known_0) <- known_0[,1]
-known_0 <- known_0[,-c(1:2)]
 known_0
-dim(known_0)[1]
-write.table(known_0, file='known_0.txt')
+write.table(knowns, file='known_0.txt')
 str(known_0)
-knowns <- known_0
+#
+knowns <- known_0[,-c(1:2)]
+knowns
+dim(knowns)[1]
+write.table(knowns, file='knowns.txt')
+str(knowns)
 #
 attach(mydata_names_4bgmm_df)
 unknown_0 <- mydata_names_4bgmm_df[ which(mydata_names_4bgmm_df$MY_TYPE_VAR=='unknown'), ]
@@ -251,16 +258,16 @@ dim(B)
 #
 ##--Here, let's make a couple of arbitrary belief matrices, to analyze and compare:
 p1=0.95
-B2 <- (matrix(p1, nrow = 206, ncol = 15))
+B2 <- (matrix(p1, nrow = 206, ncol = $NUM_COMPONENTS))
 row.names(B2) <- row.names(knowns)
 p2=0.066666666666667
-B3 <- (matrix(p2, nrow = 206, ncol = 15))
+B3 <- (matrix(p2, nrow = 206, ncol = $NUM_COMPONENTS))
 row.names(B3) <- row.names(knowns)
 
 
 
-############ III. CONDUCT UNSUPERVISED GMM ANALYSIS IN RMIXMOD
-if( $CALL_REG_GMM == '0' ){print('Skipping unsupervised GMM analysis... ')} else {if($CALL_REG_GMM == '1' ){
+############ III. CONDUCT UNSUPERVISED GMM CLUSTERING ANALYSIS IN RMIXMOD
+if( $CALL_UNSUPERGMM == '0' ){print('Skipping unsupervised GMM analysis... ')} else {if($CALL_UNSUPERGMM == '1' ){
 date()
 print('Conducting unsupervised GMM analysis of the data using Rmixmod... ')
 mydata_gower_gmm <-mixmodCluster(nmds_dims_df, nbCluster=$NUM_RANGE_GMM_NBCLUSTERS)
@@ -274,22 +281,19 @@ plot(mydata_gower_gmm, c(2, 3))
 plot(mydata_gower_gmm, c(2, 4))
 plot(mydata_gower_gmm, c(3, 4))
 dev.off()
-mydata_gower_gmm['partition']} else { date();
-print('WARNING: Something went wrong deciding whether or not to call unsupervised GMM analysis... ')
+mydata_gower_gmm['partition']} else { print('WARNING: Something went wrong deciding whether or not to call unsupervised GMM analysis... ')
 	}
 }
 
 
-####### IV. (SEMI-)SUPERVISED GMM ANALYSIS IN RMIXMOD:
-if( $CALL_SUPERMIXMOD == '0' ){print('Skipping semi-supervised or supervised GMM analysis in Rmixmod... ')} else {if($CALL_SUPERMIXMOD == '1' ){
-## (1):
-mydata_names_clusters <- read.table('mydata_names_clusters.txt', h=T)
-str(mydata_names_clusters)
-## (2):
-known_1 <- mydata_names_clusters[ which(mydata_names_4bgmm_df$MY_TYPE_VAR=='known'), ]
-## (3):
-##    (3A):
-mydata_known_learn <- mixmodLearn(knowns, known_1$MY_SPECIES_VAR, nbCVBlocks = nrow(mydata_names_4bgmm_df))
+####### IV. (SEMI-)SUPERVISED GMM-BASED DISCRIMINANT ANALYSIS IN RMIXMOD:
+if( $CALL_DISCRIMINANT == '0' ){print('Skipping GMM-based discriminant analysis in Rmixmod... ')} else {if($CALL_DISCRIMINANT == '1' ){
+## Analysis:
+##    A. Learning:
+known_labels <- subset(mydata_names$MY_SPECIES_VAR, type=='known')
+length(known_labels)
+known_labels
+mydata_known_learn <- mixmodLearn(knowns, known_labels, nbCVBlocks = 10)
 mydata_known_learn['bestResult']
 pdf('superRmixmod_learn_results.pdf')   ## SAVE THESE PLOTS--THEY'RE AWESOME!!!
 plot(mydata_known_learn)
@@ -301,18 +305,20 @@ plot(mydata_known_learn, c(2, 4))
 plot(mydata_known_learn, c(3, 4))
 dev.off()
 #
-##    (3B):
-## My prior experience with this (supervised prediction on lizard morphological data)
+##    B. Prediction:
+## My prior experience with this (supervised prediction on lizard morphological dataset)
 ## suggests that prediction success when going from a set of knowns (1:1 or partial coverage)
-## to unknowns is usually not so good. Nevertheless, here goes:
-unknown_1 <- mydata_names_clusters[ which(mydata_names_4bgmm_df$MY_TYPE_VAR=='unknown'), ]
+## to unknowns is usually not so good (~20%). Nevertheless, here goes:
+unknown_labels <- subset(mydata_names$MY_SPECIES_VAR, type=='unknown')
+length(unknown_labels)
+unknown_labels
 mydata_unknown_prediction <- mixmodPredict(data = X, classificationRule = mydata_known_learn['bestResult'])
 summary(mydata_unknown_prediction)
-mean(as.integer(unknown_1$MY_SPECIES_VAR) == mydata_unknown_prediction['partition'])
+mean(as.integer(unknown_labels) == mydata_unknown_prediction['partition'])
 	}
 }
 
-####### V. BGMM MODELING STEPS (IN PROGRESS):
+####### V. BGMM MODELING STEPS - CURRENTLY GMM ANALYSIS WITH SOFT LABELS (IN PROGRESS):
 modelSoft1 <- soft(X=X, knowns=knowns, P=B2)
 pdf('bgmm_modelSoft1_result.pdf')  ## SAVE THIS PLOT!
 plot(modelSoft1)
@@ -362,9 +368,9 @@ fi
 read -p "FLOW      | $(date) |          Would you like to keep text files output by GaussClust? (y/n) : " TO_KEEP
 if [ "$TO_KEEP" = "y" ]; then
 	mkdir txt
-	mv ./known_0.txt ./unknown_0.txt ./mydata_names_4bgmm_df.txt ./txt/
+	mv ./known_0.txt ./knowns.txt ./unknown_0.txt ./mydata_names_4bgmm_df.txt ./txt/
 else
-	rm ./known_0.txt ./unknown_0.txt ./mydata_names_4bgmm_df.txt
+	rm ./known_0.txt ./knowns.txt ./unknown_0.txt ./mydata_names_4bgmm_df.txt
 fi
 
 
