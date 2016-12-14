@@ -140,19 +140,15 @@ echo "
 setwd('$MY_PATH')
 # 
 ##--Load needed library, R code, or package stuff. Install packages if not present.
-##--opt: source('GaussClust.R', chdir = TRUE)
-packages <- c('bgmm', 'stringi', 'Rmixmod', 'StatMatch', 'MASS', 'cluster', 'ggfortify',
-'labdsv')
+packages <- c('bgmm', 'Rmixmod', 'StatMatch', 'MASS', 'ggfortify', 'labdsv')
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
     install.packages(setdiff(packages, rownames(installed.packages())))
 }
 
 library(bgmm)
-library(stringi)
 library(Rmixmod)
 library(StatMatch)
 library(MASS)
-library(cluster)
 library(ggfortify)
 library(labdsv)
 
