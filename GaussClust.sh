@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ##########################################################################################
-#                             GaussClust v1.1, December 2016                             #
+#                             GaussClust v1.0, December 2016                             #
 #   SHELL SCRIPT FOR AUTOMATING GAUSSIAN MIXTURE MODELING ON CONTINUOUS, DISCRETE, OR    #
 #   COMBINED GENETIC/MORPHOLOGICAL/ECOLOGICAL DATA, FOR SPECIES DELIMITATION AND         #
 #   CLASSIFICATION                                                                       #
@@ -13,7 +13,7 @@
 
 echo "
 ##########################################################################################
-#                             GaussClust v1.1, December 2016                             #
+#                             GaussClust v1.0, December 2016                             #
 ##########################################################################################
 "
 echo "INFO      | $(date) | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... "
