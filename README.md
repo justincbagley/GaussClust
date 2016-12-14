@@ -31,8 +31,7 @@ As noted by Lebret et al. (2015), two foci of multivariate approaches related to
 ## GETTING STARTED
 
 ### Dependencies
-- The R software environment (available from download mirrors from The Comprehensive R Archive Network (CRAN) such as https://cloud.r-project.org)
-Several R packages, including:
+- The [R](https://www.r-project.org) software environment (available from download mirrors from The Comprehensive R Archive Network (CRAN) such as https://cloud.r-project.org), as well as several R packages including:
 - [bgmm](https://cran.r-project.org/web/packages/bgmm/index.html)
 - [Rmixmod](https://cran.r-project.org/web/packages/Rmixmod/index.html)
 - [StatMatch](https://cran.r-project.org/web/packages/StatMatch/index.html)
