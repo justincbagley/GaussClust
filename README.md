@@ -22,9 +22,9 @@ The DOI for GaussClust, via [Zenodo](https://zenodo.org), is coming soon.
 ## INTRODUCTION
 
 *"Clustering and discriminant analysis (or classification) methods are among the most important
-techniques in multivariate statistical learning." - Lebret et al. 2015*
+techniques in multivariate statistical learning." - Lebret et al. (2015)*
 
-This repository focuses on ways to use Gaussian Mixture Models (GMMs) to conduct clustering analyses that address problems in systematics, particularly in the delimitation of species, and classification of individuals to species, using univariate or multivariate data. Also, the repository presently focuses on GaussClust, a shell script that works with R to conduct various GMM analyses. 
+This repository focuses on ways to use Gaussian Mixture Models (GMMs) to conduct clustering analyses that address problems in systematics, particularly in the delimitation of species, and classification of individuals to species, using univariate or multivariate data. Recent papers discuss the promise of such methods for species delimitation, with or without multiple data-types (e.g. genetic, morphological, ecological data), and with or without accounting for noise during clustering (Hausdorf & Hennig 2010; Edwards & Knowles 2014). Also, the repository presently focuses on GaussClust, a shell script that works with R to conduct various GMM analyses. 
 
 As noted by Lebret et al. (2015), two foci of multivariate approaches related to clustering are (1) clustering proper, which aims to group observations (e.g. individuals) into groups or 'clusters' that are more similar to one another than to other clusters, and (2) classification methods where a discriminant function is used to assign new data to groups that are known a priori. GaussClust primarily focuses on the former, but the latter also sneaks into clustering analyses and therefore is also included. As in the case of the author's other software on GitHub (e.g. PIrANHA), GaussClust is fully command line-based and is available as open-source software according to the license. 
 
@@ -87,14 +87,16 @@ regular GMM or bgmm modeling (except see other option available using -n flag ab
 corresponds to 'k' or the number of columns in 'B', based on definitions in the bgmm 
 documentation.
 
-Input file: Script expects as inputFile a single plain text data table with a first column 
-containing the code names or IDs of each individual (preferably with a species-specific 
-abbreviation followed by a museum voucher number or individual code) and subsequent columns 
-containing categorical or discrete data for different morphological characters measured for 
-the sample. The input file contains a header with four-letter codes for each column. Individual 
-names in the first 'samples' column should not include hyphen characters or spaces. The second 
-column should be headed 'group' and specify whether each individual ID is 'known' or 'unknown'.
-
+Input file: Script expects as inputFile a single plain-text data table with a header and 
+several columns of information followed by columns containing categorical or discrete data
+(e.g. for different morphological characters measured) for the sample. The first column 
+will be named 'samples' and contain code names or IDs for each individual (preferably with 
+a species-specific abbreviation followed by a museum voucher number or individual code). 
+The second column is headed as 'group' and specifies whether each individual ID is 'known'
+or 'unknown'. The third column contains integer values corresponding to codes/numbers (1 
+to k, where k is total number of components/clusters) assigning each individual to a 
+species (usually, 1 species = 1 cluster). The example input file contains a header with 
+four-letter codes for each column, but users can make the names a little longer if needed.
 ````
 
 ## Real-world example #1:
@@ -104,10 +106,14 @@ Here, (1) we specify to keep 4 NMDS dimensions; (2) conduct a regular unsupervis
 ````
 
 ## REFERENCES
-Lebret et al. 2015
+- Edwards D, Knowles LL (2014)
+- Hausdorf B, Hennig C (2010). Species delimitation using dominant and codominant multilocus markers. Systematic Biology, 59, 491-503.
+- Lebret R, Iovleff S, Langrognet F, Biernacki C, Celeux G, Govaert G (2015) Rmixmod: the R package of the model-based unsupervised, supervised, and semi-supervised classification Mixmod Library. Journal of Statistical Software, 67(6). doi:10.18637/jss.v067.i06
 
 ## TODO
-More with bgmm.
+- Fix two input file problem (get code down to single file).
+- Make script do more with bgmm, including semisupervised analysis.
+- Change Usage section to include code for working with example files.
 
 December 14, 2016
 Justin C. Bagley, Tuscaloosa, AL, USA
