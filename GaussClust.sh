@@ -220,7 +220,7 @@ known_0 <- mydata_names_4bgmm_df[ which(mydata_names_4bgmm_df$MY_TYPE_VAR=='know
 detach(mydata_names_4bgmm_df)
 row.names(known_0) <- known_0[,1]
 known_0
-write.table(knowns, file='known_0.txt')
+write.table(known_0, file='known_0.txt')
 str(known_0)
 #
 knowns <- known_0[,-c(1:2)]
