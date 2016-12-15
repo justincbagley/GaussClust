@@ -229,6 +229,10 @@ dim(knowns)[1]
 write.table(knowns, file='knowns.txt')
 str(knowns)
 #
+known_labels <- subset(mydata_names$species, type=='known')
+length(known_labels)
+known_labels
+#
 attach(mydata_names_4bgmm_df)
 unknown_0 <- mydata_names_4bgmm_df[ which(mydata_names_4bgmm_df$MY_TYPE_VAR=='unknown'), ]
 detach(mydata_names_4bgmm_df)
@@ -290,9 +294,6 @@ mydata_gower_gmm['partition']} else { print('WARNING: Something went wrong decid
 if( $CALL_DISCRIMINANT == '0' ){print('Skipping GMM-based discriminant analysis in Rmixmod... ')} else {if($CALL_DISCRIMINANT == '1' ){
 ## Analysis:
 ##    A. Learning:
-known_labels <- subset(mydata_names$MY_SPECIES_VAR, type=='known')
-length(known_labels)
-known_labels
 mydata_known_learn <- mixmodLearn(knowns, known_labels, nbCVBlocks = 10)
 mydata_known_learn['bestResult']
 pdf('superRmixmod_learn_results.pdf')   ## SAVE THESE PLOTS--THEY'RE AWESOME!!!
