@@ -146,8 +146,10 @@ INFO      | Thu Dec 15 15:37:22 CST 2016 | Bye.
 - Lebret R, Iovleff S, Langrognet F, Biernacki C, Celeux G, Govaert G (2015) Rmixmod: the R package of the model-based unsupervised, supervised, and semi-supervised classification Mixmod Library. Journal of Statistical Software, 67(6). doi:10.18637/jss.v067.i06
 
 ## TODO
-- Make script do more with bgmm, including semisupervised analysis using belief probs matrix.
+- Solve two input file problem. **DONE!** :white_check_mark:
+- Make script do more with bgmm, including semisupervised analysis using belief probs matrix. **DONE!** :white_check_mark:
 - Change Usage section to include code for working with example files.
+- Explore different methods for BIC calculation (e.g. in mclust) during unsupervised clustering.
 
 December 15, 2016
 Justin C. Bagley, Tuscaloosa, AL, USA
