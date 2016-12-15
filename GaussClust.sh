@@ -7,7 +7,7 @@
 #   CLASSIFICATION                                                                       #
 #   Copyright (c)2016 Justin C. Bagley, Universidade de Brasília, Brasília, DF, Brazil.  #
 #   See the README and license files on GitHub (http://github.com/justincbagley) for     #
-#   further information. Last update: December 14, 2016. For questions, please email     #
+#   further information. Last update: December 15, 2016. For questions, please email     #
 #   jcbagley@unb.br.                                                                     #
 ##########################################################################################
 
@@ -140,7 +140,7 @@ echo "
 
 #################################### GaussClust.R ########################################
 
-############ SETUP
+############ CONDUCT SETUP, READ IN AND PLOT THE DATA
 setwd('$MY_PATH')
 # 
 ##--Load needed library, R code, or package stuff. Install packages if not present.
@@ -240,6 +240,10 @@ row.names(unknown_0) <- unknown_0[,1]
 unknown_0 <- unknown_0[,-c(1:2)]
 write.table(unknown_0, file='unknown_0.txt')
 str(unknown_0)
+#
+unknown_labels <- subset(mydata_names$MY_SPECIES_VAR, type=='unknown')
+length(unknown_labels)
+unknown_labels
 
 ##--Remove names from data frame of unknowns and place in var 'X' (bgmm unknowns var). Also 
 ##--read in the belief matrix (B) containing prior probabilities for the knowns, with 0.95 
@@ -310,9 +314,6 @@ dev.off()
 ## My prior experience with this (supervised prediction on lizard morphological dataset)
 ## suggests that prediction success when going from a set of knowns (1:1 or partial coverage)
 ## to unknowns is usually not so good (~20%). Nevertheless, here goes:
-unknown_labels <- subset(mydata_names$MY_SPECIES_VAR, type=='unknown')
-length(unknown_labels)
-unknown_labels
 mydata_unknown_prediction <- mixmodPredict(data = X, classificationRule = mydata_known_learn['bestResult'])
 summary(mydata_unknown_prediction)
 mean(as.integer(unknown_labels) == mydata_unknown_prediction['partition'])
