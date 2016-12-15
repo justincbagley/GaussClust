@@ -23,8 +23,8 @@ echo "INFO      | $(date) | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE...
 NUM_NMDS_DIMS=4
 CALL_UNSUPERGMM=1
 CALL_DISCRIMINANT=1
-CALL_BGMM=0
 MY_PROBS_MATRIX=probs.txt
+CALL_BGMM=0
 
 ## PARSE THE OPTIONS ##
 while getopts 'k:u:n:d:b:p:c:' opt ; do
@@ -52,11 +52,11 @@ using 'Rmixmod' R pacakge, for comparative or individual purposes) | -n numGMMCl
 numeric listing of a range, x:y, of the number of clusters to be modeled over during unsupervised GMM \
 in Rmixmod) | -d ssDiscrimGMM (0=no (semi-)supervised GMM is carried out in Rmixmod; 1=conduct (semi-)\
 supervised GMM in Rmixmod) | -b beliefBasedMM (0=no mixture modeling is carried out using the 'bgmm' \
-R package; the following other options conduct different kinds of mixture modeling using separate \
-functions available in bgmm: belief, soft, semisupervised, supervised) | -c numComponents (specify \
-number of components (e.g. Gaussian components) or 'clusters' to assign individuals to during regular \
-GMM (single value, rather than a range; see -n above) or bgmm modeling) | -l mixmodLearn (0=\
-discriminant analysis with mixmodLearn in Rmixmod is not called; 1=conduct discriminant analysis)
+R package; 1=calls 'supervised' GMM analysis, 2=calls 'semisupervised' GMM analysis, and 3=calls \
+both supervised and semisupervised analyses in bgmm) | -c numComponents (specify number of components \
+(e.g. Gaussian components) or 'clusters' to assign individuals to during regular GMM (single value, \
+rather than a range; see -n above) or bgmm modeling) | -l mixmodLearn (0=discriminant analysis with \
+mixmodLearn in Rmixmod is not called; 1=conduct discriminant analysis)
 
 The -k flag sets the number of k dimensions to be retained during NMDS, which affects both
 regular Gaussian mixture modeling and also the different models that are implemented in
@@ -85,12 +85,15 @@ estimates a discriminant function from known labeled data and uses it to predict
 unknown samples that correspondto the same knowns, i.e. species or clusters. Set this flag 
 to '0' to skip this analysis.
 
-The -b flag allows users to request the Gaussian mixture modeling or belief-based mixture
-modeling options available in the 'bgmm' R package. You may call four different models,
-specified in different functions in bgmm, by passing the script the function names 'belief', 
-'soft', 'semisupervised', or 'supervised'. See the bgmm R site and documentation for 
-more information on this method (available at: 
-https://cran.r-project.org/web/packages/bgmm/index.html).
+The -b flag allows users to request two Gaussian mixture modeling or belief-based mixture
+modeling options available in the 'bgmm' R package. The two currently supported models are
+specified in different functions by passing the script a value of '1', which calls the 
+'supervised' function for supervised GMM analysis, or '2', which calls the 'semisupervised' 
+function for semisupervised GMM analysis. You can also call both of these functions by 
+passing a value of '3' to this option. See the bgmm R site and documentation for more 
+information on these different GMMs (available at: 
+https://cran.r-project.org/web/packages/bgmm/index.html). Set this flag 
+to '0' to skip this analysis.
 
 The -p flag specifies the filename of the bgmm 'B' matrix file in the working dir.
 
@@ -100,15 +103,16 @@ corresponds to 'k' or the number of columns in 'B', based on definitions in the 
 documentation.
 
 Input file: Script expects as inputFile a single plain-text data table with a header and 
-several columns of information followed by columns containing categorical or discrete data
-(e.g. for different morphological characters measured) for the sample. The first column 
-will be named 'samples' and contain code names or IDs for each individual (preferably with 
-a species-specific abbreviation followed by a museum voucher number or individual code). 
-The second column is headed as 'type' and specifies whether each individual ID is 'known'
-or 'unknown'. The third column contains integer values corresponding to codes/numbers (1 
-to k, where k is total number of components/clusters) assigning each individual to a 
-species (usually, 1 species = 1 cluster). The example input file contains a header with 
-four-letter codes for each column, but users can make the names a little longer if needed.
+several columns of information followed by columns containing single-type or mixed data
+(e.g. categorical, discrete, or continuous data for different morphological characters 
+measured) for the sample. The first column will be named 'samples' and typically contain 
+sample IDs/codes for each individual (preferably with a species-specific abbreviation 
+followed by a museum voucher number or individual code). The second column is headed as 
+'type' and specifies whether each individual ID is 'known' or 'unknown'. The third column 
+contains labels (e.g. four-letter codes) for each known individual (e.g. by species), and
+'NA' values for samples of unknown type, assigning individuals to species. The example 
+input file contains a header with four-letter codes for each datacolumn, but users can 
+make the names a little longer if needed.
 "
 
   exit 1
@@ -130,6 +134,7 @@ MY_TYPE_VAR=$(echo "\$type")
 MY_SAMP_VAR=$(echo "\$samples")
 ## Same as above but for '$species'...
 MY_SPECIES_VAR=$(echo "\$species")
+MY_TIJ_VAR=$(echo "\$tij")
 
 
 ############ MAKE R SCRIPT
@@ -210,38 +215,39 @@ nmds_dims_df = data.frame(nmds_1, nmds_2, nmds_3, nmds_4)
 ##--file(s) in the working dir; we may want it handy in case we need it later...
 sample_names <- mydata_names[,1]
 type <- mydata_names[,2]
-mydata_names_4bgmm_df <- data.frame(sample_names, type, nmds_1, nmds_2, nmds_3, nmds_4)
-write.table(mydata_names_4bgmm_df, file='mydata_names_4bgmm_df.txt')
+species <- mydata_names[,3]
+mydata_names_df <- data.frame(sample_names, type, species, nmds_1, nmds_2, nmds_3, nmds_4)
+write.table(mydata_names_df, file='mydata_names_df.txt')
 
 ##--Subset the NMDS points by 'known' and 'unknown' individuals, for bgmm. Also write the
 ##--resulting new data frames back to file in working dir--in case of subsequent checks: 
-attach(mydata_names_4bgmm_df)
-known_0 <- mydata_names_4bgmm_df[ which(mydata_names_4bgmm_df$MY_TYPE_VAR=='known'), ]
-detach(mydata_names_4bgmm_df)
+attach(mydata_names_df)
+known_0 <- mydata_names_df[ which(mydata_names_df$MY_TYPE_VAR=='known'), ]
+detach(mydata_names_df)
 row.names(known_0) <- known_0[,1]
 known_0
 write.table(known_0, file='known_0.txt')
 str(known_0)
 #
-knowns <- known_0[,-c(1:2)]
+knowns <- known_0[,-c(1:3)]
 knowns
 dim(knowns)[1]
 write.table(knowns, file='knowns.txt')
 str(knowns)
 #
-known_labels <- subset(mydata_names$species, type=='known')
+known_labels <- subset(mydata_names_df$MY_SPECIES_VAR, type=='known')
 length(known_labels)
 known_labels
 #
-attach(mydata_names_4bgmm_df)
-unknown_0 <- mydata_names_4bgmm_df[ which(mydata_names_4bgmm_df$MY_TYPE_VAR=='unknown'), ]
-detach(mydata_names_4bgmm_df)
+attach(mydata_names_df)
+unknown_0 <- mydata_names_df[ which(mydata_names_df$MY_TYPE_VAR=='unknown'), ]
+detach(mydata_names_df)
 row.names(unknown_0) <- unknown_0[,1]
-unknown_0 <- unknown_0[,-c(1:2)]
+unknown_0 <- unknown_0[,-c(1:3)]
 write.table(unknown_0, file='unknown_0.txt')
 str(unknown_0)
 #
-unknown_labels <- subset(mydata_names$MY_SPECIES_VAR, type=='unknown')
+unknown_labels <- subset(mydata_names_df$MY_SPECIES_VAR, type=='unknown')
 length(unknown_labels)
 unknown_labels
 
@@ -264,13 +270,17 @@ B <- B[,-c(1)]
 B
 dim(B)
 #
-##--Here, let's make a couple of arbitrary belief matrices, to analyze and compare:
-p1=0.95
-B2 <- (matrix(p1, nrow = 206, ncol = $NUM_COMPONENTS))
-row.names(B2) <- row.names(knowns)
-p2=0.066666666666667
-B3 <- (matrix(p2, nrow = 206, ncol = $NUM_COMPONENTS))
-row.names(B3) <- row.names(knowns)
+##--What about arbitrary beliefs on knowns?
+##--This is commented out for now; however, the following lines of code allow the user to 
+##--make a couple of arbitrary belief matrices, to analyze and compare with the belief-
+##--based GMMs in bgmm, if called by the user using the -b flag. Uncomment here and under
+##--Section V below if desired.
+# p1=0.95
+# B2 <- (matrix(p1, nrow = dim(B)[1], ncol = $NUM_COMPONENTS))
+# row.names(B2) <- row.names(knowns)
+# p2=0.066666666666667
+# B3 <- (matrix(p2, nrow = dim(B)[1], ncol = $NUM_COMPONENTS))
+# row.names(B3) <- row.names(knowns)
 
 
 
@@ -298,8 +308,10 @@ mydata_gower_gmm['partition']} else { print('WARNING: Something went wrong decid
 if( $CALL_DISCRIMINANT == '0' ){print('Skipping GMM-based discriminant analysis in Rmixmod... ')} else {if($CALL_DISCRIMINANT == '1' ){
 ## Analysis:
 ##    A. Learning:
-mydata_known_learn <- mixmodLearn(knowns, known_labels, nbCVBlocks = 10)
+mydata_known_learn <- mixmodLearn(as.data.frame(knowns), as.factor(known_labels), nbCVBlocks = 10)
 mydata_known_learn['bestResult']
+graphics.off()
+quartz()
 pdf('superRmixmod_learn_results.pdf')   ## SAVE THESE PLOTS--THEY'RE AWESOME!!!
 plot(mydata_known_learn)
 plot(mydata_known_learn, c(1, 2))
@@ -320,26 +332,58 @@ mean(as.integer(unknown_labels) == mydata_unknown_prediction['partition'])
 	}
 }
 
-####### V. BGMM MODELING STEPS - CURRENTLY GMM ANALYSIS WITH SOFT LABELS (IN PROGRESS):
-modelSoft1 <- soft(X=X, knowns=knowns, P=B2)
-pdf('bgmm_modelSoft1_result.pdf')  ## SAVE THIS PLOT!
-plot(modelSoft1)
+####### V. (SEMI-)SUPERVISED BELIEF-BASED GMM ANALYSIS IN BGMM:
+if( $CALL_BGMM == '0' ){print('Skipping belief-based GMM analysis in bgmm... ')} else if($CALL_BGMM == '1' ){
+supervisedModel <- supervised(as.data.frame(knowns), class = as.factor(known_labels))
+supervisedModel
+# pdf('bgmm_supervised_result.pdf')
+# plot(supervisedModel)
+# dev.off()
+} else if($CALL_BGMM == '2' ){
+semisupervisedModel <- semisupervised(as.data.frame(X), as.data.frame(knowns), class = as.factor(known_labels), k = $NUM_COMPONENTS, P = B)
+$semisupervisedModel
+pdf('bgmm_semisupervised_result.pdf')
+plot(semisupervisedModel)
 dev.off()
-
-modelSoft2 <- soft(X=X, knowns=knowns, P=B3)
-pdf('bgmm_modelSoft2_result.pdf')  ## SAVE THIS PLOT!
-plot(modelSoft2)
+z <- as.data.frame(semisupervisedModel$MY_TIJ_VAR)
+write.table(z, file='bgmm_semisupervised_posteriorProbs.txt', sep='\t')} else if($CALL_BGMM == '3' ){
+supervisedModel <- supervised(as.data.frame(knowns), class = as.factor(known_labels))
+supervisedModel
+# pdf('bgmm_supervised_result.pdf')
+# plot(supervisedModel)
+# dev.off()
+semisupervisedModel <- semisupervised(as.data.frame(X), as.data.frame(knowns), class = as.factor(known_labels), k = $NUM_COMPONENTS, P = B)
+$semisupervisedModel
+pdf('bgmm_semisupervised_result.pdf')
+plot(semisupervisedModel)
 dev.off()
-
-quartz()
-pdf('bgmm_modelSoft1_vs_modelSoft2_2x1.pdf')  ## SAVE THIS PLOT!
-par(mfrow=c(2,1))
-plot(modelSoft1)
-plot(modelSoft2)
-dev.off()
+z <- as.data.frame(semisupervisedModel$MY_TIJ_VAR)
+write.table(z, file='bgmm_semisupervised_posteriorProbs.txt', sep='\t')} else {print('Sorry, the belief, soft, and unsupervised routines in bgmm are not yet supported in GaussClust... ')}
 
 
-### ADD SEMISUPERVISED ANALYSIS IN BGMM HERE ONCE YOU GET IT WORKING.
+
+
+##--What about arbitrary beliefs on knowns?
+# modelSoft1 <- soft(X, knowns, class = as.factor(known_labels), k = $NUM_COMPONENTS, P = B2)
+# pdf('bgmm_modelSoft1_result.pdf')  ## SAVE THIS PLOT!
+# plot(modelSoft1)
+# dev.off()
+#
+# modelSoft2 <- soft(X, knowns, class = as.factor(known_labels), k = $NUM_COMPONENTS, P = B3)
+# pdf('bgmm_modelSoft2_result.pdf')  ## SAVE THIS PLOT!
+# plot(modelSoft2)
+# dev.off()
+#
+# quartz()
+# pdf('bgmm_modelSoft1_vs_modelSoft2_2x1.pdf')  ## SAVE THIS PLOT!
+# par(mfrow=c(2,1))
+# plot(modelSoft1)
+# plot(modelSoft2)
+# dev.off()
+
+
+
+
 
 
 ######################################### END ############################################
@@ -353,13 +397,11 @@ R CMD BATCH ./GaussClust.R
 
 echo "INFO      | $(date) | STEP #4: CLEAN UP THE WORKSPACE. "
 ##--Cleanup:
+echo "INFO      | $(date) |          Moving R ouput files to new folder named 'R'... "
 mkdir R
-mv ./bgmm_modelSoft1_vs_modelSoft2_2x1.pdf ./bgmm_modelSoft2_result.pdf \
-./bgmm_modelSoft1_result.pdf ./superRmixmod_learn_results.pdf ./gower_gmm_result.pdf \
-./gower_gg_nmds_plot.pdf ./gower_nmds_plot.pdf ./gower_dist_gg_autoplot.pdf ./*.Rout ./R/
+mv ./*.pdf ./*.Rout ./bgmm_semisupervised_posteriorProbs.txt ./R/
 
-#
-## Next-some questions-based flow control for the cleanup:
+## Next: some questions-based flow control for the cleanup...
 read -p "FLOW      | $(date) |          Would you like to keep the Rscript output by GaussClust? (y/n) : " DEL_SCRIPT
 if [ "$DEL_SCRIPT" != "y" ]; then
 	rm ./GaussClust.r
@@ -370,9 +412,9 @@ fi
 read -p "FLOW      | $(date) |          Would you like to keep text files output by GaussClust? (y/n) : " TO_KEEP
 if [ "$TO_KEEP" = "y" ]; then
 	mkdir txt
-	mv ./known_0.txt ./knowns.txt ./unknown_0.txt ./mydata_names_4bgmm_df.txt ./txt/
+	mv ./known_0.txt ./knowns.txt ./unknown_0.txt ./mydata_names_df.txt ./txt/
 else
-	rm ./known_0.txt ./knowns.txt ./unknown_0.txt ./mydata_names_4bgmm_df.txt
+	rm ./known_0.txt ./knowns.txt ./unknown_0.txt ./mydata_names_df.txt
 fi
 
 
