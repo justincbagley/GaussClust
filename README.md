@@ -114,6 +114,26 @@ Here, (1) we specify to keep 4 NMDS dimensions; (2) conduct a regular unsupervis
 ./GaussClust.sh -k 4 -u 1 -n 5:20 -d 1 -b semisupervised -p B_206.txt -c 14 ./mydata.txt
 ````
 
+## Example screen output
+When you run GaussClust, you will see 'INFO' and date printed to screen for each step, as well as question-response lines (marked 'FLOW'), with no error messages, as shown below:
+````
+$ ./GaussClust.sh -k 4 -u 1 -n 5:20 -d 1 -b semisupervised -p B_206.txt -c 14 ./mydata.txt
+
+##########################################################################################
+#                             GaussClust v1.1, December 2016                             #
+##########################################################################################
+
+INFO      | Thu Dec 15 07:58:34 CST 2016 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
+INFO      | Thu Dec 15 07:58:34 CST 2016 | STEP #2: MAKE GAUSSIAN CLUSTERING R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE... 
+INFO      | Thu Dec 15 07:58:34 CST 2016 | STEP #3: RUN THE R SCRIPT. 
+INFO      | Thu Dec 15 07:58:51 CST 2016 | STEP #4: CLEAN UP THE WORKSPACE. 
+FLOW      | Thu Dec 15 07:58:51 CST 2016 |          Would you like to keep the Rscript output by GaussClust? (y/n) : y
+FLOW      | Thu Dec 15 07:58:55 CST 2016 |          Would you like to keep text files output by GaussClust? (y/n) : y
+INFO      | Thu Dec 15 07:58:56 CST 2016 | Done conducting Gaussian clustering and related analyses using GaussClust.
+INFO      | Thu Dec 15 07:58:56 CST 2016 | Bye.
+
+````
+
 ## REFERENCES
 - Edwards DL, Knowles LL (2014) Species detection and individual assignment in species delimitation: can integrative data increase efficacy? Proceedings of the Royal Society B, 281, 20132765. 
 - Hausdorf B, Hennig C (2010). Species delimitation using dominant and codominant multilocus markers. Systematic Biology, 59, 491-503.
