@@ -31,6 +31,7 @@ As noted by Lebret et al. (2015), two foci of multivariate approaches related to
 ## GETTING STARTED
 
 ### Dependencies
+![alt tag](https://cloud.githubusercontent.com/assets/10584087/21243724/b12a94d2-c2df-11e6-9d20-5cf06877ad94.png)
 - The [R](https://www.r-project.org) software environment (available from download mirrors from The Comprehensive R Archive Network (CRAN) such as https://cloud.r-project.org), as well as several R packages including:
 - [bgmm](https://cran.r-project.org/web/packages/bgmm/index.html)
 - [Rmixmod](https://cran.r-project.org/web/packages/Rmixmod/index.html)
