@@ -49,11 +49,11 @@ $ ./GaussClust.sh
 #                             GaussClust v1.0, December 2016                             #
 ##########################################################################################
 
-INFO      | Wed Dec 14 09:03:11 CST 2016 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
+INFO      | Thu Dec 15 15:55:34 CST 2016 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
 
 Usage: ./GaussClust.sh [options] inputFile
   
-Options: -k nmdsDimensions (specify number of dimensions, k, to retain during NMDS on Gower distances) | -u unsuperGMM (0=no unsupervised GMM is carried out; 1=conduct unsupervised GMM using 'Rmixmod' R pacakge, for comparative or individual purposes) | -n numGMMClusters (optional numeric listing of a range, x:y, of the number of clusters to be modeled over during unsupervised GMM in Rmixmod) | -d ssDiscrimGMM (0=no (semi-)supervised GMM is carried out in Rmixmod; 1=conduct (semi-)supervised GMM in Rmixmod) | -b beliefBasedMM (0=no mixture modeling is carried out using the 'bgmm' R package; the following other options conduct different kinds of mixture modeling using separate functions available in bgmm: belief, soft, semisupervised, supervised) | -c numComponents (specify number of components (e.g. Gaussian components) or 'clusters' to assign individuals to during regular GMM (single value, rather than a range; see -n above) or bgmm modeling) | -l mixmodLearn (0=discriminant analysis with mixmodLearn in Rmixmod is not called; 1=conduct discriminant analysis)
+Options: -k nmdsDimensions (specify number of dimensions, k, to retain during NMDS on Gower distances) | -u unsuperGMM (0=no unsupervised GMM is carried out; 1=conduct unsupervised GMM using 'Rmixmod' R pacakge, for comparative or individual purposes) | -n numGMMClusters (optional numeric listing of a range, x:y, of the number of clusters to be modeled over during unsupervised GMM in Rmixmod) | -d ssDiscrimGMM (0=no (semi-)supervised GMM is carried out in Rmixmod; 1=conduct (semi-)supervised GMM in Rmixmod) | -b beliefBasedMM (0=no mixture modeling is carried out using the 'bgmm' R package; 1=calls 'supervised' GMM analysis, 2=calls 'semisupervised' GMM analysis, and 3=calls both supervised and semisupervised analyses in bgmm) | -c numComponents (specify number of components (e.g. Gaussian components) or 'clusters' to assign individuals to during regular GMM (single value, rather than a range; see -n above) or bgmm modeling) | -l mixmodLearn (0=discriminant analysis with mixmodLearn in Rmixmod is not called; 1=conduct discriminant analysis)
 
 The -k flag sets the number of k dimensions to be retained during NMDS, which affects both
 regular Gaussian mixture modeling and also the different models that are implemented in
@@ -82,12 +82,15 @@ estimates a discriminant function from known labeled data and uses it to predict
 unknown samples that correspondto the same knowns, i.e. species or clusters. Set this flag 
 to '0' to skip this analysis.
 
-The -b flag allows users to request the Gaussian mixture modeling or belief-based mixture
-modeling options available in the 'bgmm' R package. You may call four different models,
-specified in different functions in bgmm, by passing the script the function names 'belief', 
-'soft', 'semisupervised', or 'supervised'. See the bgmm R site and documentation for 
-more information on this method (available at: 
-https://cran.r-project.org/web/packages/bgmm/index.html).
+The -b flag allows users to request two Gaussian mixture modeling or belief-based mixture
+modeling options available in the 'bgmm' R package. The two currently supported models are
+specified in different functions by passing the script a value of '1', which calls the 
+'supervised' function for supervised GMM analysis, or '2', which calls the 'semisupervised' 
+function for semisupervised GMM analysis. You can also call both of these functions by 
+passing a value of '3' to this option. See the bgmm R site and documentation for more 
+information on these different GMMs (available at: 
+https://cran.r-project.org/web/packages/bgmm/index.html). Set this flag 
+to '0' to skip this analysis.
 
 The -p flag specifies the filename of the bgmm 'B' matrix file in the working dir.
 
@@ -97,40 +100,43 @@ corresponds to 'k' or the number of columns in 'B', based on definitions in the 
 documentation.
 
 Input file: Script expects as inputFile a single plain-text data table with a header and 
-several columns of information followed by columns containing categorical or discrete data
-(e.g. for different morphological characters measured) for the sample. The first column 
-will be named 'samples' and contain code names or IDs for each individual (preferably with 
-a species-specific abbreviation followed by a museum voucher number or individual code). 
-The second column is headed as 'type' and specifies whether each individual ID is 'known'
-or 'unknown'. The third column contains integer values corresponding to codes/numbers (1 
-to k, where k is total number of components/clusters) assigning each individual to a 
-species (usually, 1 species = 1 cluster). The example input file contains a header with 
-four-letter codes for each column, but users can make the names a little longer if needed.
+several columns of information followed by columns containing single-type or mixed data
+(e.g. categorical, discrete, or continuous data for different morphological characters 
+measured) for the sample. The first column will be named 'samples' and typically contain 
+sample IDs/codes for each individual (preferably with a species-specific abbreviation 
+followed by a museum voucher number or individual code). The second column is headed as 
+'type' and specifies whether each individual ID is 'known' or 'unknown'. The third column 
+contains labels (e.g. four-letter codes) for each known individual (e.g. by species), and
+'NA' values for samples of unknown type, assigning individuals to species. The example 
+input file contains a header with four-letter codes for each datacolumn, but users can 
+make the names a little longer if needed.
+
 ````
 
 ## Real-world example #1:
-Here, (1) we specify to keep 4 NMDS dimensions; (2) conduct a regular unsupervised GMM analysis in Rmixmod, using multiple models across 5-20 clusters, which are compared to identify the best model using BIC; (3) call supervised GMM analysis in Rmixmod; (4) attempt semisupervised analysis in bgmm; and (4) specify that analyses (where needed) specify 14 clusters. Output is not redirected (e.g. '> output.txt' at the end, so all output from the script are printed to screen (except for steps conducted in R).
+Here, (1) we specify to keep 4 NMDS dimensions; (2) conduct a regular unsupervised GMM analysis in Rmixmod, using multiple models across 5-20 clusters, which are compared to identify the best model using BIC; (3) call supervised GMM analysis in Rmixmod; (4) attempt supervised and semisupervised analysis in bgmm; and (4) specify that analyses use or require 14 clusters (as needed). Output is not redirected (e.g. '> output.txt' at the end, so all output from the script are printed to screen (except for steps conducted in R).
 ````
-./GaussClust.sh -k 4 -u 1 -n 5:20 -d 1 -b semisupervised -p B_206.txt -c 14 ./mydata.txt
+./GaussClust.sh -k 4 -u 1 -n 5:20 -d 1 -b 3 -p B_206.txt -c 13 ./mydata.txt
 ````
 
 ## Example screen output
 When you run GaussClust, you will see 'INFO' and date printed to screen for each step, as well as question-response lines (marked 'FLOW'), with no error messages, as shown below:
 ````
-$ ./GaussClust.sh -k 4 -u 1 -n 5:20 -d 1 -b semisupervised -p B_206.txt -c 14 ./mydata.txt
+$ ./GaussClust.sh -k 4 -u 1 -n 5:20 -d 1 -b 3 -p B_206.txt -c 13 ./mydata_names_knownLabels.txt
 
 ##########################################################################################
-#                             GaussClust v1.1, December 2016                             #
+#                             GaussClust v1.0, December 2016                             #
 ##########################################################################################
 
-INFO      | Thu Dec 15 07:58:34 CST 2016 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
-INFO      | Thu Dec 15 07:58:34 CST 2016 | STEP #2: MAKE GAUSSIAN CLUSTERING R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE... 
-INFO      | Thu Dec 15 07:58:34 CST 2016 | STEP #3: RUN THE R SCRIPT. 
-INFO      | Thu Dec 15 07:58:51 CST 2016 | STEP #4: CLEAN UP THE WORKSPACE. 
-FLOW      | Thu Dec 15 07:58:51 CST 2016 |          Would you like to keep the Rscript output by GaussClust? (y/n) : y
-FLOW      | Thu Dec 15 07:58:55 CST 2016 |          Would you like to keep text files output by GaussClust? (y/n) : y
-INFO      | Thu Dec 15 07:58:56 CST 2016 | Done conducting Gaussian clustering and related analyses using GaussClust.
-INFO      | Thu Dec 15 07:58:56 CST 2016 | Bye.
+INFO      | Thu Dec 15 15:36:54 CST 2016 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
+INFO      | Thu Dec 15 15:36:54 CST 2016 | STEP #2: MAKE GAUSSIAN CLUSTERING R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE... 
+INFO      | Thu Dec 15 15:36:54 CST 2016 | STEP #3: RUN THE R SCRIPT. 
+INFO      | Thu Dec 15 15:37:11 CST 2016 | STEP #4: CLEAN UP THE WORKSPACE. 
+INFO      | Thu Dec 15 15:37:11 CST 2016 |          Moving R ouput files to new folder named 'R'... 
+FLOW      | Thu Dec 15 15:37:11 CST 2016 |          Would you like to keep the Rscript output by GaussClust? (y/n) : y
+FLOW      | Thu Dec 15 15:37:21 CST 2016 |          Would you like to keep text files output by GaussClust? (y/n) : y
+INFO      | Thu Dec 15 15:37:22 CST 2016 | Done conducting Gaussian clustering and related analyses using GaussClust.
+INFO      | Thu Dec 15 15:37:22 CST 2016 | Bye.
 
 ````
 
@@ -143,5 +149,5 @@ INFO      | Thu Dec 15 07:58:56 CST 2016 | Bye.
 - Make script do more with bgmm, including semisupervised analysis using belief probs matrix.
 - Change Usage section to include code for working with example files.
 
-December 14, 2016
+December 15, 2016
 Justin C. Bagley, Tuscaloosa, AL, USA
