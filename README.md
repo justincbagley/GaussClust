@@ -17,7 +17,7 @@ Alternatively, please provide the following link to this software repository in 
 
 ## DOI
 
-The DOI for GaussClust, via [Zenodo](https://zenodo.org), is coming soon.
+The DOI for GaussClust, via [Zenodo](https://zenodo.org), is coming soon. :wink:
 
 ## INTRODUCTION
 
