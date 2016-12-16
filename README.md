@@ -24,9 +24,21 @@ The DOI for GaussClust, via [Zenodo](https://zenodo.org), is coming soon.
 *"Clustering and discriminant analysis (or classification) methods are among the most important
 techniques in multivariate statistical learning." - Lebret et al. (2015)*
 
-This repository focuses on ways to use Gaussian Mixture Models (GMMs) to conduct clustering analyses to address problems in systematics, particularly in the delimitation of species, and classification of individuals to species, using univariate or multivariate data. Recent papers discuss the promise of such methods for species delimitation, with or without multiple data-types (e.g. genetic, morphological, ecological data), and with or without accounting for noise during clustering (Hausdorf & Hennig 2010; Edwards & Knowles 2014). The current pre-release version of the repository focuses on GaussClust, a shell script that works with R to conduct various GMM analyses. 
+This repository focuses on ways to use Gaussian Mixture Models (GMMs) to conduct clustering analyses to address problems in systematics, particularly in the delimitation of species, and classification of individuals to species, using univariate or multivariate data. Recent papers discuss the promise of such methods for species delimitation, with or without multiple data-types (e.g. genetic, morphological, ecological data), and with or without accounting for noise during clustering (Hausdorf & Hennig 2010; Edwards & Knowles 2014). The current pre-release version of the repository focuses on GaussClust, a shell script that customizes and runs R scripts to conduct various GMM analyses. 
 
-As noted by Lebret et al. (2015), two foci of multivariate approaches related to clustering are (1) clustering proper, which aims to group observations (e.g. individuals) into groups or 'clusters' that are more similar to one another than to other clusters, and (2) classification methods where a discriminant function is used to assign new data to groups that are known a priori. GaussClust primarily focuses on the former, but the latter also sneaks into clustering analyses and therefore is also included. As in the case of the author's other software on GitHub (e.g. [PIrANHA](https://github.com/justincbagley/PIrANHA)), GaussClust is fully command line-based and is available as open-source software according to the license. 
+As noted by Lebret et al. (2015), two foci of multivariate approaches related to clustering are (1) clustering proper, which aims to group observations (e.g. individuals) into groups or 'clusters' that are more similar to one another than to other clusters, and (2) classification methods where a discriminant function is used to assign new data to groups that are known a priori. GaussClust primarily focuses on the former, but the latter also sneaks into clustering analyses and therefore is also included. The GaussClust workflow is most broadly divided into accomplishing three goals: (1) setting up and reading in the data, (2) creating an Rscript to conduct a set of user-directed GMM-based analyses, (3) running the Rscript, and (4) cleanup. The code run by GaussClust in R can be set up to accomplish at least three basic steps: I. scaling/standardization of the data by converting the raw data to Gower distances and conducting non-metric multidimensional scaling (NMDS) on the distances, II. checking and preparing the data for GMM analyses, and III. calling different GMM analyses. There are several types of NMDS and GMM analyses available using GaussClust, including:
+- **NMDS:**
+ - regular NMDS on a single value specified for the number of clusters in the data
+ - NMDS model selection using BIC
+- **GMMs (all starting from NMDS results):**
+ - unsupervised GMM
+ - supervised or semisupervised discriminant analysis
+ - semisupervised belief-based GMMs
+
+As in the case of the author's other software on GitHub (e.g. [PIrANHA](https://github.com/justincbagley/PIrANHA)), GaussClust is fully command line-based and is available as open-source software according to the license. 
+
+**What's new in GaussClust?**
+While GaussClust is still in active development and available as a pre-release, I have recently updated GaussClust to use the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS
 
 ## GETTING STARTED
 
@@ -120,8 +132,8 @@ make the names a little longer if needed.
 
 ````
 
-## Real-world example \#1 with screen output:
-Below is an example of the usage for GaussClust (shown above), using the example data files ("probs_35.txt" and "Enyalius_35.txt") located in the "examples" folder of the distro. In this simplified example, we use GaussClust to conduct only unsupervised Gaussian clustering on 6 clusters, on 4 dimensions of data retained from NMDS. All screen (Terminal) output from the analysis is shown. When you run GaussClust, 'INFO' and date printed to screen along with info for each of the broader steps of the script (details from R go to an *.Rout file). Question-response lines output to screen are marked 'FLOW'. As you can see, the code runs with no error messages.
+### Real-world example \#1 with screen output:
+Below is an example of the usage for GaussClust (options above), using the example data files ("probs_35.txt" and "Enyalius_35.txt") located in the "examples" folder of the distro. In this simplified example, we use GaussClust to conduct only unsupervised Gaussian clustering on 2 clusters (-c 2), on 4 dimensions of data retained from NMDS (-k 4). All screen output (e.g. to Terminal on mac) from the analysis is shown. When you run GaussClust, 'INFO' and date printed to screen along with information for each of the broader steps of the script (details from R go to an *.Rout file, organized at the end of each run). Question-response lines output to screen are marked 'FLOW' and (to date) requrie yes/no answers. As you can see, the code runs with no error messages. 
 ````
 $ ./GaussClust.sh -k 4 -u 1 -r 0 -d 0 -b 0 -p ./probs_35.txt -c 2 ./Enyalius_35.txt
 
@@ -141,7 +153,7 @@ INFO      | Thu Dec 15 23:24:07 CST 2016 | Bye.
 
 ````
 
-## Real-world example \#2:
+### Real-world example \#2:
 Here, (1) we specify to keep 4 NMDS dimensions (-k 4); (2) conduct a regular unsupervised GMM analysis in Rmixmod, using multiple models across 5-20 clusters (-u 1 -r 5:20), which are compared to identify the best model using BIC; (3) call supervised discriminant analysis in Rmixmod (-d 1); (4) attempt supervised and semisupervised analysis in bgmm (-b 3 for 'both'); and (4) specify that analyses use or require 13 clusters (as needed; -c 13). Output is not redirected (e.g. by placing something like '> output.txt' at the end, so all output from the script is printed to screen (except for steps conducted in R).
 ````
 ./GaussClust.sh -k 4 -u 1 -r 5:20 -d 1 -b 3 -p B_206.txt -c 13 ./mydata.txt
