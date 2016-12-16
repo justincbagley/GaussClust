@@ -114,7 +114,13 @@ make the names a little longer if needed.
 
 ````
 
-## Real-world example #1:
+## Real-world example \#1:
+Below is an example of the usage for GaussClust, using the example data files ("probs_35.txt" and "Enyalius_35.txt"), which are located in the "examples" folder of the distro. In this simplified example, we use GaussClust to conduct only unsupervised Gaussian clustering on 6 clusters, on 4 dimensions of data retained from NMDS. 
+````
+./GaussClust.sh -k 4 -u 1 -n 6 -d 0 -b 0 -p ./probs_35.txt -c 2 ./Enyalius_35.txt
+````
+
+## Real-world example \#2:
 Here, (1) we specify to keep 4 NMDS dimensions; (2) conduct a regular unsupervised GMM analysis in Rmixmod, using multiple models across 5-20 clusters, which are compared to identify the best model using BIC; (3) call supervised GMM analysis in Rmixmod; (4) attempt supervised and semisupervised analysis in bgmm; and (4) specify that analyses use or require 14 clusters (as needed). Output is not redirected (e.g. '> output.txt' at the end, so all output from the script are printed to screen (except for steps conducted in R).
 ````
 ./GaussClust.sh -k 4 -u 1 -n 5:20 -d 1 -b 3 -p B_206.txt -c 13 ./mydata.txt
