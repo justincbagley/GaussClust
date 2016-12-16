@@ -180,6 +180,14 @@ Users should familiarize themselves with NMDS and GMMs before using GaussClust. 
 - [GMM Wikipedia overview](https://en.wikipedia.org/wiki/Mixture_model)
 - [What are the true clusters?](https://128.84.21.199/pdf/1502.02555v1.pdf) article by Christian Hennig
 
+R GMM and clustering tutorials:
+
+- http://tinyheero.github.io/2015/10/13/mixture-model.html
+- http://tinyheero.github.io/2016/01/03/gmm-em.html
+- https://www.r-bloggers.com/fitting-mixture-distributions-with-the-r-package-mixtools/
+- https://www.google.com/search?client=safari&rls=en&q=multivariate+partially+supervised+gaussian+mixture+model&ie=UTF-8&oe=UTF-8
+- http://www.statmethods.net/advstats/cluster.html
+
 ## TODO
 - Solve two input file problem. **DONE!** :white_check_mark:
 - Make script do more with bgmm, including semisupervised analysis using belief probs matrix. **DONE!** :white_check_mark:
