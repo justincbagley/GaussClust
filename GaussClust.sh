@@ -22,16 +22,17 @@ echo "INFO      | $(date) | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE...
 ## OPTION DEFAULTS ##
 NUM_NMDS_DIMS=4
 CALL_UNSUPERGMM=1
+RANGE_NBCLUST=0
 CALL_DISCRIMINANT=1
 MY_PROBS_MATRIX=probs.txt
 CALL_BGMM=0
 
 ## PARSE THE OPTIONS ##
-while getopts 'k:u:n:d:b:p:c:' opt ; do
+while getopts 'k:u:r:d:b:p:c:' opt ; do
   case $opt in
     k) NUM_NMDS_DIMS=$OPTARG ;;
     u) CALL_UNSUPERGMM=$OPTARG ;;
-    n) NUM_RANGE_GMM_NBCLUSTERS=$OPTARG ;;
+    r) RANGE_NBCLUST=$OPTARG ;;
     d) CALL_DISCRIMINANT=$OPTARG ;;
     b) CALL_BGMM=$OPTARG ;;
     p) MY_PROBS_MATRIX=$OPTARG ;;
@@ -48,15 +49,16 @@ Usage: $0 [options] inputFile
   "
   echo "Options: -k nmdsDimensions (specify number of dimensions, k, to retain during NMDS \
 on Gower distances) | -u unsuperGMM (0=no unsupervised GMM is carried out; 1=conduct unsupervised GMM \
-using 'Rmixmod' R pacakge, for comparative or individual purposes) | -n numGMMClusters (optional \
+using 'Rmixmod' R pacakge, for comparative or individual purposes) | -r rangeNumClusters (optional \
 numeric listing of a range, x:y, of the number of clusters to be modeled over during unsupervised GMM \
-in Rmixmod) | -d ssDiscrimGMM (0=no (semi-)supervised GMM is carried out in Rmixmod; 1=conduct (semi-)\
-supervised GMM in Rmixmod) | -b beliefBasedMM (0=no mixture modeling is carried out using the 'bgmm' \
-R package; 1=calls 'supervised' GMM analysis, 2=calls 'semisupervised' GMM analysis, and 3=calls \
-both supervised and semisupervised analyses in bgmm) | -c numComponents (specify number of components \
+in Rmixmod) | -d GMMDiscrim (0=(semi-)supervised, GMM-based discriminant analysis is not carried out \
+with 'mixmodelLearn' in Rmixmod; 1=conduct discriminant analysis) | -b beliefBasedMM (0=no mixture \
+modeling is carried out using the 'bgmm' R package; 1=calls 'supervised' GMM analysis, 2=calls \
+'semisupervised' GMM analysis, and 3=calls both supervised and semisupervised analyses in bgmm) | -p \
+probsMatrix (specify matrix of plausibilities, or weights of the prior probabilities for labeled \
+observations, for bgmm; also sets belief matrix) | -c numComponents (specify number of components \
 (e.g. Gaussian components) or 'clusters' to assign individuals to during regular GMM (single value, \
-rather than a range; see -n above) or bgmm modeling) | -l mixmodLearn (0=discriminant analysis with \
-mixmodLearn in Rmixmod is not called; 1=conduct discriminant analysis)
+rather than a range; see -r above) or bgmm modeling)
 
 The -k flag sets the number of k dimensions to be retained during NMDS, which affects both
 regular Gaussian mixture modeling and also the different models that are implemented in
@@ -71,12 +73,12 @@ for additional information on this package (available at:
 https://cran.r-project.org/web/packages/Rmixmod/index.html). Set this flag to '0' to
 skip this analysis.
 
-The -n flag is *optional* and gives the user the ability to conduct unsupervised modeling
-(called using -r above) over a range of nbCluster values. In the case that a numGMMClusters 
-range is specified (e.g. '5:20'), Rmixmod will calculate unsupervised GMMs over this range 
-and select the best model using the Bayesian information criterion (BIC). If a range of 
-values is not specified for -n, then a GMM analysis in Rmixmod will use the number of 
-components/clusters specified using the -c flag (see below).
+The -r flag gives the user the ability to conduct unsupervised modeling (called using -u 
+above) over a range of nbCluster values. In the case that rangeNumClusters is specified 
+(e.g. as '5:20'), Rmixmod will calculate unsupervised GMMs over this range and select the 
+best model using the Bayesian information criterion (BIC). If a range of values is not 
+specified for -r, then a GMM analysis in Rmixmod will use the number of components/clusters 
+specified using the -c flag (see below).
 
 The -d flag calls the supervised or semi-supervised discriminant analysis method implemented 
 in the 'mixmodLearn' and 'mixmodPredict' functions of Rmixmod. The discriminant analysis is
@@ -85,14 +87,13 @@ estimates a discriminant function from known labeled data and uses it to predict
 unknown samples that correspondto the same knowns, i.e. species or clusters. Set this flag 
 to '0' to skip this analysis.
 
-The -b flag allows users to request two Gaussian mixture modeling or belief-based mixture
-modeling options available in the 'bgmm' R package. The two currently supported models are
-specified in different functions by passing the script a value of '1', which calls the 
-'supervised' function for supervised GMM analysis, or '2', which calls the 'semisupervised' 
-function for semisupervised GMM analysis. You can also call both of these functions by 
-passing a value of '3' to this option. See the bgmm R site and documentation for more 
-information on these different GMMs (available at: 
-https://cran.r-project.org/web/packages/bgmm/index.html). Set this flag 
+The -b flag allows users to request two belief-based Gaussian mixture modeling options 
+available in the 'bgmm' R package. The two currently supported models are specified in 
+different functions by passing the script a value of '1', which calls the 'supervised' 
+function for supervised GMM analysis, or '2', which calls the 'semisupervised' function 
+for semisupervised GMM analysis. You can also call both of these functions by passing a 
+value of '3' to this option. See the bgmm R site and documentation for more information 
+(available at: https://cran.r-project.org/web/packages/bgmm/index.html). Set this flag 
 to '0' to skip this analysis.
 
 The -p flag specifies the filename of the bgmm 'B' matrix file in the working dir.
@@ -119,21 +120,16 @@ make the names a little longer if needed.
 fi
 
 
-## Make input file a mandatory parameter:
+## Make input file a mandatory parameter, and set the path variable to the current dir:
 MY_INPUT_FILE="$1"
-
 MY_PATH=`pwd -P`
-# MY_PATH=$(pwd)
 
-##--FIX some issues with echoing shell text to R below:
-## Make points variable with '$points' text for Rscript...
-MY_POINTS_VAR=$(echo "\$points")
-## Make type variable with '$type' text for Rscript...
-MY_TYPE_VAR=$(echo "\$type")
-## Same as above but for '$samples'...
-MY_SAMP_VAR=$(echo "\$samples")
-## Same as above but for '$species'...
-MY_SPECIES_VAR=$(echo "\$species")
+
+##--FIX issues with echoing shell text containing dollar signs to R:
+MY_POINTS_VAR=$(echo "\$points")   ## Make points variable with '$points' text for Rscript...
+MY_TYPE_VAR=$(echo "\$type")       ## Make type variable with '$type' text for Rscript...
+MY_SAMP_VAR=$(echo "\$samples")    ## Same as above but for '$samples'...
+MY_SPECIES_VAR=$(echo "\$species") ## Same as above but for '$species'...
 MY_TIJ_VAR=$(echo "\$tij")
 
 
@@ -180,10 +176,15 @@ dev.off()} else {print('Cannot do pairwise plots of the data (too much data)... 
 ############ ANALYSIS
 
 ############ I. SCALE / STANDARDIZE DATA USING NMDS 
-##--Estimate Gower distances from the original morphological data matrix w/o names: 
+##--Estimate Gower distances from the original data. Here, we are starting from a single 
+##--data frame, and the code was originally written with a single morphological data matrix
+##--in mind. However, multiple datasets from different data types could be used. Either way,
+##--Gower distances are ideal because they allow us to get an estimate of the similarities
+##--and dissimilarities between all individuals/samples, while allowing for missing data 
+##--('NA' observations) in the dataset.
 mydata_gower <- gower.dist(mydata)
 
-##--Use ggfortify to visualize the gower distnces:
+##--Use ggfortify to visualize the Gower distnces:
 pdf('gower_dist_gg_autoplot.pdf')
 autoplot(mydata_gower)
 dev.off()
@@ -219,7 +220,7 @@ species <- mydata_names[,3]
 mydata_names_df <- data.frame(sample_names, type, species, nmds_1, nmds_2, nmds_3, nmds_4)
 write.table(mydata_names_df, file='mydata_names_df.txt')
 
-##--Subset the NMDS points by 'known' and 'unknown' individuals, for bgmm. Also write the
+##--Subset the NMDS points by 'known' and 'unknown' individuals. We also stop to write the
 ##--resulting new data frames back to file in working dir--in case of subsequent checks: 
 attach(mydata_names_df)
 known_0 <- mydata_names_df[ which(mydata_names_df$MY_TYPE_VAR=='known'), ]
@@ -288,7 +289,16 @@ dim(B)
 if( $CALL_UNSUPERGMM == '0' ){print('Skipping unsupervised GMM analysis... ')} else {if($CALL_UNSUPERGMM == '1' ){
 date()
 print('Conducting unsupervised GMM analysis of the data using Rmixmod... ')
-mydata_gower_gmm <-mixmodCluster(nmds_dims_df, nbCluster=$NUM_RANGE_GMM_NBCLUSTERS)
+#
+if( $RANGE_NBCLUST == '0'){print('Running unsupervised GMM using a single cluster number... ')
+mydata_gower_gmm <-mixmodCluster(nmds_dims_df, nbCluster=$NUM_COMPONENTS)
+summary(mydata_gower_gmm)
+pdf('gower_gmm_result.pdf')  ## SAVE THIS PLOT!
+plot(mydata_gower_gmm)
+dev.off()
+mydata_gower_gmm['partition']
+} else {print('Running unsupervised GMMs over a range of values for nbCluster, then selecting the best model using BIC... ')
+mydata_gower_gmm <-mixmodCluster(nmds_dims_df, nbCluster=$RANGE_NBCLUST)
 summary(mydata_gower_gmm)
 pdf('gower_gmm_result.pdf')  ## SAVE THESE PLOTS--THEY'RE AWESOME!!!
 plot(mydata_gower_gmm)
@@ -299,10 +309,9 @@ plot(mydata_gower_gmm, c(2, 3))
 plot(mydata_gower_gmm, c(2, 4))
 plot(mydata_gower_gmm, c(3, 4))
 dev.off()
-mydata_gower_gmm['partition']} else { print('WARNING: Something went wrong deciding whether or not to call unsupervised GMM analysis... ')
+mydata_gower_gmm['partition']}
 	}
 }
-
 
 ####### IV. (SEMI-)SUPERVISED GMM-BASED DISCRIMINANT ANALYSIS IN RMIXMOD:
 if( $CALL_DISCRIMINANT == '0' ){print('Skipping GMM-based discriminant analysis in Rmixmod... ')} else {if($CALL_DISCRIMINANT == '1' ){
@@ -396,12 +405,15 @@ echo "INFO      | $(date) | STEP #3: RUN THE R SCRIPT. "
 R CMD BATCH ./GaussClust.R
 
 echo "INFO      | $(date) | STEP #4: CLEAN UP THE WORKSPACE. "
-##--Cleanup:
 echo "INFO      | $(date) |          Moving R ouput files to new folder named 'R'... "
 mkdir R
-mv ./*.pdf ./*.Rout ./bgmm_semisupervised_posteriorProbs.txt ./R/
+mv ./*.pdf ./*.Rout ./R/
+if [ "$CALL_BGMM" -gt "0" ]; then
+	mv ./bgmm_semisupervised_posteriorProbs.txt ./R/
+fi
 
 ## Next: some questions-based flow control for the cleanup...
+## Rscript:
 read -p "FLOW      | $(date) |          Would you like to keep the Rscript output by GaussClust? (y/n) : " DEL_SCRIPT
 if [ "$DEL_SCRIPT" != "y" ]; then
 	rm ./GaussClust.r
@@ -409,6 +421,7 @@ else
 	mv ./GaussClust.r ./R/
 fi
 
+## Text files:
 read -p "FLOW      | $(date) |          Would you like to keep text files output by GaussClust? (y/n) : " TO_KEEP
 if [ "$TO_KEEP" = "y" ]; then
 	mkdir txt
