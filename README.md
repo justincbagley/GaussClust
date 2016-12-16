@@ -21,7 +21,7 @@ The DOI for GaussClust, via [Zenodo](https://zenodo.org), is coming soon. :wink:
 
 ## INTRODUCTION
 
-*"Clustering and discriminant analysis (or classification) methods are among the most important
+> *"Clustering and discriminant analysis (or classification) methods are among the most important
 techniques in multivariate statistical learning." - Lebret et al. (2015)*
 
 This repository focuses on ways to use Gaussian Mixture Models (GMMs) to conduct clustering analyses to address problems in systematics, particularly in the delimitation of species, and classification of individuals to species, using univariate or multivariate data. Recent papers discuss the promise of such methods for species delimitation, with or without multiple data-types (e.g. genetic, morphological, ecological data), and with or without accounting for noise during clustering (Hausdorf & Hennig 2010; Edwards & Knowles 2014). The current pre-release version of the repository focuses on GaussClust, a shell script that customizes and runs R scripts to conduct various GMM analyses. As in the case of the author's other software on GitHub (e.g. [PIrANHA](https://github.com/justincbagley/PIrANHA)), GaussClust is fully command line-based and is available as open-source software according to the license. 
