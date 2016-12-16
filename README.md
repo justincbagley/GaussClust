@@ -54,6 +54,7 @@ While GaussClust is still under active development and available as a pre-releas
 - [MASS](https://cran.r-project.org/web/packages/MASS/index.html)
 - [ggfortify](https://cran.r-project.org/web/packages/ggfortify/index.html)
 - [vegan](https://cran.r-project.org/web/packages/vegan/index.html)
+
 [More info coming soon.]
 
 ### Installation
