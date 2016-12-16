@@ -168,6 +168,15 @@ Here, (1) we specify to keep 4 NMDS dimensions (-k 4); (2) conduct a regular uns
 - Hausdorf B, Hennig C (2010). Species delimitation using dominant and codominant multilocus markers. Systematic Biology, 59, 491-503.
 - Lebret R, Iovleff S, Langrognet F, Biernacki C, Celeux G, Govaert G (2015) Rmixmod: the R package of the model-based unsupervised, supervised, and semi-supervised classification Mixmod Library. Journal of Statistical Software, 67(6). doi:10.18637/jss.v067.i06
 
+## OTHER READINGS
+Users should familiarize themselves with NMDS and GMMs before using GaussClust. Here are some useful resources:
+
+- [NMDS Wikipedia overview](https://en.wikipedia.org/wiki/Multidimensional_scaling)
+- [NMDS tutorial](http://strata.uga.edu/software/pdf/mdsTutorial.pdf) from the University of Georgia
+- [Unconstrained Ordination Techniques lecture ](http://www.umass.edu/landeco/teaching/multivariate/schedule/ordination2.pdf) from Univ. Massachusetts
+- [GMM Wikipedia overview](https://en.wikipedia.org/wiki/Mixture_model)
+- [What are the true clusters?](https://128.84.21.199/pdf/1502.02555v1.pdf) article by Christian Hennig
+
 ## TODO
 - Solve two input file problem. **DONE!** :white_check_mark:
 - Make script do more with bgmm, including semisupervised analysis using belief probs matrix. **DONE!** :white_check_mark:
