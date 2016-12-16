@@ -7,7 +7,7 @@
 #   CLASSIFICATION                                                                       #
 #   Copyright (c)2016 Justin C. Bagley, Universidade de Brasília, Brasília, DF, Brazil.  #
 #   See the README and license files on GitHub (http://github.com/justincbagley) for     #
-#   further information. Last update: December 15, 2016. For questions, please email     #
+#   further information. Last update: December 16, 2016. For questions, please email     #
 #   jcbagley@unb.br.                                                                     #
 ##########################################################################################
 
@@ -99,7 +99,7 @@ to '0' to skip this analysis.
 The -p flag specifies the filename of the bgmm 'B' matrix file in the working dir.
 
 The -c flag specifies the number of components or 'clusters' that will be modeled during
-regular GMM or bgmm modeling (except see other option available using -n flag above). This 
+regular GMM or bgmm modeling (except see other option available using -r flag above). This 
 corresponds to 'k' or the number of columns in 'B', based on definitions in the bgmm 
 documentation.
 
@@ -126,10 +126,15 @@ MY_PATH=`pwd -P`
 
 
 ##--FIX issues with echoing shell text containing dollar signs to R:
-MY_POINTS_VAR=$(echo "\$points")   ## Make points variable with '$points' text for Rscript...
-MY_TYPE_VAR=$(echo "\$type")       ## Make type variable with '$type' text for Rscript...
-MY_SAMP_VAR=$(echo "\$samples")    ## Same as above but for '$samples'...
-MY_SPECIES_VAR=$(echo "\$species") ## Same as above but for '$species'...
+MY_POINTS_VAR=$(echo "\$points")	## Make points variable with '$points' text for Rscript...
+MY_TYPE_VAR=$(echo "\$type")		## Make type variable with '$type' text for Rscript...
+MY_SAMP_VAR=$(echo "\$samples")		## Same as above but for '$samples'...
+MY_SPECIES_VAR=$(echo "\$species")	## Same as above but for '$species'...
+MY_STRESS_VAR=$(echo "\$stress")	## Same as above but for '$stress'...
+MY_NMDS1_VAR=$(echo "\$nmds_1")
+MY_NMDS2_VAR=$(echo "\$nmds_2")
+MY_NMDS3_VAR=$(echo "\$nmds_3")
+MY_NMDS4_VAR=$(echo "\$nmds_4")
 MY_TIJ_VAR=$(echo "\$tij")
 
 
@@ -145,7 +150,7 @@ echo "
 setwd('$MY_PATH')
 # 
 ##--Load needed library, R code, or package stuff. Install packages if not present.
-packages <- c('bgmm', 'Rmixmod', 'StatMatch', 'MASS', 'ggfortify', 'labdsv')
+packages <- c('bgmm', 'Rmixmod', 'StatMatch', 'MASS', 'ggfortify', 'vegan')
 if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
     install.packages(setdiff(packages, rownames(installed.packages())))
 }
@@ -155,7 +160,7 @@ library(Rmixmod)
 library(StatMatch)
 library(MASS)
 library(ggfortify)
-library(labdsv)
+library(vegan)
 
 ##--Read in the data:
 mydata_names <- read.table('$MY_INPUT_FILE', h=T)
@@ -191,22 +196,55 @@ dev.off()
 
 ##--Conduct NMDS using simple 'nmds' function from labdsv pkg, RETAINING k DIMENSIONS,
 ##--with the goal being to get NMDS points for use downstream in Rmixmod and/or bgmm:
-mydata_gower_nmds <- nmds(mydata_gower, k=$NUM_NMDS_DIMS)
+# mydata_gower_nmds <- nmds(mydata_gower, k=$NUM_NMDS_DIMS)
+# pdf('gower_nmds_plot.pdf')
+# plot(mydata_gower_nmds)
+# dev.off()
+##--Use ggfortify to visualize the NMDS:
+# pdf('gower_gg_nmds_plot.pdf')
+# autoplot(isoMDS(mydata_gower, k=$NUM_NMDS_DIMS), colour = 'orange', size = 1, shape = 3)
+# dev.off()
+
+##--Conduct NMDS using 'metaMDS' function in vegan package, retaining k dimensions:
+mydata_gower_metaMDS <- metaMDS(mydata_gower, k=$NUM_NMDS_DIMS)
+summary(mydata_gower_metaMDS)
+#
+nmds_stress <- mydata_gower_metaMDS$MY_STRESS_VAR * 100
+nmds_stress
+#
+mydata_gower_metaMDS$MY_POINTS_VAR
+metaMDS_points <- as.data.frame(mydata_gower_metaMDS$MY_POINTS_VAR)
+metaMDS_points
+row.names(metaMDS_points) <- mydata_names[,1]
+names(metaMDS_points) <- c('nmds_1', 'nmds_2', 'nmds_3', 'nmds_4')
+#
 pdf('gower_nmds_plot.pdf')
-plot(mydata_gower_nmds)
+plot(metaMDS_points)
+dev.off()
+pdf('gower_nmds_plot_1vs2.pdf')
+plot(metaMDS_points$MY_NMDS1_VAR, metaMDS_points$MY_NMDS2_VAR, xlab='NMDS dim 1', ylab='NMDS dim 2')
+text(-0.12,0.12, round(c(mydata_gower_metaMDS$MY_STRESS_VAR * 100), digits=2), col='red')
+dev.off()
+pdf('gower_nmds_plot_1vs3.pdf')
+plot(metaMDS_points$MY_NMDS1_VAR, metaMDS_points$MY_NMDS3_VAR, xlab='NMDS dim 1', ylab='NMDS dim 3')
+text(-0.12,0.12, round(c(mydata_gower_metaMDS$MY_STRESS_VAR * 100), digits=2), col='red')
+dev.off()
+pdf('gower_nmds_plot_2vs3.pdf')
+plot(metaMDS_points$MY_NMDS2_VAR, metaMDS_points$MY_NMDS3_VAR, xlab='NMDS dim 2', ylab='NMDS dim 3')
+text(-0.12,0.12, round(c(mydata_gower_metaMDS$MY_STRESS_VAR * 100), digits=2), col='red')
 dev.off()
 
-##--Use ggfortify to visualize the NMDS:
-pdf('gower_gg_nmds_plot.pdf')
-autoplot(isoMDS(mydata_gower, k=$NUM_NMDS_DIMS), colour = 'orange', size = 1, shape = 3)
-dev.off()
 
 ##--Save each dimension of values retained from NMDS into a separate variable, and then
 ##--in a data frame (extension 'df'):
-nmds_1 <- mydata_gower_nmds$MY_POINTS_VAR[,1]
-nmds_2 <- mydata_gower_nmds$MY_POINTS_VAR[,2]
-nmds_3 <- mydata_gower_nmds$MY_POINTS_VAR[,3]
-nmds_4 <- mydata_gower_nmds$MY_POINTS_VAR[,4]
+# nmds_1 <- mydata_gower_nmds$MY_POINTS_VAR[,1]
+# nmds_2 <- mydata_gower_nmds$MY_POINTS_VAR[,2]
+# nmds_3 <- mydata_gower_nmds$MY_POINTS_VAR[,3]
+# nmds_4 <- mydata_gower_nmds$MY_POINTS_VAR[,4]
+nmds_1 <- metaMDS_points[,1]
+nmds_2 <- metaMDS_points[,2]
+nmds_3 <- metaMDS_points[,3]
+nmds_4 <- metaMDS_points[,4]
 nmds_dims_df = data.frame(nmds_1, nmds_2, nmds_3, nmds_4)
 
 
@@ -405,6 +443,7 @@ echo "INFO      | $(date) | STEP #3: RUN THE R SCRIPT. "
 R CMD BATCH ./GaussClust.R
 
 echo "INFO      | $(date) | STEP #4: CLEAN UP THE WORKSPACE. "
+##--Cleanup:
 echo "INFO      | $(date) |          Moving R ouput files to new folder named 'R'... "
 mkdir R
 mv ./*.pdf ./*.Rout ./R/
