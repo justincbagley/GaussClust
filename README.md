@@ -36,11 +36,12 @@ As noted by Lebret et al. (2015), two foci of multivariate approaches related to
  - semisupervised belief-based GMMs
 
 **Which GaussClust option is best for my kind of analysis?**
-Specific examples are given under Usage below, but in general you'll be best off using GaussClust to delimit species with an unsupervised GMM or (semi-)supervised belief-based GMM, and it will be best to use the discriminant analysis for classification. That's pretty much it (though more options are planned for development in the near future)!
+
+Specific examples are given under Usage below, but in general you'll be best off using GaussClust to **delimit species** with an unsupervised GMM or (semi-)supervised belief-based GMM, and it will be best to use the discriminant analysis for **classification**. That's pretty much it (though more options are planned for development in the near future)!
 
 **What's new in GaussClust?**
 
-While GaussClust is still under active development and available as a pre-release, I have recently updated GaussClust in several ways, for example to use the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS, rather than using 'isoMDS' through labdsv (which turned out to be slightly problematic). See the TODO list below for other ways I am seeking to improve the software. If it interests you, feel free to jump in and help with development!! :memo::+1:
+While GaussClust is still under active development and available as a pre-release, I have recently updated GaussClust in several ways, for example to use the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS, rather than using 'isoMDS' through labdsv (which turned out to be slightly problematic). See the TODO list below for other ways I am seeking to improve the software. *If it interests you, feel free to jump in and help with development!!* :memo::+1:
 
 ## GETTING STARTED
 
