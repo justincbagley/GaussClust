@@ -38,7 +38,8 @@ As noted by Lebret et al. (2015), two foci of multivariate approaches related to
 As in the case of the author's other software on GitHub (e.g. [PIrANHA](https://github.com/justincbagley/PIrANHA)), GaussClust is fully command line-based and is available as open-source software according to the license. 
 
 **What's new in GaussClust?**
-While GaussClust is still in active development and available as a pre-release, I have recently updated GaussClust to use the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS
+
+While GaussClust is still in active development and available as a pre-release, I have recently updated GaussClust to use the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS. See the TODO list below for other ways I am seeking to improve the software. If it interests you, feel free to jump in and help with development!! :memo::+1:
 
 ## GETTING STARTED
 
@@ -53,8 +54,11 @@ While GaussClust is still in active development and available as a pre-release, 
 - [vegan](https://cran.r-project.org/web/packages/vegan/index.html)
 [More info coming soon.]
 
+### Installation
+:computer: GaussClust uses UNIX shell and R scripts and thus is well suited for running on a variety of operating systems, but especially UNIX/LINUX-like systems. Most of these systems (Mac OSX, Ubuntu, Linux, etc.) come with the shell preinstalled, so GaussClust should run "out-of-the-box" from most any folder on your machine.
+
 ### Best practices for input data and format
-GaussClust calls R functions that are capable of robustly handling several weaknesses often present in real working datasets employed by researchers in systematics & biodiversity research, including (1) mixed data-types and (2) missing data. As one of its first steps, GaussClust also standardizes and reduces the dimensionality of the data using non-metric multidimensional scaling (NMDS), prior to running any Gaussian mixture models or discriminant analyses. This is ideal, because NMDS makes fewer assumptions about the data than other ordination methods such as PCA. However, it is critical that the data meet some standards for NMDS. 
+:warning: GaussClust calls R functions that are capable of robustly handling several weaknesses often present in real working datasets employed by researchers in systematics & biodiversity research, including (1) mixed data-types and (2) missing data. As one of its first steps, GaussClust also standardizes and reduces the dimensionality of the data using non-metric multidimensional scaling (NMDS), prior to running any Gaussian mixture models or discriminant analyses. This is ideal, because NMDS makes fewer assumptions about the data than other ordination methods such as PCA. However, it is critical that the data meet some standards for NMDS. 
 
 Perhaps the most important admonition I can make here is that users should be sure that the number of variables in their dataset is (much) greater than the potential/likely number of clusters present in the data, and greater than any range of clusters that they would like to model over. For example, under Real-world example \#2 in the Usage section below, the analysis calls for modeling over 5 to 20 clusters, so I would expect that datasets with \<20 variables might perform poorly in this case, and if a single value of nbCluster=x were used, you would need to use (many) more than x variables. It can be difficult to ensure that such conditions are met or objectively determined; however, this issue highlights how critical it is that systematists have thoroughly explored their data, and are familiar with it, prior to conducting extensive analyses, and in this case NMDS or GMMs. 
 
