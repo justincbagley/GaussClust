@@ -38,10 +38,17 @@ As noted by Lebret et al. (2015), two foci of multivariate approaches related to
 - [StatMatch](https://cran.r-project.org/web/packages/StatMatch/index.html)
 - [MASS](https://cran.r-project.org/web/packages/MASS/index.html)
 - [ggfortify](https://cran.r-project.org/web/packages/ggfortify/index.html)
-- [labdsv](https://cran.r-project.org/web/packages/labdsv/index.html)
+- [vegan](https://cran.r-project.org/web/packages/vegan/index.html)
 [More info coming soon.]
 
-# USAGE
+### Best practices for input data and format
+GaussClust calls R functions that are capable of robustly handling several weaknesses often present in real working datasets employed by researchers in systematics & biodiversity research, including (1) mixed data-types and (2) missing data. As one of its first steps, GaussClust also standardizes and reduces the dimensionality of the data using non-metric multidimensional scaling (NMDS), prior to running any Gaussian mixture models or discriminant analyses. This is ideal, because NMDS makes fewer assumptions about the data than other ordination methods such as PCA. However, it is critical that the data meet some standards for NMDS. 
+
+Perhaps the most important admonition I can make here is that users should be sure that the number of variables in their dataset is (much) greater than the potential/likely number of clusters present in the data, and greater than any range of clusters that they would like to model over. For example, under Real-world example \#2 in the Usage section below, the analysis calls for modeling over 5 to 20 clusters, so I would expect that datasets with \<20 variables might perform poorly in this case, and if a single value of nbCluster=x were used, you would need to use (many) more than x variables. It can be difficult to ensure that such conditions are met or objectively determined; however, this issue highlights how critical it is that systematists have thoroughly explored their data, and are familiar with it, prior to conducting extensive analyses, and in this case NMDS or GMMs. 
+
+One suggestion for doing the above is for users to (1) explore basic patterns in the data, (2) conduct outlier analyses and remove any problematic individuals or variables, and (3) conduct pilot analyses with basic multivariate methods and nominal species labels prior to conducting any analyses using GaussClust. However, it would probably be a good idea to collect data for at least two to three times the number of nominal taxa in the dataset, in the case of species delimitation and classification analyses (this is my arbitrary guess; of course, four times that number might be even better!).
+
+### Usage
 ````
 ## Assuming GaussClust.sh is present in the current working directory, display usage for the script by simply entering its name at the command line:
 $ ./GaussClust.sh
@@ -149,9 +156,11 @@ Here, (1) we specify to keep 4 NMDS dimensions (-k 4); (2) conduct a regular uns
 - Solve two input file problem. **DONE!** :white_check_mark:
 - Make script do more with bgmm, including semisupervised analysis using belief probs matrix. **DONE!** :white_check_mark:
 - Change Usage section to include code for working with example files.  **Partially DONE!**
+- Find a better NMDS function than isoMDS in labdsv package. **DONE!** :white_check_mark:
 - Explore different methods for BIC calculation (e.g. in mclust) during unsupervised clustering.
 - Explain defaults better.
-- Would be nice if not giving a flag meant the corresponding analysis was not run (equivalent to passing '0' for some of the options)
+- Would be nice if not giving a flag meant the corresponding analysis was not run (equivalent to passing '0' for some of the options).
+- Provide warnings to user, with a particularly important example being to warn when the number of variables is less than k (number of clusters), in which case NMDS will surely fail to produce good results!
 
-December 15, 2016
+December 16, 2016
 Justin C. Bagley, Tuscaloosa, AL, USA
