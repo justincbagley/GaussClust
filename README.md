@@ -1,15 +1,15 @@
-# GaussClust
+# GaussClust v0.1.0
 Clustering using Gaussian mixture modeling for species delimitation and classification
 
 ## LICENSE
 
-All code within the GaussClust repository is available "AS IS" under a generous GNU license. See the [LICENSE](LICENSE) file for more information.
+All code within the GaussClust v0.1.0 repository is available "AS IS" under a generous GNU license. See the [LICENSE](LICENSE) file for more information.
 
 ## CITATION
 
 If you use scripts from this repository as part of your published research, I require that you cite the repository as follows (also see DOI information below): 
   
-- Bagley, J.C. 2016. GaussClust. GitHub repository, Available at: http://github.com/justincbagley/GaussClust.
+- Bagley, J.C. 2016. GaussClust v0.1.0. GitHub repository, Available at: http://github.com/justincbagley/GaussClust.
 
 Alternatively, please provide the following link to this software repository in your manuscript:
 
@@ -17,16 +17,16 @@ Alternatively, please provide the following link to this software repository in 
 
 ## DOI
 
-The DOI for GaussClust, via [Zenodo](https://zenodo.org), is coming soon. :wink:
+The DOI for GaussClust v0.1.0, via [Zenodo](https://zenodo.org), is coming soon. :wink:
 
 ## INTRODUCTION
 
 > *"Clustering and discriminant analysis (or classification) methods are among the most important
 techniques in multivariate statistical learning." - Lebret et al. (2015)*
 
-This repository focuses on ways to use Gaussian Mixture Models (GMMs) to conduct clustering analyses to address problems in systematics, particularly in the delimitation of species, and classification of individuals to species, using univariate or multivariate data. Recent papers discuss the promise of such methods for species delimitation, with or without multiple data-types (e.g. genetic, morphological, ecological data), and with or without accounting for noise during clustering (Hausdorf & Hennig 2010; Edwards & Knowles 2014). The current pre-release version of the repository focuses on GaussClust, a shell script that customizes and runs R scripts to conduct various GMM analyses. As in the case of the author's other software on GitHub (e.g. [PIrANHA](https://github.com/justincbagley/PIrANHA)), GaussClust is fully command line-based and is available as open-source software according to the license. 
+This repository focuses on ways to use Gaussian Mixture Models (GMMs) to conduct clustering analyses to address problems in systematics, particularly in the delimitation of species, and classification of individuals to species, using univariate or multivariate data. Recent papers discuss the promise of such methods for species delimitation, with or without multiple data-types (e.g. genetic, morphological, ecological data), and with or without accounting for noise during clustering (Hausdorf & Hennig 2010; Edwards & Knowles 2014). The current development version of the repository focuses on GaussClust.sh, a shell script that customizes and runs R scripts to conduct various GMM analyses, and bgmmSensTest.sh and related code for exploring the sensitivity of belief-based GMM analysis to varying prior probabilities on known observations. As in the case of the author's other software on GitHub (e.g. [PIrANHA](https://github.com/justincbagley/PIrANHA)), GaussClust is fully command line-based and is available as open-source software according to the license. 
 
-As noted by Lebret et al. (2015), two foci of multivariate approaches related to clustering are (1) clustering proper, which aims to group observations (e.g. individuals) into groups or 'clusters' that are more similar to one another than to other clusters, and (2) classification methods where a discriminant function is used to assign new data to groups that are known a priori. GaussClust primarily focuses on the former, but the latter also sneaks into clustering analyses and therefore is also included. The GaussClust workflow is most broadly divided into accomplishing three goals: (1) setting up and reading in the data, (2) creating an Rscript to conduct a set of user-directed GMM-based analyses, (3) running the Rscript, and (4) cleanup. The code run by GaussClust in R can be set up to accomplish at least three basic steps: I. scaling/standardization of the data by converting the raw data to Gower distances (Gower 1971) and conducting non-metric multidimensional scaling (NMDS) on the distances, II. checking and preparing the data for GMM analyses, and III. calling different GMM analyses. There are several types of NMDS and GMM analyses available using GaussClust, including:
+As noted by Lebret et al. (2015), two foci of multivariate approaches related to clustering are (1) clustering proper, which aims to group observations (e.g. individuals) into groups or 'clusters' that are more similar to one another than to other clusters, and (2) classification methods where a discriminant function is used to assign new data to groups that are known a priori. GaussClust.sh primarily focuses on the former, but the latter also sneaks into clustering analyses and therefore is also included. The basic GaussClust workflow is most broadly divided into accomplishing three goals: (1) setting up and reading in the data, (2) creating an Rscript to conduct a set of user-directed GMM-based analyses, (3) running the Rscript, and (4) cleanup. The code run by GaussClust.sh in R can be set up to accomplish at least three basic steps: I. scaling/standardization of the data by converting the raw data to Gower distances (Gower 1971) and conducting non-metric multidimensional scaling (NMDS) on the distances, II. checking and preparing the data for GMM analyses, and III. calling different GMM analyses. There are several types of NMDS and GMM analyses available using GaussClust, including:
 - **NMDS:**
  - regular NMDS on a single value specified for the number of clusters in the data
  - NMDS model selection using BIC
@@ -37,16 +37,24 @@ As noted by Lebret et al. (2015), two foci of multivariate approaches related to
 
 **Which GaussClust option is best for my kind of analysis?**
 
-Specific examples are given under Usage below, but in general you'll be best off using GaussClust to **delimit species** with an unsupervised GMM or (semi-)supervised belief-based GMM, and it will be best to use the discriminant analysis for **classification**. That's pretty much it (though more options are planned for development in the near future)!
+Specific examples are given under GaussClust Usage below, but in general you'll be best off using GaussClust to **delimit species** with an unsupervised GMM or (semi-)supervised belief-based GMM, and it will be best to use the discriminant analysis for **classification**. That's pretty much it (though more options are planned for development in the near future)!
 
 **What's new in GaussClust?**
 
 While GaussClust is still under active development and available as a pre-release, I have recently updated GaussClust in several ways, for example to use the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS, rather than using 'isoMDS' through labdsv (which turned out to be slightly problematic). See the TODO list below for other ways I am seeking to improve the software. *If it interests you, feel free to jump in and help with development!!* :memo::+1:
 
+**What does bgmmSensTest do?**
+
+The bgmmSensTest portion of the GaussClust repository uses a simple sensitivity analysis to probe the effect of varying the prior probabilities given to known observations (e.g. labeled individuals) during belief-based GMM in the bgmm R package. This sounds more complicated than it really is. The bgmm package expects a P matrix containing the plausibilities of the known assignments, in which the diagonal values are prior probs for knowns, and other values in a row are zero or split the remaining probability into the corresponding number of clusters (dividing by the number of off-diagonal cells/columns along each row). bgmmSensTest.sh goes through a simple series of steps to see how different the matrix of posterior probabilities of assignment to different clusters (named 'tij' in bgmm output) turns out to be when the (on-diagonal) prior probabilities for knowns in P are varied across some range of equally spaced values, e.g. from 0.5 to 0.95. Here are the basic steps in a bgmmSensTest run: (1) setup work environment and read in sensitivity test conditions from 'bgmm_sens_test.cfg' configuration file present in working dir, (2) make test input files with prior probs varying across range specified by user, (3) organize files and conduct test runs within separate sub-folders, (3) use results and text organized above to create an Rscript allowing visualization and comparison of results across test conditions, (4) run the Rscript and cleanup unnecessary files.
+
+Hopefully the results of bgmmSensTest will show that varying knowns' plausibilities has very little effect on the posterior outcome of the assignments of knowns, and of of course it should also have very little effect on the unknowns! If, for example, results meet an arbitrary value of \<\<5% difference across all pairs of probability matrices (each derived from running GaussClust with a different 'test value' for the knowns' prior probs), then you can probably feel confident in fixing the prior probabilities of the knowns to a set value. Alternatively, results might be better presented from across the range of test values used in bgmmSensTest.
+
+_NOTE_: One difference between bgmmSensTest code and regular GaussClust runs is that bgmmSensTest calls a 'lite' version of GaussClust with reduced to-screen output (printing comments to screen mostly turned off). Users should only use this 'GaussClust_lite.sh' script with bgmmSensTest.sh, not by itself.
+
 ## GETTING STARTED
 
 ### Dependencies
-![alt tag](https://cloud.githubusercontent.com/assets/10584087/21243724/b12a94d2-c2df-11e6-9d20-5cf06877ad94.png)
+![alt tag](https://cloud.githubusercontent.com/assets/10584087/21243724/b12a94d2-c2df-11e6-9d20-5cf06877ad94.png)  Code in the GaussClust repository is largely dependent upon R and a series of R packages, as follows:
 - The [R](https://www.r-project.org) software environment (available from download mirrors from The Comprehensive R Archive Network (CRAN) such as https://cloud.r-project.org), as well as several R packages including:
 - [bgmm](https://cran.r-project.org/web/packages/bgmm/index.html)
 - [Rmixmod](https://cran.r-project.org/web/packages/Rmixmod/index.html)
@@ -54,11 +62,12 @@ While GaussClust is still under active development and available as a pre-releas
 - [MASS](https://cran.r-project.org/web/packages/MASS/index.html)
 - [ggfortify](https://cran.r-project.org/web/packages/ggfortify/index.html)
 - [vegan](https://cran.r-project.org/web/packages/vegan/index.html)
-
-[More info coming soon.]
+- tools - a default R package with "base" priority
+- grid - a default R package with "base" priority
+- [gplots](https://cran.r-project.org/web/packages/gplots/index.html)
 
 ### Installation
-:computer: GaussClust uses UNIX shell and R scripts and thus is well suited for running on a variety of operating systems, but especially UNIX/LINUX-like systems. Most of these systems (Mac OSX, Ubuntu, Linux, etc.) come with the shell preinstalled, so GaussClust should run "out-of-the-box" from most any folder on your machine.
+:computer: GaussClust uses UNIX shell and R scripts and thus is well suited for running on a variety of operating systems, but especially UNIX/LINUX-like systems. Most of these systems (Mac OSX, Ubuntu, Linux, etc.) come with the shell preinstalled, so GaussClust code should run "out-of-the-box" from most any folder on your machine.
 
 ### Best practices for input data and format
 :warning: GaussClust calls R functions that are capable of robustly handling several weaknesses often present in real working datasets employed by researchers in systematics & biodiversity research, including (1) mixed data-types and (2) missing data. As one of its first steps, GaussClust also standardizes and reduces the dimensionality of the data using non-metric multidimensional scaling (NMDS), prior to running any Gaussian mixture models or discriminant analyses. This is ideal, because NMDS makes fewer assumptions about the data than other ordination methods such as PCA. However, it is critical that the data meet some standards for NMDS. 
@@ -67,8 +76,8 @@ Perhaps the most important admonition I can make here is that users should be su
 
 One suggestion for doing the above is for users to (1) explore basic patterns in the data, (2) conduct outlier analyses and remove any problematic individuals or variables, and (3) conduct pilot analyses with basic multivariate methods and nominal species labels prior to conducting any analyses using GaussClust. However, it would probably be a good idea to collect data for at least two to three times the number of nominal taxa in the dataset, in the case of species delimitation and classification analyses (this is my arbitrary guess; of course, four times that number might be even better!).
 
-### Usage
-````
+### GaussClust Usage
+```
 ## Assuming GaussClust.sh is present in the current working directory, display usage for the script by simply entering its name at the command line:
 $ ./GaussClust.sh
 
@@ -137,11 +146,11 @@ contains labels (e.g. four-letter codes) for each known individual (e.g. by spec
 input file contains a header with four-letter codes for each datacolumn, but users can 
 make the names a little longer if needed.
 
-````
+```
 
-### Real-world example \#1 with screen output:
+### Real-world GaussClust example \#1 with screen output:
 Below is an example of the usage for GaussClust (options above), using the example data files ("probs_35.txt" and "Enyalius_35.txt") located in the "examples" folder of the distro. In this simplified example, we use GaussClust to conduct only unsupervised Gaussian clustering on 2 clusters (-c 2), on 4 dimensions of data retained from NMDS (-k 4). All screen output (e.g. to Terminal on mac) from the analysis is shown. When you run GaussClust, 'INFO' and date printed to screen along with information for each of the broader steps of the script (details from R go to an *.Rout file, organized at the end of each run). Question-response lines output to screen are marked 'FLOW' and (to date) requrie yes/no answers. As you can see, the code runs with no error messages. 
-````
+```
 $ ./GaussClust.sh -k 4 -u 1 -r 0 -d 0 -b 0 -p ./probs_35.txt -c 2 ./Enyalius_35.txt
 
 ##########################################################################################
@@ -158,13 +167,27 @@ FLOW      | Thu Dec 15 23:24:06 CST 2016 |          Would you like to keep text 
 INFO      | Thu Dec 15 23:24:07 CST 2016 | Done conducting Gaussian clustering and related analyses using GaussClust.
 INFO      | Thu Dec 15 23:24:07 CST 2016 | Bye.
 
-````
+```
 
-### Real-world example \#2:
+### Real-world GaussClust example \#2:
 Here, (1) we specify to keep 4 NMDS dimensions (-k 4); (2) conduct a regular unsupervised GMM analysis in Rmixmod, using multiple models across 5-20 clusters (-u 1 -r 5:20), which are compared to identify the best model using BIC; (3) call supervised discriminant analysis in Rmixmod (-d 1); (4) attempt supervised and semisupervised analysis in bgmm (-b 3 for 'both'); and (4) specify that analyses use or require 13 clusters (as needed; -c 13). Output is not redirected (e.g. by placing something like '> output.txt' at the end, so all output from the script is printed to screen (except for steps conducted in R).
-````
+```
 ./GaussClust.sh -k 4 -u 1 -r 5:20 -d 1 -b 3 -p B_206.txt -c 13 ./mydata.txt
-````
+```
+
+### bgmmSensTest Usage
+:warning: **IMPORTANT!:** As of current development build, you should run bgmmSensTest.sh in a new sub-folder created within the GaussClust-master distro folder, so that GaussClust_lite.sh should be present one enclosing folder up from the working directory for the analysis. The bgmm sensitivity test can then be run by adding appropriate values for test conditions following each equals sign in the bgmm_sens_test.cfg configuration file and then entering ```./bgmmSensTest.sh``` at the command line while the data file (e.g. 'data.txt'), P matrix file (e.g. 'P.txt'), and configuration file are all present in the same working dir folder. 
+
+### Real-world bgmmSensTest example \#1:
+```
+cd GaussClust-master
+mkdir sens_test1; cp ./data.txt ./P.txt ./bgmm_sens_test.cfg ./sens_test1/;
+cd ./sens_test1
+./bgmmSensTest.sh
+```
+
+### Troubleshooting
+Sometimes, GaussClust runs will fail because likelihood or Bayesian calculations in Rmixmod or bgmm fail. This can be caused by a 'bad' random number seed, which is a rather trivial issue that requires simply re-running the analysis. For example, one common minor issue with bgmmSensTest analyses is that you are attempting to run x number of runs over x different test values, and the code creates separate daughter folders in which each run is conducted, but one run fails because one or all model likelihoods goes to infinity! You will notice this because 1) an error will be output to screen showing that the shell 'mv', or move, command failed to execute properly since it couldn't find the posterior probability txt file resulting from one of the runs (which should be present in a 'txt' folder in the run directory). This causes the bgmmSensTest analyses and figures to be incomplete. For example, if you don't rerun the analysis, then you will have one less heatmap-type plot than expected in the resulting "plots.pdf" output file.
 
 ## REFERENCES
 - Edwards DL, Knowles LL (2014) Species detection and individual assignment in species delimitation: can integrative data increase efficacy? Proceedings of the Royal Society B, 281, 20132765. 
@@ -192,13 +215,14 @@ R GMM, clustering, and NMDS tutorials:
 
 ## TODO
 - Solve two input file problem. **DONE!** :white_check_mark:
-- Make script do more with bgmm, including semisupervised analysis using belief probs matrix. **DONE!** :white_check_mark:
-- Change Usage section to include code for working with example files.  **Partially DONE!**
+- Make GaussClust script do more with bgmm, including semisupervised analysis using belief probs matrix. **DONE!** :white_check_mark:
+- Change Usage section of README to include code for working with example files.  **Partially DONE!**
 - Find a better NMDS function than isoMDS in labdsv package. **DONE!** :white_check_mark:
+- Change bgmmSensTest from interactive to non-interactive, and make it produce PDF plots. **DONE!** :white_check_mark:
 - Explore different methods for BIC calculation (e.g. in mclust) during unsupervised clustering.
 - Explain defaults better.
 - Would be nice if not giving a flag meant the corresponding analysis was not run (equivalent to passing '0' for some of the options).
 - Provide warnings to user, with a particularly important example being to warn when the number of variables is less than k (number of clusters), in which case NMDS will surely fail to produce good results!
 
-December 16, 2016
+January 4, 2016
 Justin C. Bagley, Tuscaloosa, AL, USA
