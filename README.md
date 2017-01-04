@@ -9,7 +9,7 @@ All code within the GaussClust v0.1.0 repository is available "AS IS" under a ge
 
 If you use scripts from this repository as part of your published research, I require that you cite the repository as follows (also see DOI information below): 
   
-- Bagley, J.C. 2016. GaussClust v0.1.0. GitHub repository, Available at: http://github.com/justincbagley/GaussClust.
+- Bagley, J.C. 2017. GaussClust v0.1.0. GitHub repository, Available at: http://github.com/justincbagley/GaussClust.
 
 Alternatively, please provide the following link to this software repository in your manuscript:
 
@@ -45,9 +45,9 @@ While GaussClust is still under active development and available as a pre-releas
 
 **What does bgmmSensTest do?**
 
-The bgmmSensTest portion of the GaussClust repository uses a simple sensitivity analysis to probe the effect of varying the prior probabilities given to known observations (e.g. labeled individuals) during belief-based GMM in the bgmm R package. This sounds more complicated than it really is. The bgmm package expects a P matrix containing the plausibilities of the known assignments, in which the diagonal values are prior probs for knowns, and other values in a row are zero or split the remaining probability into the corresponding number of clusters (dividing by the number of off-diagonal cells/columns along each row). bgmmSensTest.sh goes through a simple series of steps to see how different the matrix of posterior probabilities of assignment to different clusters (named 'tij' in bgmm output) turns out to be when the (on-diagonal) prior probabilities for knowns in P are varied across some range of equally spaced values, e.g. from 0.5 to 0.95. Here are the basic steps in a bgmmSensTest run: (1) setup work environment and read in sensitivity test conditions from 'bgmm_sens_test.cfg' configuration file present in working dir, (2) make test input files with prior probs varying across range specified by user, (3) organize files and conduct test runs within separate sub-folders, (3) use results and text organized above to create an Rscript allowing visualization and comparison of results across test conditions, (4) run the Rscript and cleanup unnecessary files.
+The bgmmSensTest portion of the GaussClust repository uses a simple sensitivity analysis to probe the effect of varying the prior probabilities given to known observations (e.g. labeled individuals) during belief-based GMM in the bgmm R package. This sounds more complicated than it really is. The bgmm package expects a P matrix containing the plausibilities of the known assignments, in which the diagonal values are prior probs for knowns, and other values in a row are zero or another minimum value, or they simply split the remaining probability into the corresponding number of clusters (dividing by the number of off-diagonal cells/columns along each row). bgmmSensTest.sh goes through a simple series of steps to see how different the matrix of posterior probabilities of assignment to different clusters (named 'tij' in bgmm output) turns out to be when the (on-diagonal) prior probabilities for knowns in P are varied across some range of equally spaced values, e.g. from 0.5 to 0.95. Here are the basic steps in a bgmmSensTest run: (1) setup work environment and read in sensitivity test conditions from 'bgmm_sens_test.cfg' configuration file present in working dir, (2) make test input files with prior probs varying across range specified by user, (3) organize files and conduct test runs within separate sub-folders, (3) use results and text organized above to create an Rscript allowing visualization and comparison of results across test conditions, (4) run the Rscript and cleanup unnecessary files.
 
-Hopefully the results of bgmmSensTest will show that varying knowns' plausibilities has very little effect on the posterior outcome of the assignments of knowns, and of of course it should also have very little effect on the unknowns! If, for example, results meet an arbitrary value of \<\<5% difference across all pairs of probability matrices (each derived from running GaussClust with a different 'test value' for the knowns' prior probs), then you can probably feel confident in fixing the prior probabilities of the knowns to a set value. Alternatively, results might be better presented from across the range of test values used in bgmmSensTest.
+Hopefully, the results of bgmmSensTest will show that varying knowns' plausibilities has very little effect on the posterior outcome of the assignments of knowns, and of of course this should also have very little effect on the unknowns! If, for example, results meet an arbitrary value of \<\<5% difference across all pairs of probability matrices (each derived from running GaussClust with a different 'test value' for the knowns' prior probs), then you can probably feel confident in fixing the prior probabilities of the knowns to a set value. Alternatively, results might be better presented from across the range of test values used in bgmmSensTest.
 
 _NOTE_: One difference between bgmmSensTest code and regular GaussClust runs is that bgmmSensTest calls a 'lite' version of GaussClust with reduced to-screen output (printing comments to screen mostly turned off). Users should only use this 'GaussClust_lite.sh' script with bgmmSensTest.sh, not by itself.
 
@@ -82,10 +82,10 @@ One suggestion for doing the above is for users to (1) explore basic patterns in
 $ ./GaussClust.sh
 
 ##########################################################################################
-#                             GaussClust v1.0, December 2016                             #
+#                            GaussClust v0.1.0, January 2017                             #
 ##########################################################################################
 
-INFO      | Thu Dec 15 23:50:28 CST 2016 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
+INFO      | Wed Jan  4 14:50:29 CST 2017 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
 
 Usage: ./GaussClust.sh [options] inputFile
   
@@ -130,7 +130,7 @@ to '0' to skip this analysis.
 The -p flag specifies the filename of the bgmm 'B' matrix file in the working dir.
 
 The -c flag specifies the number of components or 'clusters' that will be modeled during
-regular GMM or bgmm modeling (except see other option available using -n flag above). This 
+regular GMM or bgmm modeling (except see other option available using -r flag above). This 
 corresponds to 'k' or the number of columns in 'B', based on definitions in the bgmm 
 documentation.
 
@@ -154,18 +154,19 @@ Below is an example of the usage for GaussClust (options above), using the examp
 $ ./GaussClust.sh -k 4 -u 1 -r 0 -d 0 -b 0 -p ./probs_35.txt -c 2 ./Enyalius_35.txt
 
 ##########################################################################################
-#                             GaussClust v1.0, December 2016                             #
+#                            GaussClust v0.1.0, January 2017                             #
 ##########################################################################################
 
-INFO      | Thu Dec 15 23:24:00 CST 2016 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
-INFO      | Thu Dec 15 23:24:00 CST 2016 | STEP #2: MAKE GAUSSIAN CLUSTERING R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE... 
-INFO      | Thu Dec 15 23:24:00 CST 2016 | STEP #3: RUN THE R SCRIPT. 
-INFO      | Thu Dec 15 23:24:03 CST 2016 | STEP #4: CLEAN UP THE WORKSPACE. 
-INFO      | Thu Dec 15 23:24:03 CST 2016 |          Moving R ouput files to new folder named 'R'... 
-FLOW      | Thu Dec 15 23:24:03 CST 2016 |          Would you like to keep the Rscript output by GaussClust? (y/n) : y
-FLOW      | Thu Dec 15 23:24:06 CST 2016 |          Would you like to keep text files output by GaussClust? (y/n) : y
-INFO      | Thu Dec 15 23:24:07 CST 2016 | Done conducting Gaussian clustering and related analyses using GaussClust.
-INFO      | Thu Dec 15 23:24:07 CST 2016 | Bye.
+INFO      | Wed Jan  4 14:37:43 CST 2017 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
+INFO      | Wed Jan  4 14:37:43 CST 2017 | STEP #2: MAKE GAUSSIAN CLUSTERING R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE... 
+INFO      | Wed Jan  4 14:37:43 CST 2017 | STEP #3: RUN THE R SCRIPT. 
+INFO      | Wed Jan  4 14:37:47 CST 2017 | STEP #4: CLEAN UP THE WORKSPACE. 
+INFO      | Wed Jan  4 14:37:47 CST 2017 |          Moving R output files to new folder named 'R'... 
+FLOW      | Wed Jan  4 14:37:47 CST 2017 |          Would you like to keep the Rscript output by GaussClust? (y/n) : y
+FLOW      | Wed Jan  4 14:37:57 CST 2017 |          Would you like to keep text files output by GaussClust? (y/n) : y
+INFO      | Wed Jan  4 14:37:57 CST 2017 |          Moving text files to new folder named 'txt'... 
+INFO      | Wed Jan  4 14:37:57 CST 2017 | Done conducting Gaussian clustering and related analyses using GaussClust.
+INFO      | Wed Jan  4 14:37:57 CST 2017 | Bye.
 
 ```
 
@@ -176,7 +177,11 @@ Here, (1) we specify to keep 4 NMDS dimensions (-k 4); (2) conduct a regular uns
 ```
 
 ### bgmmSensTest Usage
-:warning: **IMPORTANT!:** As of current development build, you should run bgmmSensTest.sh in a new sub-folder created within the GaussClust-master distro folder, so that GaussClust_lite.sh should be present one enclosing folder up from the working directory for the analysis. The bgmm sensitivity test can then be run by adding appropriate values for test conditions following each equals sign in the bgmm_sens_test.cfg configuration file and then entering ```./bgmmSensTest.sh``` at the command line while the data file (e.g. 'data.txt'), P matrix file (e.g. 'P.txt'), and configuration file are all present in the same working dir folder. 
+The bgmmSensTest script doesn't print out usage like GaussClust; however, ... 
+
+> :warning: **WARNING!:** _As of current development build, you should run bgmmSensTest.sh in a new sub-folder created within the GaussClust-master distro folder, so that GaussClust_lite.sh is present one enclosing folder up from the working directory for the analysis_. 
+
+Assuming you heed this guideline, the bgmm sensitivity test can then be run by adding appropriate values for test conditions following each equals sign in the bgmm_sens_test.cfg configuration file and then entering ```./bgmmSensTest.sh``` at the command line while the data file (e.g. 'data.txt'), P matrix file (e.g. 'P.txt'), and configuration file are all present in the same working dir folder. The next section below gives a brief example of bgmmSensTest usage.
 
 ### Real-world bgmmSensTest example \#1:
 ```
@@ -187,7 +192,7 @@ cd ./sens_test1
 ```
 
 ### Troubleshooting
-Sometimes, GaussClust runs will fail because likelihood or Bayesian calculations in Rmixmod or bgmm fail. This can be caused by a 'bad' random number seed, which is a rather trivial issue that requires simply re-running the analysis. For example, one common minor issue with bgmmSensTest analyses is that you are attempting to run x number of runs over x different test values, and the code creates separate daughter folders in which each run is conducted, but one run fails because one or all model likelihoods goes to infinity! You will notice this because 1) an error will be output to screen showing that the shell 'mv', or move, command failed to execute properly since it couldn't find the posterior probability txt file resulting from one of the runs (which should be present in a 'txt' folder in the run directory). This causes the bgmmSensTest analyses and figures to be incomplete. For example, if you don't rerun the analysis, then you will have one less heatmap-type plot than expected in the resulting "plots.pdf" output file.
+Sometimes, GaussClust runs will fail because likelihood or Bayesian calculations in Rmixmod or bgmm fail. This can be caused by a 'bad' random number seed, which is a rather trivial issue that requires simply re-running the analysis with a different seed (selected for you each time you run). For example, one common minor issue with bgmmSensTest analyses is that you are attempting to run x number of runs over x different test values, and the code creates separate daughter folders in which each run is conducted, but one run fails because one or all model likelihoods goes to infinity! You will notice this because 1) an error will be output to screen showing that the shell 'mv', or move, command failed to execute properly since it couldn't find the posterior probability txt file resulting from one of the runs (which should be present in a 'txt' folder in the run directory). This causes the bgmmSensTest analyses and figures to be incomplete. For example, if you don't rerun the analysis, then you will have one less heatmap-type plot than expected in the resulting "plots.pdf" output file.
 
 ## REFERENCES
 - Edwards DL, Knowles LL (2014) Species detection and individual assignment in species delimitation: can integrative data increase efficacy? Proceedings of the Royal Society B, 281, 20132765. 
@@ -224,5 +229,5 @@ R GMM, clustering, and NMDS tutorials:
 - Would be nice if not giving a flag meant the corresponding analysis was not run (equivalent to passing '0' for some of the options).
 - Provide warnings to user, with a particularly important example being to warn when the number of variables is less than k (number of clusters), in which case NMDS will surely fail to produce good results!
 
-January 4, 2016
+January 4, 2017
 Justin C. Bagley, Tuscaloosa, AL, USA
