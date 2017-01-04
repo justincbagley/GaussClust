@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ##########################################################################################
-#                            bgmmSensTest v1.0, December 2016                            #
+#                           bgmmSensTest v0.1.0, December 2016                           #
 #   SHELL SCRIPT FOR CONDUCTING SIMPLE SENSITIVITY TESTING TO EXPLORE BELIEF-BASED       #
 #   GAUSSIAN MIXTURE MODEL ROBUSTNESS TO VARYING PRIORS ON KNOWN OBSERVATIONS (P MATRIX) #
 #   Copyright (c)2016 Justin C. Bagley, Universidade de Brasília, Brasília, DF, Brazil.  #
@@ -12,7 +12,7 @@
 
 echo "
 ##########################################################################################
-#                            bgmmSensTest v1.0, December 2016                            #
+#                           bgmmSensTest v0.1.0, December 2016                           #
 ##########################################################################################
 "
 
@@ -329,7 +329,7 @@ dev.off()
 
 
 ############ FINAL STEPS:
-echo "INFO      | $(date) | STEP #5: RUN THE R SCRIPT. "
+echo "INFO      | $(date) | STEP #5: RUN THE R SCRIPT AND CONDUCT CLEANUP. "
 	R CMD BATCH ./comparePPMats.R
 
 ##--Cleanup remaining unnecessary files:
