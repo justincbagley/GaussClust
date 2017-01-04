@@ -1,19 +1,19 @@
 #!/bin/sh
 
 ##########################################################################################
-#                             GaussClust v1.0, December 2016                             #
+#                             GaussClust v0.2, January 2016                              #
 #   SHELL SCRIPT FOR AUTOMATING GAUSSIAN MIXTURE MODELING ON CONTINUOUS, DISCRETE, OR    #
 #   COMBINED GENETIC/MORPHOLOGICAL/ECOLOGICAL DATA, FOR SPECIES DELIMITATION AND         #
 #   CLASSIFICATION                                                                       #
 #   Copyright (c)2016 Justin C. Bagley, Universidade de Brasília, Brasília, DF, Brazil.  #
 #   See the README and license files on GitHub (http://github.com/justincbagley) for     #
-#   further information. Last update: December 16, 2016. For questions, please email     #
+#   further information. Last update: January 3, 2016. For questions, please email       #
 #   jcbagley@unb.br.                                                                     #
 ##########################################################################################
 
 echo "
 ##########################################################################################
-#                             GaussClust v1.0, December 2016                             #
+#                             GaussClust v0.2, January 2016                              #
 ##########################################################################################
 "
 echo "INFO      | $(date) | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... "
@@ -121,21 +121,21 @@ fi
 
 
 ## Make input file a mandatory parameter, and set the path variable to the current dir:
-MY_INPUT_FILE="$1"
-MY_PATH=`pwd -P`
+	MY_INPUT_FILE="$1"
+	MY_PATH=`pwd -P`
 
 
 ##--FIX issues with echoing shell text containing dollar signs to R:
-MY_POINTS_VAR=$(echo "\$points")	## Make points variable with '$points' text for Rscript...
-MY_TYPE_VAR=$(echo "\$type")		## Make type variable with '$type' text for Rscript...
-MY_SAMP_VAR=$(echo "\$samples")		## Same as above but for '$samples'...
-MY_SPECIES_VAR=$(echo "\$species")	## Same as above but for '$species'...
-MY_STRESS_VAR=$(echo "\$stress")	## Same as above but for '$stress'...
-MY_NMDS1_VAR=$(echo "\$nmds_1")
-MY_NMDS2_VAR=$(echo "\$nmds_2")
-MY_NMDS3_VAR=$(echo "\$nmds_3")
-MY_NMDS4_VAR=$(echo "\$nmds_4")
-MY_TIJ_VAR=$(echo "\$tij")
+	MY_POINTS_VAR=$(echo "\$points")	## Make points variable with '$points' text for Rscript...
+	MY_TYPE_VAR=$(echo "\$type")		## Make type variable with '$type' text for Rscript...
+	MY_SAMP_VAR=$(echo "\$samples")		## Same as above but for '$samples'...
+	MY_SPECIES_VAR=$(echo "\$species")	## Same as above but for '$species'...
+	MY_STRESS_VAR=$(echo "\$stress")	## Same as above but for '$stress'...
+	MY_NMDS1_VAR=$(echo "\$nmds_1")
+	MY_NMDS2_VAR=$(echo "\$nmds_2")
+	MY_NMDS3_VAR=$(echo "\$nmds_3")
+	MY_NMDS4_VAR=$(echo "\$nmds_4")
+	MY_TIJ_VAR=$(echo "\$tij")
 
 
 ############ MAKE R SCRIPT
@@ -236,11 +236,8 @@ dev.off()
 
 
 ##--Save each dimension of values retained from NMDS into a separate variable, and then
-##--in a data frame (extension 'df'):
-# nmds_1 <- mydata_gower_nmds$MY_POINTS_VAR[,1]
-# nmds_2 <- mydata_gower_nmds$MY_POINTS_VAR[,2]
-# nmds_3 <- mydata_gower_nmds$MY_POINTS_VAR[,3]
-# nmds_4 <- mydata_gower_nmds$MY_POINTS_VAR[,4]
+##--in a data frame (extension 'df'). NOTE: This and other code is weak in being written 
+##--to assume that the user will retain four NMDS dimensions (-k 4).
 nmds_1 <- metaMDS_points[,1]
 nmds_2 <- metaMDS_points[,2]
 nmds_3 <- metaMDS_points[,3]
@@ -308,18 +305,6 @@ row.names(B) <- B[,1]
 B <- B[,-c(1)]
 B
 dim(B)
-#
-##--What about arbitrary beliefs on knowns?
-##--This is commented out for now; however, the following lines of code allow the user to 
-##--make a couple of arbitrary belief matrices, to analyze and compare with the belief-
-##--based GMMs in bgmm, if called by the user using the -b flag. Uncomment here and under
-##--Section V below if desired.
-# p1=0.95
-# B2 <- (matrix(p1, nrow = dim(B)[1], ncol = $NUM_COMPONENTS))
-# row.names(B2) <- row.names(knowns)
-# p2=0.066666666666667
-# B3 <- (matrix(p2, nrow = dim(B)[1], ncol = $NUM_COMPONENTS))
-# row.names(B3) <- row.names(knowns)
 
 
 
@@ -410,28 +395,6 @@ write.table(z, file='bgmm_semisupervised_posteriorProbs.txt', sep='\t')} else {p
 
 
 
-##--What about arbitrary beliefs on knowns?
-# modelSoft1 <- soft(X, knowns, class = as.factor(known_labels), k = $NUM_COMPONENTS, P = B2)
-# pdf('bgmm_modelSoft1_result.pdf')  ## SAVE THIS PLOT!
-# plot(modelSoft1)
-# dev.off()
-#
-# modelSoft2 <- soft(X, knowns, class = as.factor(known_labels), k = $NUM_COMPONENTS, P = B3)
-# pdf('bgmm_modelSoft2_result.pdf')  ## SAVE THIS PLOT!
-# plot(modelSoft2)
-# dev.off()
-#
-# quartz()
-# pdf('bgmm_modelSoft1_vs_modelSoft2_2x1.pdf')  ## SAVE THIS PLOT!
-# par(mfrow=c(2,1))
-# plot(modelSoft1)
-# plot(modelSoft2)
-# dev.off()
-
-
-
-
-
 
 ######################################### END ############################################
 " > GaussClust.r
@@ -440,34 +403,35 @@ write.table(z, file='bgmm_semisupervised_posteriorProbs.txt', sep='\t')} else {p
 
 ############ FINAL STEPS:
 echo "INFO      | $(date) | STEP #3: RUN THE R SCRIPT. "
-R CMD BATCH ./GaussClust.R
+	R CMD BATCH ./GaussClust.R
 
 echo "INFO      | $(date) | STEP #4: CLEAN UP THE WORKSPACE. "
 ##--Cleanup:
-echo "INFO      | $(date) |          Moving R ouput files to new folder named 'R'... "
-mkdir R
-mv ./*.pdf ./*.Rout ./R/
-if [ "$CALL_BGMM" -gt "0" ]; then
-	mv ./bgmm_semisupervised_posteriorProbs.txt ./R/
-fi
+echo "INFO      | $(date) |          Moving R output files to new folder named 'R'... "
+	mkdir R
+	mv ./*.pdf ./*.Rout ./R/
+	if [ "$CALL_BGMM" -gt "0" ]; then
+		mv ./bgmm_semisupervised_posteriorProbs.txt ./R/
+	fi
 
 ## Next: some questions-based flow control for the cleanup...
 ## Rscript:
-read -p "FLOW      | $(date) |          Would you like to keep the Rscript output by GaussClust? (y/n) : " DEL_SCRIPT
-if [ "$DEL_SCRIPT" != "y" ]; then
-	rm ./GaussClust.r
-else
-	mv ./GaussClust.r ./R/
-fi
+	read -p "FLOW      | $(date) |          Would you like to keep the Rscript output by GaussClust? (y/n) : " DEL_SCRIPT
+	if [ "$DEL_SCRIPT" != "y" ]; then
+		rm ./GaussClust.r
+	else
+		mv ./GaussClust.r ./R/
+	fi
 
 ## Text files:
-read -p "FLOW      | $(date) |          Would you like to keep text files output by GaussClust? (y/n) : " TO_KEEP
-if [ "$TO_KEEP" = "y" ]; then
-	mkdir txt
-	mv ./known_0.txt ./knowns.txt ./unknown_0.txt ./mydata_names_df.txt ./txt/
-else
-	rm ./known_0.txt ./knowns.txt ./unknown_0.txt ./mydata_names_df.txt
-fi
+	read -p "FLOW      | $(date) |          Would you like to keep text files output by GaussClust? (y/n) : " TO_KEEP
+	if [ "$TO_KEEP" = "y" ]; then
+		echo "INFO      | $(date) |          Moving text files to new folder named 'txt'... "
+		mkdir txt
+		mv ./known_0.txt ./knowns.txt ./unknown_0.txt ./mydata_names_df.txt ./txt/
+	else
+		rm ./known_0.txt ./knowns.txt ./unknown_0.txt ./mydata_names_df.txt
+	fi
 
 
 echo "INFO      | $(date) | Done conducting Gaussian clustering and related analyses using GaussClust."
