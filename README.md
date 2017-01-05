@@ -1,4 +1,4 @@
-# GaussClust v0.1.0
+# GaussClust v0.1.0 ![alt tag](https://cloud.githubusercontent.com/assets/10584087/21690095/6c535498-d338-11e6-89b0-ff59a38a57f7.png)
 Clustering using Gaussian mixture modeling for species delimitation and classification
 
 ## LICENSE
