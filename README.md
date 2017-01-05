@@ -332,6 +332,9 @@ INFO      | Thu Jan  5 00:50:33 CST 2017 | Bye.
 Under this scenario, comparisons also will not be made between test runs, and output files (e.g. PDFs) present in the "Ex2_bgmmSensTest" example run folder will not be created during your sensitivity analysis! Avoid these issues by always passing a "2" or "3" option to the script using the -b flag.
 
 
+## ACKNOWLEDGEMENTS
+During the development of this software, J.C.B. received stipend support from a Ciência Sem Fronteiras (Science Without Borders) postdoctoral fellowship from the Brazilian Conselho Nacional de Desenvolvimento Científico e Tecnológico (CNPq; Processo 314724/2014-1). Lab and computer space was also supplied by The University of Alabama, during an internship in the Lozier Lab in the UA Department of Biological Sciences.
+
 ## REFERENCES
 - Edwards DL, Knowles LL (2014) Species detection and individual assignment in species delimitation: can integrative data increase efficacy? Proceedings of the Royal Society B, 281, 20132765. 
 - Gower JC (1971) A general coefficient of similarity and some of its properties. Biometrics, 27, 857–871. doi:10.2307/2528823
