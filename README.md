@@ -265,7 +265,7 @@ How to troubleshoot some potentially common problems encountered by users:
 
 (2) Sometimes, likelihood or Bayesian calculations in Rmixmod or bgmm fail because they, by chance, use a 'bad'/suboptimal random number seed. This is a rather trivial issue, but it can cause clustering analysis runs to fail. Fixing this requires simply re-running the analysis with a different seed (selected for you each time you run). For example, one common minor issue with bgmmSensTest analyses is that you are attempting to run x number of runs over x different test values, and the code creates separate daughter folders in which each run is conducted, but one run fails because one or all model likelihoods goes to infinity! You will notice this because 1) an error will be output to screen showing that the shell 'mv', or move, command failed to execute properly since it couldn't find the posterior probability txt file resulting from one of the runs (which should be present in a 'txt' folder in the run directory). This causes the bgmmSensTest analyses and figures to be incomplete. For example, if you don't rerun the analysis, then you will have one less heatmap-type plot than expected in the resulting "plots.pdf" output file.
 
-(3) If you inadvertently attempted to run bgmmSensTest without passing a value other than "0" or "1" for the -b flag in the configuration file, you will find a number of errors and problems with the results, because belief-based GMM is not conducted. For example, after running bgmmSensTest with "-b 0" in the first cfg file option, you would find that separate runs were conducted across a range of test values, but that a series of errors were printed to screen starting at the end of STEP \#3, in which cp, sed, cat, and rm failed. The first cp failure message will say that the \*\_posteriorProbs.txt results files could not be found, and later error messages will also state that no ./tij\*.txt file could be removed, etc. From the partial screen output below, you can see that the reporting gets a bit messy, indicating several things went wrong:
+(3) If you inadvertently attempted to run bgmmSensTest without passing a value other than "0" or "1" for the -b flag in the configuration file (as in the "bgmm_sens_test-bozo.cfg" file in the distro), you will find a number of errors and problems with the results, because belief-based GMM is not conducted. For example, after running bgmmSensTest with "-b 0" in the first cfg file option, you would find that separate runs were conducted across a range of test values, but that a series of errors were printed to screen starting at the end of STEP \#3, in which cp, sed, cat, and rm failed. The first cp failure message will say that the \*\_posteriorProbs.txt results files could not be found, and later error messages will also state that no ./tij\*.txt file could be removed, etc. From the partial screen output below, you can see that the reporting gets a bit messy, indicating several things went wrong:
 ```
 ...
 ...
@@ -317,15 +317,21 @@ R GMM, clustering, and NMDS tutorials:
 - https://rstudio-pubs-static.s3.amazonaws.com/58843_d17d5721f5254ac3bbeea211466c0bb7.html
 
 ## TODO
+Current:
+
+- **Make code work on -k values other than 4, so user is free to specify any number of retained NMDS dimensions!**
+- Explore different methods for BIC calculation (e.g. in mclust) during unsupervised clustering.
+- Explain defaults better.
+- Would be nice if not giving a flag meant the corresponding analysis was not run (equivalent to passing '0' for some of the options).
+- Provide warnings to user, with a particularly important example being to warn when the number of variables is less than k (number of clusters), in which case NMDS will surely fail to produce good results!
+
+Recently finished/fixed:
+
 - Solve two input file problem. **DONE!** :white_check_mark:
 - Make GaussClust script do more with bgmm, including semisupervised analysis using belief probs matrix. **DONE!** :white_check_mark:
 - Change Usage section of README to include code for working with example files.  **Partially DONE!**
 - Find a better NMDS function than isoMDS in labdsv package. **DONE!** :white_check_mark:
 - Change bgmmSensTest from interactive to non-interactive, and make it produce PDF plots. **DONE!** :white_check_mark:
-- Explore different methods for BIC calculation (e.g. in mclust) during unsupervised clustering.
-- Explain defaults better.
-- Would be nice if not giving a flag meant the corresponding analysis was not run (equivalent to passing '0' for some of the options).
-- Provide warnings to user, with a particularly important example being to warn when the number of variables is less than k (number of clusters), in which case NMDS will surely fail to produce good results!
 
 January 4, 2017
 Justin C. Bagley, Tuscaloosa, AL, USA
