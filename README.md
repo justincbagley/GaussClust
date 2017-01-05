@@ -19,6 +19,14 @@ Alternatively, please provide the following link to this software repository in 
 
 The DOI for GaussClust v0.1.0, via [Zenodo](https://zenodo.org), is coming soon. :wink:
 
+- [Introduction](https://github.com/justincbagley/GaussClust#introduction)
+- [Getting Started](https://github.com/justincbagley/GaussClust#getting-started)
+- [Troubleshooting](https://github.com/justincbagley/GaussClust#troubleshooting)
+- [References](https://github.com/justincbagley/GaussClust#references)
+- [Other Readings](https://github.com/justincbagley/GaussClust#other-readings)
+- [TODO List](https://github.com/justincbagley/GaussClust#todo)
+
+
 ## INTRODUCTION
 
 > *"Clustering and discriminant analysis (or classification) methods are among the most important
@@ -284,7 +292,7 @@ INFO      | Wed Jan  4 19:13:54 CST 2017 | Bye.
 ![alt tag](https://cloud.githubusercontent.com/assets/10584087/21687005/1f792a36-d32d-11e6-856c-c534c3f0b1a3.png)
 
 
-### Troubleshooting
+## TROUBLESHOOTING
 How to troubleshoot some potentially common problems encountered by users:
 
 (1) One problem you may run into is the 'permission denied' error returned by the shell when attempting to execute the shell scripts; for example, bash might return "-bash: ./GaussClust.sh: Permission denied". This indicates that permissions for .sh files were not correctly set during [Installation](https://github.com/justincbagley/GaussClust#installation). Fix this by moving into the repository master folder and entering ```$ chmod u+x ./*.sh``` at the command line, then using the shell script(s) in the repo folder from that point forward.
@@ -342,7 +350,7 @@ R GMM, clustering, and NMDS tutorials:
 - http://www.statmethods.net/advstats/cluster.html
 - https://rstudio-pubs-static.s3.amazonaws.com/58843_d17d5721f5254ac3bbeea211466c0bb7.html
 
-## TODO
+## TODO LIST
 Current:
 
 - **Make code work on -k values other than 4, so user is free to specify any number of retained NMDS dimensions!**
