@@ -49,7 +49,7 @@ Usage: $0 [options] inputFile
   "
   echo "Options: -k nmdsDimensions (specify number of dimensions, k, to retain during NMDS \
 on Gower distances) | -u unsuperGMM (0=no unsupervised GMM is carried out; 1=conduct unsupervised GMM \
-using 'Rmixmod' R pacakge, for comparative or individual purposes) | -r rangeNumClusters (optional \
+using 'Rmixmod' R package, for comparative or individual purposes) | -r rangeNumClusters (optional \
 numeric listing of a range, x:y, of the number of clusters to be modeled over during unsupervised GMM \
 in Rmixmod) | -d GMMDiscrim (0=(semi-)supervised, GMM-based discriminant analysis is not carried out \
 with 'mixmodelLearn' in Rmixmod; 1=conduct discriminant analysis) | -b beliefBasedMM (0=no mixture \
