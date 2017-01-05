@@ -155,8 +155,10 @@ make the names a little longer if needed.
 
 ```
 
-### Real-world GaussClust example \#1, with screen output:
-Below is an example of the usage for GaussClust (options above) in which the example data files ("Enyalius_35.txt" and "probs_35.txt"), located in the "example_data_files" folder of the distro, are used to conduct _only_ unsupervised Gaussian clustering on 2 clusters (-c 2), on 4 dimensions of data retained from NMDS (-k 4). All screen output (e.g. to Terminal on mac) from the analysis is shown. When you run GaussClust, 'INFO' and date printed to screen along with information for each of the broader steps of the script (details from R go to an \*.Rout file, organized at the end of each run). Question-response lines output to screen are marked 'FLOW' and (to date) requrie yes/no answers. As you can see, the code runs with no error messages. **_This run produced all directories and ouptut files present in the "Ex1_GaussClust" folder provided within the GaussClust distribution_. Look through the files to learn more about the structure of GaussClust output, including graphical results saved as PDF files.**
+### Real-world GaussClust example \#1:
+Below is an example of the usage for GaussClust.sh, in which the example data files ("Enyalius_35.txt" and "probs_35.txt"; see "example_data_files" folder of distro) are used to conduct _only_ unsupervised Gaussian clustering (-u 1) on 2 clusters (-c 2), based on 4 dimensions of data retained from NMDS (-k 4). All screen output (e.g. to Terminal on mac) from the analysis is shown. When you run GaussClust, 'INFO' and date printed to screen along with information for each of the broader steps of the script (details from R go to an \*.Rout file, organized at the end of each run). Question-response lines output to screen are marked 'FLOW' and (to date) requrie yes/no answers. As you can see, the code runs with no error messages. 
+
+**_This run produced all directories and ouptut files present in the "Ex1_GaussClust" folder provided within the GaussClust distribution_. Some of the folder and graphical output are shown in Figures 1-3 below. Look over these Figures, and through the files in the example folder to learn more about the structure of GaussClust output, including graphical results saved as PDF files.**
 ```
 $ ./GaussClust.sh -k 4 -u 1 -r 0 -d 0 -b 0 -p ./probs_35.txt -c 2 ./Enyalius_35.txt
 
@@ -176,8 +178,18 @@ INFO      | Wed Jan  4 19:12:03 CST 2017 | Done conducting Gaussian clustering a
 INFO      | Wed Jan  4 19:12:03 CST 2017 | Bye.
 
 ```
+**Read-world GaussClust example Results:**
 
-### Another real-world GaussClust example, showing variations:
+**Figure 1**
+![alt tag](https://cloud.githubusercontent.com/assets/10584087/21687010/1f85da92-d32d-11e6-85b8-9e55e8ccfd56.png)
+
+**Figure 2**
+![alt tag](https://cloud.githubusercontent.com/assets/10584087/21687009/1f7d79ce-d32d-11e6-800e-b2e7a0247205.png)
+
+**Figure 3**
+![alt tag](https://cloud.githubusercontent.com/assets/10584087/21687007/1f7b38b2-d32d-11e6-806b-353471e39ffc.png)
+
+### Another real-world GaussClust example, showing some variations:
 Here, (1) we specify to keep 4 NMDS dimensions (-k 4); (2) conduct a regular unsupervised GMM analysis in Rmixmod, using multiple models across 5-20 clusters (-u 1 -r 5:20), which are compared to identify the best model using BIC; (3) call supervised discriminant analysis in Rmixmod (-d 1); (4) attempt supervised and semisupervised analysis in bgmm (-b 3 for 'both'); and (4) specify that analyses use or require 13 clusters (as needed; -c 13). Output is not redirected (e.g. by placing something like '> output.txt' at the end, so all output from the script is printed to screen (except for steps conducted in R). Example files are not provided for this example, because this analysis is part of an on-going project in our lab.
 ```
 $ ./GaussClust.sh -k 4 -u 1 -r 5:20 -d 1 -b 3 -p B_206.txt -c 13 ./mydata.txt
@@ -188,8 +200,10 @@ $ ./GaussClust.sh -k 4 -u 1 -r 5:20 -d 1 -b 3 -p B_206.txt -c 13 ./mydata.txt
 
 The bgmmSensTest script doesn't print out usage options, as GaussClust does; however, assuming you heed the warning above, the bgmm sensitivity test can then be run by adding appropriate values for test conditions following each equals sign in the bgmm_sens_test.cfg configuration file and then entering ```$ ./bgmmSensTest.sh``` at the command line while the data file (e.g. 'data.txt'), P matrix file (e.g. 'P.txt'), and configuration file are all present in the same working dir folder. 
 
-### Real-world bgmmSensTest example \#1, with screen output:
-I have produced a bgmmSensTest example using the same example data files as those used to test GaussClust above. Below, I provide the code for producing the example configuration file and screen output from a run on these files. **_This run produced all directories and ouptut files present in the "Ex2_bgmmSensTest" folder provided within the GaussClust distribution_. Look through the files to learn more about the structure of bgmmSensTest output, including graphical results output to PDF files.**
+### Real-world bgmmSensTest example \#1:
+I have produced a bgmmSensTest example using the same example data files as those used to test GaussClust above. Below, I provide the code for producing the example configuration file and screen output from a run on these files. 
+
+**_This run produced all directories and ouptut files present in the "Ex2_bgmmSensTest" folder provided within the GaussClust distribution_. Some of the folder and graphical output are shown in Figures 4-6 below. Look over these Figures, and through the files in the example folder to learn more about the structure of GaussClust output, including graphical results saved as PDF files.**
 
 ```
 $ cd GaussClust-master
@@ -257,6 +271,18 @@ INFO      | Wed Jan  4 19:13:53 CST 2017 | STEP #5: RUN THE R SCRIPT AND CONDUCT
 INFO      | Wed Jan  4 19:13:54 CST 2017 | Done conducting sensitivity test(s) examining the effect of varying the 'prior' probabilities of known observations in the beliefs matrix supplied to bgmm, using bgmmSensTest.
 INFO      | Wed Jan  4 19:13:54 CST 2017 | Bye.
 ```
+
+**Read-world bgmmSensTest example Results:**
+
+**Figure 4**
+![alt tag](https://cloud.githubusercontent.com/assets/10584087/21687008/1f7b6698-d32d-11e6-8940-4034bdf87657.png)
+
+**Figure 5**
+![alt tag](https://cloud.githubusercontent.com/assets/10584087/21687006/1f7993ae-d32d-11e6-9f08-fc426f43bf99.png)
+
+**Figure 6**
+![alt tag](https://cloud.githubusercontent.com/assets/10584087/21687005/1f792a36-d32d-11e6-856c-c534c3f0b1a3.png)
+
 
 ### Troubleshooting
 How to troubleshoot some potentially common problems encountered by users:
