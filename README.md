@@ -17,7 +17,11 @@ Alternatively, please provide the following link to this software repository in 
 
 ## DOI
 
-The DOI for GaussClust v0.1.0, via [Zenodo](https://zenodo.org), is coming soon. :wink:
+The DOI for GaussClust v0.1.0, via [Zenodo](https://zenodo.org), is as follows: [![DOI](https://zenodo.org/badge/76403119.svg)](https://zenodo.org/badge/latestdoi/76403119). Here are some examples of citing GaussClust using the DOI: 
+  
+  Bagley, J.C. 2017. GaussClust v0.1.0. GitHub package, Available at: http://doi.org/10.5281/zenodo.231221.
+
+  Bagley, J.C. 2017. GaussClust v0.1.0. Zenodo, Available at: http://doi.org/10.5281/zenodo.231221.  
 
 ## CONTENTS
 
