@@ -28,6 +28,7 @@ The DOI for GaussClust v0.1.0, via [Zenodo](https://zenodo.org), is as follows: 
 - [Introduction](https://github.com/justincbagley/GaussClust#introduction)
 - [Getting Started](https://github.com/justincbagley/GaussClust#getting-started)
 - [Troubleshooting](https://github.com/justincbagley/GaussClust#troubleshooting)
+- [Acknowledgements](https://github.com/justincbagley/GaussClust#acknowledgements)
 - [References](https://github.com/justincbagley/GaussClust#references)
 - [Other Readings](https://github.com/justincbagley/GaussClust#other-readings)
 - [TODO List](https://github.com/justincbagley/GaussClust#todo)
