@@ -1,0 +1,803 @@
+
+R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
+Copyright (C) 2016 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+> #!/usr/bin/env Rscript
+> 
+> #################################### GaussClust.R ########################################
+> 
+> ############ CONDUCT SETUP, READ IN AND PLOT THE DATA
+> setwd('/Users/justinbagley/Documents/GaussClust/Ex2_bgmmSensTest/run0_0.5')
+> # 
+> ##--Load needed library, R code, or package stuff. Install packages if not present.
+> packages <- c('bgmm', 'Rmixmod', 'StatMatch', 'MASS', 'ggfortify', 'vegan')
+> if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
++     install.packages(setdiff(packages, rownames(installed.packages())))
++ }
+> 
+> library(bgmm)
+Loading required package: mvtnorm
+Loading required package: car
+Loading required package: lattice
+Loading required package: combinat
+
+Attaching package: ‘combinat’
+
+The following object is masked from ‘package:utils’:
+
+    combn
+
+> library(Rmixmod)
+Loading required package: Rcpp
+Rmixmod version 2.1.1 loaded
+R package of mixmodLib version 3.2.2
+
+Condition of use
+----------------
+Copyright (C)  MIXMOD Team - 2001-2013
+
+MIXMOD is publicly available under the GPL license (see www.gnu.org/copyleft/gpl.html)
+You can redistribute it and/or modify it under the terms of the GPL-3 license.
+Please understand that there may still be bugs and errors. Use it at your own risk.
+We take no responsibility for any errors or omissions in this package or for any misfortune that may befall you or others as a result of its use.
+
+Please report bugs at: http://www.mixmod.org/article.php3?id_article=23
+
+More information on : www.mixmod.org
+
+
+Attaching package: ‘Rmixmod’
+
+The following object is masked from ‘package:car’:
+
+    ellipse
+
+> library(StatMatch)
+Loading required package: proxy
+
+Attaching package: ‘proxy’
+
+The following objects are masked from ‘package:stats’:
+
+    as.dist, dist
+
+The following object is masked from ‘package:base’:
+
+    as.matrix
+
+Loading required package: clue
+Loading required package: survey
+Loading required package: grid
+Loading required package: Matrix
+Loading required package: survival
+
+Attaching package: ‘survey’
+
+The following object is masked from ‘package:graphics’:
+
+    dotchart
+
+Loading required package: RANN
+Loading required package: lpSolve
+> library(MASS)
+> library(ggfortify)
+Loading required package: ggplot2
+> library(vegan)
+Loading required package: permute
+This is vegan 2.4-1
+
+Attaching package: ‘vegan’
+
+The following object is masked from ‘package:survey’:
+
+    calibrate
+
+> 
+> ##--Read in the data:
+> mydata_names <- read.table('Enyalius_35.txt', h=T)
+> str(mydata_names)
+'data.frame':	35 obs. of  47 variables:
+ $ sample : Factor w/ 35 levels "bib_CHUNB56555",..: 1 2 3 4 5 6 7 8 9 10 ...
+ $ type   : Factor w/ 2 levels "known","unknown": 1 1 1 1 1 1 2 1 1 1 ...
+ $ species: Factor w/ 2 levels "bib","bil": 1 1 1 1 1 1 1 1 1 1 ...
+ $ scan   : int  1 1 1 1 1 0 1 1 1 1 ...
+ $ stym   : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ tdhan  : int  0 1 0 0 1 1 1 0 1 1 ...
+ $ tvhan  : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ tdfor  : int  0 0 0 0 1 0 0 0 0 1 ...
+ $ tvthi  : int  1 1 0 0 1 0 0 0 1 1 ...
+ $ tcres  : int  1 1 1 1 1 1 0 1 1 0 ...
+ $ spar   : int  3 2 3 3 3 3 3 3 2 2 ...
+ $ sdor   : int  1 0 1 1 1 1 1 1 0 2 ...
+ $ slat   : int  1 1 0 0 0 1 0 0 0 0 ...
+ $ sven   : int  0 0 0 0 0 0 1 0 0 0 ...
+ $ nasros : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ ssub   : int  1 1 1 1 0 0 1 1 1 1 ...
+ $ gula   : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ sgula  : int  0 0 0 0 0 1 0 0 0 0 ...
+ $ thead  : int  1 1 1 1 0 0 0 1 1 0 ...
+ $ tment  : int  1 1 1 1 1 1 1 1 1 0 ...
+ $ sflam  : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ shlam  : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ par    : int  92 87 79 81 77 79 73 77 78 81 ...
+ $ mid    : int  60 61 57 54 51 61 58 60 57 54 ...
+ $ cres   : int  60 65 56 55 55 60 60 56 58 58 ...
+ $ ven    : int  48 65 49 43 50 48 48 46 50 46 ...
+ $ infra  : int  10 11 11 9 10 9 9 8 10 10 ...
+ $ pmen   : int  2 2 2 2 2 2 2 2 2 2 ...
+ $ cpmen  : int  7 7 7 8 8 7 7 6 6 7 ...
+ $ ngula  : int  39 43 46 40 32 40 42 36 37 37 ...
+ $ can    : int  4 5 5 4 4 4 4 4 4 5 ...
+ $ naslab : int  1 1 2 2 1 1 2 2 1 1 ...
+ $ lor    : int  5 5 6 7 5 7 7 7 6 5 ...
+ $ cinter : int  9 9 7 8 10 7 8 8 8 10 ...
+ $ circ   : int  1 2 1 2 2 2 2 2 2 2 ...
+ $ suplab : int  10 11 10 10 10 10 11 11 11 10 ...
+ $ ros    : int  5 7 5 7 4 5 6 8 7 8 ...
+ $ suboc  : int  11 14 12 15 14 14 14 12 15 13 ...
+ $ sup    : int  8 11 10 11 10 10 10 10 12 9 ...
+ $ subsup : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ tlen   : int  162 165 107 179 171 217 231 NA 205 149 ...
+ $ crc    : int  115 105 100 86 74 105 113 118 105 67 ...
+ $ flam   : int  33 34 36 32 30 31 30 28 34 32 ...
+ $ hlam   : int  22 21 21 21 18 20 19 17 22 21 ...
+ $ sulam  : int  3 2 3 3 2 2 3 2 2 4 ...
+ $ tib    : int  12 13 12 13 11 13 12 11 13 12 ...
+ $ atail  : int  43 47 44 38 40 40 34 38 43 34 ...
+> mydata <- mydata_names[,-c(1:3)]
+> str(mydata)
+'data.frame':	35 obs. of  44 variables:
+ $ scan  : int  1 1 1 1 1 0 1 1 1 1 ...
+ $ stym  : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ tdhan : int  0 1 0 0 1 1 1 0 1 1 ...
+ $ tvhan : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ tdfor : int  0 0 0 0 1 0 0 0 0 1 ...
+ $ tvthi : int  1 1 0 0 1 0 0 0 1 1 ...
+ $ tcres : int  1 1 1 1 1 1 0 1 1 0 ...
+ $ spar  : int  3 2 3 3 3 3 3 3 2 2 ...
+ $ sdor  : int  1 0 1 1 1 1 1 1 0 2 ...
+ $ slat  : int  1 1 0 0 0 1 0 0 0 0 ...
+ $ sven  : int  0 0 0 0 0 0 1 0 0 0 ...
+ $ nasros: int  0 0 0 0 0 0 0 0 0 0 ...
+ $ ssub  : int  1 1 1 1 0 0 1 1 1 1 ...
+ $ gula  : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ sgula : int  0 0 0 0 0 1 0 0 0 0 ...
+ $ thead : int  1 1 1 1 0 0 0 1 1 0 ...
+ $ tment : int  1 1 1 1 1 1 1 1 1 0 ...
+ $ sflam : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ shlam : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ par   : int  92 87 79 81 77 79 73 77 78 81 ...
+ $ mid   : int  60 61 57 54 51 61 58 60 57 54 ...
+ $ cres  : int  60 65 56 55 55 60 60 56 58 58 ...
+ $ ven   : int  48 65 49 43 50 48 48 46 50 46 ...
+ $ infra : int  10 11 11 9 10 9 9 8 10 10 ...
+ $ pmen  : int  2 2 2 2 2 2 2 2 2 2 ...
+ $ cpmen : int  7 7 7 8 8 7 7 6 6 7 ...
+ $ ngula : int  39 43 46 40 32 40 42 36 37 37 ...
+ $ can   : int  4 5 5 4 4 4 4 4 4 5 ...
+ $ naslab: int  1 1 2 2 1 1 2 2 1 1 ...
+ $ lor   : int  5 5 6 7 5 7 7 7 6 5 ...
+ $ cinter: int  9 9 7 8 10 7 8 8 8 10 ...
+ $ circ  : int  1 2 1 2 2 2 2 2 2 2 ...
+ $ suplab: int  10 11 10 10 10 10 11 11 11 10 ...
+ $ ros   : int  5 7 5 7 4 5 6 8 7 8 ...
+ $ suboc : int  11 14 12 15 14 14 14 12 15 13 ...
+ $ sup   : int  8 11 10 11 10 10 10 10 12 9 ...
+ $ subsup: int  1 1 1 1 1 1 1 1 1 1 ...
+ $ tlen  : int  162 165 107 179 171 217 231 NA 205 149 ...
+ $ crc   : int  115 105 100 86 74 105 113 118 105 67 ...
+ $ flam  : int  33 34 36 32 30 31 30 28 34 32 ...
+ $ hlam  : int  22 21 21 21 18 20 19 17 22 21 ...
+ $ sulam : int  3 2 3 3 2 2 3 2 2 4 ...
+ $ tib   : int  12 13 12 13 11 13 12 11 13 12 ...
+ $ atail : int  43 47 44 38 40 40 34 38 43 34 ...
+> 
+> ##--Graph of pairwise data plots when there are small numbers of characters (else basic R 
+> ##--function and windows cannot handle the plots resulting from calling 'plot' function):
+> if( dim(mydata_names)[2] < 10 ){
++ print('Making pairwise plots of the data... ')
++ pdf('pairwise_data_plots.pdf')
++ plot(mydata_names)
++ dev.off()} else {print('Cannot do pairwise plots of the data (too much data)... ')
++ }
+[1] "Cannot do pairwise plots of the data (too much data)... "
+> 
+> 
+> ############ ANALYSIS
+> 
+> ############ I. SCALE / STANDARDIZE DATA USING NMDS 
+> ##--Estimate Gower distances from the original data. Here, we are starting from a single 
+> ##--data frame, and the code was originally written with a single morphological data matrix
+> ##--in mind. However, multiple datasets from different data types could be used. Either way,
+> ##--Gower distances are ideal because they allow us to get an estimate of the similarities
+> ##--and dissimilarities between all individuals/samples, while allowing for missing data 
+> ##--('NA' observations) in the dataset.
+> mydata_gower <- gower.dist(mydata)
+> 
+> ##--Use ggfortify to visualize the Gower distnces:
+> pdf('gower_dist_gg_autoplot.pdf')
+> autoplot(mydata_gower)
+Scale for 'y' is already present. Adding another scale for 'y', which will
+replace the existing scale.
+> dev.off()
+null device 
+          1 
+> 
+> ##--Conduct NMDS using 'metaMDS' function in vegan package, retaining k dimensions:
+> mydata_gower_metaMDS <- metaMDS(mydata_gower, k=4)
+Run 0 stress 0.06359327 
+Run 1 stress 0.06405811 
+... Procrustes: rmse 0.03887526  max resid 0.195254 
+Run 2 stress 0.06458822 
+Run 3 stress 0.06359695 
+... Procrustes: rmse 0.0006564641  max resid 0.002334629 
+... Similar to previous best
+Run 4 stress 0.06406397 
+... Procrustes: rmse 0.03871886  max resid 0.1948376 
+Run 5 stress 0.06359176 
+... New best solution
+... Procrustes: rmse 0.001431293  max resid 0.003523002 
+... Similar to previous best
+Run 6 stress 0.06467642 
+Run 7 stress 0.06459189 
+Run 8 stress 0.06405732 
+... Procrustes: rmse 0.03769962  max resid 0.1912556 
+Run 9 stress 0.06467492 
+Run 10 stress 0.06459333 
+Run 11 stress 0.06359957 
+... Procrustes: rmse 0.001915143  max resid 0.004965354 
+... Similar to previous best
+Run 12 stress 0.06359168 
+... New best solution
+... Procrustes: rmse 0.001269888  max resid 0.003631788 
+... Similar to previous best
+Run 13 stress 0.06359 
+... New best solution
+... Procrustes: rmse 0.001004654  max resid 0.002615185 
+... Similar to previous best
+Run 14 stress 0.06467558 
+Run 15 stress 0.06467626 
+Run 16 stress 0.06405683 
+... Procrustes: rmse 0.03815404  max resid 0.1927074 
+Run 17 stress 0.06359595 
+... Procrustes: rmse 0.001427171  max resid 0.003645673 
+... Similar to previous best
+Run 18 stress 0.06359634 
+... Procrustes: rmse 0.001027667  max resid 0.002761098 
+... Similar to previous best
+Run 19 stress 0.06359779 
+... Procrustes: rmse 0.001720667  max resid 0.004505146 
+... Similar to previous best
+Run 20 stress 0.06458857 
+*** Solution reached
+> summary(mydata_gower_metaMDS)
+           Length Class  Mode     
+nobj         1    -none- numeric  
+nfix         1    -none- numeric  
+ndim         1    -none- numeric  
+ndis         1    -none- numeric  
+ngrp         1    -none- numeric  
+diss       595    -none- numeric  
+iidx       595    -none- numeric  
+jidx       595    -none- numeric  
+xinit      140    -none- numeric  
+istart       1    -none- numeric  
+isform       1    -none- numeric  
+ities        1    -none- numeric  
+iregn        1    -none- numeric  
+iscal        1    -none- numeric  
+maxits       1    -none- numeric  
+sratmx       1    -none- numeric  
+strmin       1    -none- numeric  
+sfgrmn       1    -none- numeric  
+dist       595    -none- numeric  
+dhat       595    -none- numeric  
+points     140    -none- numeric  
+stress       1    -none- numeric  
+grstress     1    -none- numeric  
+iters        1    -none- numeric  
+icause       1    -none- numeric  
+call         3    -none- call     
+model        1    -none- character
+distmethod   1    -none- character
+distcall     1    -none- character
+distance     1    -none- character
+converged    1    -none- logical  
+tries        1    -none- numeric  
+engine       1    -none- character
+species      1    -none- logical  
+data         1    -none- character
+> #
+> nmds_stress <- mydata_gower_metaMDS$stress * 100
+> nmds_stress
+[1] 6.359
+> #
+> mydata_gower_metaMDS$points
+           MDS1         MDS2         MDS3          MDS4
+1  -0.161780043  0.077066317 -0.082327519 -0.0272331254
+2  -0.117165458  0.074847906 -0.107495451  0.1011349115
+3  -0.202156339  0.119330496  0.010103346 -0.0436035892
+4  -0.158137919  0.103389903  0.042797700 -0.0391129066
+5  -0.103688792 -0.051755123 -0.044743726 -0.0998462820
+6  -0.121941248  0.046588006  0.058772537  0.1059629070
+7  -0.091001474  0.025404976  0.127937392 -0.0185402030
+8  -0.181926277  0.094822532  0.077040595 -0.0912453481
+9  -0.091664548  0.074617383 -0.063083081  0.0485026017
+10 -0.004623297 -0.121172396 -0.023051709  0.0399906875
+11 -0.069831927 -0.112275339  0.052115532  0.0838708557
+12 -0.076863124 -0.099253622  0.147047756  0.0459507638
+13 -0.164749429  0.063679124 -0.050687149 -0.0114276400
+14 -0.044778926  0.135414912 -0.044182269  0.0620429964
+15 -0.107099074 -0.014827710  0.090728622  0.0252812490
+16 -0.153055407 -0.052205803  0.098455477 -0.0085767240
+17 -0.108039162 -0.006626530 -0.042670510  0.0454340698
+18 -0.097449509 -0.157771715  0.008686597 -0.0951976995
+19 -0.091942323 -0.121147194 -0.124199993  0.0006223908
+20 -0.092012095 -0.050954011 -0.091259434 -0.0742653444
+21 -0.124343306 -0.078729948 -0.054922552  0.0413684425
+22 -0.065187594 -0.114506942 -0.076513111 -0.0028532645
+23  0.175627928  0.037582701  0.006865462 -0.0842659587
+24  0.236511831  0.078131730 -0.033429541 -0.0310916684
+25  0.198072300  0.045219894  0.006797108 -0.0599120979
+26  0.193851041 -0.021425180 -0.009395955 -0.0656077030
+27  0.168517666  0.038861446  0.008769650 -0.0808518206
+28  0.209914310  0.054377202 -0.041777981  0.0074802198
+29  0.079375228  0.017982603  0.148531091 -0.0002487461
+30  0.197011927 -0.110781351  0.006501856 -0.0383205895
+31  0.216985737 -0.086674401 -0.013486672  0.0554070190
+32  0.177769757  0.066311571 -0.015625501  0.0129689097
+33  0.165422975 -0.005690133 -0.015645415  0.0370510865
+34  0.207011445  0.028813704  0.019056653  0.1074336081
+35  0.203365126  0.023354994  0.024290193  0.0516979922
+attr(,"centre")
+[1] TRUE
+attr(,"pc")
+[1] TRUE
+attr(,"halfchange")
+[1] FALSE
+attr(,"internalscaling")
+[1] 5.208535
+> metaMDS_points <- as.data.frame(mydata_gower_metaMDS$points)
+> metaMDS_points
+           MDS1         MDS2         MDS3          MDS4
+1  -0.161780043  0.077066317 -0.082327519 -0.0272331254
+2  -0.117165458  0.074847906 -0.107495451  0.1011349115
+3  -0.202156339  0.119330496  0.010103346 -0.0436035892
+4  -0.158137919  0.103389903  0.042797700 -0.0391129066
+5  -0.103688792 -0.051755123 -0.044743726 -0.0998462820
+6  -0.121941248  0.046588006  0.058772537  0.1059629070
+7  -0.091001474  0.025404976  0.127937392 -0.0185402030
+8  -0.181926277  0.094822532  0.077040595 -0.0912453481
+9  -0.091664548  0.074617383 -0.063083081  0.0485026017
+10 -0.004623297 -0.121172396 -0.023051709  0.0399906875
+11 -0.069831927 -0.112275339  0.052115532  0.0838708557
+12 -0.076863124 -0.099253622  0.147047756  0.0459507638
+13 -0.164749429  0.063679124 -0.050687149 -0.0114276400
+14 -0.044778926  0.135414912 -0.044182269  0.0620429964
+15 -0.107099074 -0.014827710  0.090728622  0.0252812490
+16 -0.153055407 -0.052205803  0.098455477 -0.0085767240
+17 -0.108039162 -0.006626530 -0.042670510  0.0454340698
+18 -0.097449509 -0.157771715  0.008686597 -0.0951976995
+19 -0.091942323 -0.121147194 -0.124199993  0.0006223908
+20 -0.092012095 -0.050954011 -0.091259434 -0.0742653444
+21 -0.124343306 -0.078729948 -0.054922552  0.0413684425
+22 -0.065187594 -0.114506942 -0.076513111 -0.0028532645
+23  0.175627928  0.037582701  0.006865462 -0.0842659587
+24  0.236511831  0.078131730 -0.033429541 -0.0310916684
+25  0.198072300  0.045219894  0.006797108 -0.0599120979
+26  0.193851041 -0.021425180 -0.009395955 -0.0656077030
+27  0.168517666  0.038861446  0.008769650 -0.0808518206
+28  0.209914310  0.054377202 -0.041777981  0.0074802198
+29  0.079375228  0.017982603  0.148531091 -0.0002487461
+30  0.197011927 -0.110781351  0.006501856 -0.0383205895
+31  0.216985737 -0.086674401 -0.013486672  0.0554070190
+32  0.177769757  0.066311571 -0.015625501  0.0129689097
+33  0.165422975 -0.005690133 -0.015645415  0.0370510865
+34  0.207011445  0.028813704  0.019056653  0.1074336081
+35  0.203365126  0.023354994  0.024290193  0.0516979922
+> row.names(metaMDS_points) <- mydata_names[,1]
+> names(metaMDS_points) <- c('nmds_1', 'nmds_2', 'nmds_3', 'nmds_4')
+> #
+> pdf('gower_nmds_plot.pdf')
+> plot(metaMDS_points)
+> dev.off()
+null device 
+          1 
+> pdf('gower_nmds_plot_1vs2.pdf')
+> plot(metaMDS_points$nmds_1, metaMDS_points$nmds_2, xlab='NMDS dim 1', ylab='NMDS dim 2')
+> text(-0.12,0.12, round(c(mydata_gower_metaMDS$stress * 100), digits=2), col='red')
+> dev.off()
+null device 
+          1 
+> pdf('gower_nmds_plot_1vs3.pdf')
+> plot(metaMDS_points$nmds_1, metaMDS_points$nmds_3, xlab='NMDS dim 1', ylab='NMDS dim 3')
+> text(-0.12,0.12, round(c(mydata_gower_metaMDS$stress * 100), digits=2), col='red')
+> dev.off()
+null device 
+          1 
+> pdf('gower_nmds_plot_2vs3.pdf')
+> plot(metaMDS_points$nmds_2, metaMDS_points$nmds_3, xlab='NMDS dim 2', ylab='NMDS dim 3')
+> text(-0.12,0.12, round(c(mydata_gower_metaMDS$stress * 100), digits=2), col='red')
+> dev.off()
+null device 
+          1 
+> 
+> 
+> ##--Save each dimension of values retained from NMDS into a separate variable, and then
+> ##--in a data frame (extension 'df'):
+> nmds_1 <- metaMDS_points[,1]
+> nmds_2 <- metaMDS_points[,2]
+> nmds_3 <- metaMDS_points[,3]
+> nmds_4 <- metaMDS_points[,4]
+> nmds_dims_df = data.frame(nmds_1, nmds_2, nmds_3, nmds_4)
+> 
+> 
+> ############ II. PREP AND CHECK DATA FOR GMM ANALYSES
+> ##--Make data frame containing the individual sample names as well as columns of points
+> ##--from NMDS dimensions retained during STEP I above. Also save the new data frame(s) to
+> ##--file(s) in the working dir; we may want it handy in case we need it later...
+> sample_names <- mydata_names[,1]
+> type <- mydata_names[,2]
+> species <- mydata_names[,3]
+> mydata_names_df <- data.frame(sample_names, type, species, nmds_1, nmds_2, nmds_3, nmds_4)
+> write.table(mydata_names_df, file='mydata_names_df.txt')
+> 
+> ##--Subset the NMDS points by 'known' and 'unknown' individuals. We also stop to write the
+> ##--resulting new data frames back to file in working dir--in case of subsequent checks: 
+> attach(mydata_names_df)
+The following objects are masked _by_ .GlobalEnv:
+
+    nmds_1, nmds_2, nmds_3, nmds_4, sample_names, species, type
+
+> known_0 <- mydata_names_df[ which(mydata_names_df$type=='known'), ]
+> detach(mydata_names_df)
+> row.names(known_0) <- known_0[,1]
+> known_0
+                 sample_names  type species       nmds_1      nmds_2
+bib_CHUNB56555 bib_CHUNB56555 known     bib -0.161780043  0.07706632
+bib_CHUNB56918 bib_CHUNB56918 known     bib -0.117165458  0.07484791
+bib_CHUNB57375 bib_CHUNB57375 known     bib -0.202156339  0.11933050
+bib_CHUNB57376 bib_CHUNB57376 known     bib -0.158137919  0.10338990
+bib_CHUNB57377 bib_CHUNB57377 known     bib -0.103688792 -0.05175512
+bib_CHUNB57378 bib_CHUNB57378 known     bib -0.121941248  0.04658801
+bib_CHUNB64577 bib_CHUNB64577 known     bib -0.181926277  0.09482253
+bib_CHUNB64578 bib_CHUNB64578 known     bib -0.091664548  0.07461738
+bib_CHUNB64579 bib_CHUNB64579 known     bib -0.004623297 -0.12117240
+bib_CHUNB64603 bib_CHUNB64603 known     bib -0.069831927 -0.11227534
+bib_CHUNB64604 bib_CHUNB64604 known     bib -0.076863124 -0.09925362
+bib_CHUNB64605 bib_CHUNB64605 known     bib -0.164749429  0.06367912
+bib_CHUNB64606 bib_CHUNB64606 known     bib -0.044778926  0.13541491
+bib_CHUNB64607 bib_CHUNB64607 known     bib -0.107099074 -0.01482771
+bib_CHUNB64609 bib_CHUNB64609 known     bib -0.108039162 -0.00662653
+bib_CHUNB64610 bib_CHUNB64610 known     bib -0.097449509 -0.15777171
+bib_MZUSP65628 bib_MZUSP65628 known     bib -0.091942323 -0.12114719
+bib_MZUSP66105 bib_MZUSP66105 known     bib -0.092012095 -0.05095401
+bib_MZUSP78721 bib_MZUSP78721 known     bib -0.124343306 -0.07872995
+bib_MZUSP87592 bib_MZUSP87592 known     bib -0.065187594 -0.11450694
+bil_MCNR445       bil_MCNR445 known     bil  0.175627928  0.03758270
+bil_MCNR522       bil_MCNR522 known     bil  0.236511831  0.07813173
+bil_MCNR3277     bil_MCNR3277 known     bil  0.193851041 -0.02142518
+bil_MCNR3557     bil_MCNR3557 known     bil  0.168517666  0.03886145
+bil_MZUSP5366   bil_MZUSP5366 known     bil  0.209914310  0.05437720
+bil_MZUSP10410 bil_MZUSP10410 known     bil  0.079375228  0.01798260
+bil_MZUSP29698 bil_MZUSP29698 known     bil  0.197011927 -0.11078135
+bil_MZUSP39522 bil_MZUSP39522 known     bil  0.216985737 -0.08667440
+bil_MZUSP42778 bil_MZUSP42778 known     bil  0.177769757  0.06631157
+bil_CHUNB36171 bil_CHUNB36171 known     bil  0.207011445  0.02881370
+bil_CHUNB36172 bil_CHUNB36172 known     bil  0.203365126  0.02335499
+                     nmds_3        nmds_4
+bib_CHUNB56555 -0.082327519 -0.0272331254
+bib_CHUNB56918 -0.107495451  0.1011349115
+bib_CHUNB57375  0.010103346 -0.0436035892
+bib_CHUNB57376  0.042797700 -0.0391129066
+bib_CHUNB57377 -0.044743726 -0.0998462820
+bib_CHUNB57378  0.058772537  0.1059629070
+bib_CHUNB64577  0.077040595 -0.0912453481
+bib_CHUNB64578 -0.063083081  0.0485026017
+bib_CHUNB64579 -0.023051709  0.0399906875
+bib_CHUNB64603  0.052115532  0.0838708557
+bib_CHUNB64604  0.147047756  0.0459507638
+bib_CHUNB64605 -0.050687149 -0.0114276400
+bib_CHUNB64606 -0.044182269  0.0620429964
+bib_CHUNB64607  0.090728622  0.0252812490
+bib_CHUNB64609 -0.042670510  0.0454340698
+bib_CHUNB64610  0.008686597 -0.0951976995
+bib_MZUSP65628 -0.124199993  0.0006223908
+bib_MZUSP66105 -0.091259434 -0.0742653444
+bib_MZUSP78721 -0.054922552  0.0413684425
+bib_MZUSP87592 -0.076513111 -0.0028532645
+bil_MCNR445     0.006865462 -0.0842659587
+bil_MCNR522    -0.033429541 -0.0310916684
+bil_MCNR3277   -0.009395955 -0.0656077030
+bil_MCNR3557    0.008769650 -0.0808518206
+bil_MZUSP5366  -0.041777981  0.0074802198
+bil_MZUSP10410  0.148531091 -0.0002487461
+bil_MZUSP29698  0.006501856 -0.0383205895
+bil_MZUSP39522 -0.013486672  0.0554070190
+bil_MZUSP42778 -0.015625501  0.0129689097
+bil_CHUNB36171  0.019056653  0.1074336081
+bil_CHUNB36172  0.024290193  0.0516979922
+> write.table(known_0, file='known_0.txt')
+> str(known_0)
+'data.frame':	31 obs. of  7 variables:
+ $ sample_names: Factor w/ 35 levels "bib_CHUNB56555",..: 1 2 3 4 5 6 8 9 10 11 ...
+ $ type        : Factor w/ 2 levels "known","unknown": 1 1 1 1 1 1 1 1 1 1 ...
+ $ species     : Factor w/ 2 levels "bib","bil": 1 1 1 1 1 1 1 1 1 1 ...
+ $ nmds_1      : num  -0.162 -0.117 -0.202 -0.158 -0.104 ...
+ $ nmds_2      : num  0.0771 0.0748 0.1193 0.1034 -0.0518 ...
+ $ nmds_3      : num  -0.0823 -0.1075 0.0101 0.0428 -0.0447 ...
+ $ nmds_4      : num  -0.0272 0.1011 -0.0436 -0.0391 -0.0998 ...
+> #
+> knowns <- known_0[,-c(1:3)]
+> knowns
+                     nmds_1      nmds_2       nmds_3        nmds_4
+bib_CHUNB56555 -0.161780043  0.07706632 -0.082327519 -0.0272331254
+bib_CHUNB56918 -0.117165458  0.07484791 -0.107495451  0.1011349115
+bib_CHUNB57375 -0.202156339  0.11933050  0.010103346 -0.0436035892
+bib_CHUNB57376 -0.158137919  0.10338990  0.042797700 -0.0391129066
+bib_CHUNB57377 -0.103688792 -0.05175512 -0.044743726 -0.0998462820
+bib_CHUNB57378 -0.121941248  0.04658801  0.058772537  0.1059629070
+bib_CHUNB64577 -0.181926277  0.09482253  0.077040595 -0.0912453481
+bib_CHUNB64578 -0.091664548  0.07461738 -0.063083081  0.0485026017
+bib_CHUNB64579 -0.004623297 -0.12117240 -0.023051709  0.0399906875
+bib_CHUNB64603 -0.069831927 -0.11227534  0.052115532  0.0838708557
+bib_CHUNB64604 -0.076863124 -0.09925362  0.147047756  0.0459507638
+bib_CHUNB64605 -0.164749429  0.06367912 -0.050687149 -0.0114276400
+bib_CHUNB64606 -0.044778926  0.13541491 -0.044182269  0.0620429964
+bib_CHUNB64607 -0.107099074 -0.01482771  0.090728622  0.0252812490
+bib_CHUNB64609 -0.108039162 -0.00662653 -0.042670510  0.0454340698
+bib_CHUNB64610 -0.097449509 -0.15777171  0.008686597 -0.0951976995
+bib_MZUSP65628 -0.091942323 -0.12114719 -0.124199993  0.0006223908
+bib_MZUSP66105 -0.092012095 -0.05095401 -0.091259434 -0.0742653444
+bib_MZUSP78721 -0.124343306 -0.07872995 -0.054922552  0.0413684425
+bib_MZUSP87592 -0.065187594 -0.11450694 -0.076513111 -0.0028532645
+bil_MCNR445     0.175627928  0.03758270  0.006865462 -0.0842659587
+bil_MCNR522     0.236511831  0.07813173 -0.033429541 -0.0310916684
+bil_MCNR3277    0.193851041 -0.02142518 -0.009395955 -0.0656077030
+bil_MCNR3557    0.168517666  0.03886145  0.008769650 -0.0808518206
+bil_MZUSP5366   0.209914310  0.05437720 -0.041777981  0.0074802198
+bil_MZUSP10410  0.079375228  0.01798260  0.148531091 -0.0002487461
+bil_MZUSP29698  0.197011927 -0.11078135  0.006501856 -0.0383205895
+bil_MZUSP39522  0.216985737 -0.08667440 -0.013486672  0.0554070190
+bil_MZUSP42778  0.177769757  0.06631157 -0.015625501  0.0129689097
+bil_CHUNB36171  0.207011445  0.02881370  0.019056653  0.1074336081
+bil_CHUNB36172  0.203365126  0.02335499  0.024290193  0.0516979922
+> dim(knowns)[1]
+[1] 31
+> write.table(knowns, file='knowns.txt')
+> str(knowns)
+'data.frame':	31 obs. of  4 variables:
+ $ nmds_1: num  -0.162 -0.117 -0.202 -0.158 -0.104 ...
+ $ nmds_2: num  0.0771 0.0748 0.1193 0.1034 -0.0518 ...
+ $ nmds_3: num  -0.0823 -0.1075 0.0101 0.0428 -0.0447 ...
+ $ nmds_4: num  -0.0272 0.1011 -0.0436 -0.0391 -0.0998 ...
+> #
+> known_labels <- subset(mydata_names_df$species, type=='known')
+> length(known_labels)
+[1] 31
+> known_labels
+ [1] bib bib bib bib bib bib bib bib bib bib bib bib bib bib bib bib bib bib bib
+[20] bib bil bil bil bil bil bil bil bil bil bil bil
+Levels: bib bil
+> #
+> attach(mydata_names_df)
+The following objects are masked _by_ .GlobalEnv:
+
+    nmds_1, nmds_2, nmds_3, nmds_4, sample_names, species, type
+
+> unknown_0 <- mydata_names_df[ which(mydata_names_df$type=='unknown'), ]
+> detach(mydata_names_df)
+> row.names(unknown_0) <- unknown_0[,1]
+> unknown_0 <- unknown_0[,-c(1:3)]
+> write.table(unknown_0, file='unknown_0.txt')
+> str(unknown_0)
+'data.frame':	4 obs. of  4 variables:
+ $ nmds_1: num  -0.091 -0.153 0.198 0.165
+ $ nmds_2: num  0.0254 -0.05221 0.04522 -0.00569
+ $ nmds_3: num  0.1279 0.0985 0.0068 -0.0156
+ $ nmds_4: num  -0.01854 -0.00858 -0.05991 0.03705
+> #
+> unknown_labels <- subset(mydata_names_df$species, type=='unknown')
+> length(unknown_labels)
+[1] 4
+> unknown_labels
+[1] bib bib bil bil
+Levels: bib bil
+> 
+> ##--Remove names from data frame of unknowns and place in var 'X' (bgmm unknowns var). Also 
+> ##--read in the belief matrix (B) containing prior probabilities for the knowns, with 0.95 
+> ##--probability for 'known' labeled individuals and all other cells receiving probs of
+> ##--0.05/k (where k is number of components or clusters, and number of columns in B). 
+> ##--***IMPORTANT***: matrix B is generated by the user prior to running this script and
+> ##--ONLY contains individuals classified as 'knowns'.
+> row.names(unknown_0) <- c(1:dim(unknown_0)[1])
+> unknowns <- unknown_0
+> X <- unknowns
+> X
+       nmds_1       nmds_2       nmds_3       nmds_4
+1 -0.09100147  0.025404976  0.127937392 -0.018540203
+2 -0.15305541 -0.052205803  0.098455477 -0.008576724
+3  0.19807230  0.045219894  0.006797108 -0.059912098
+4  0.16542298 -0.005690133 -0.015645415  0.037051087
+> dim(X)
+[1] 4 4
+> #
+> B <- read.table('./run0_0.5.txt', header=TRUE, sep='	')
+> names(B) <- c(0:2)
+> row.names(B) <- B[,1]
+> B <- B[,-c(1)]
+> B
+                   1     2
+bib_CHUNB56555 0.950 0.025
+bib_CHUNB56918 0.950 0.025
+bib_CHUNB57375 0.950 0.025
+bib_CHUNB57376 0.950 0.025
+bib_CHUNB57377 0.950 0.025
+bib_CHUNB57378 0.950 0.025
+bib_CHUNB64577 0.950 0.025
+bib_CHUNB64578 0.950 0.025
+bib_CHUNB64579 0.950 0.025
+bib_CHUNB64603 0.950 0.025
+bib_CHUNB64604 0.950 0.025
+bib_CHUNB64605 0.950 0.025
+bib_CHUNB64606 0.950 0.025
+bib_CHUNB64607 0.950 0.025
+bib_CHUNB64609 0.950 0.025
+bib_CHUNB64610 0.950 0.025
+bib_MZUSP65628 0.950 0.025
+bib_MZUSP66105 0.950 0.025
+bib_MZUSP78721 0.950 0.025
+bib_MZUSP87592 0.950 0.025
+bil_MCNR445    0.025 0.950
+bil_MCNR522    0.025 0.950
+bil_MCNR3277   0.025 0.950
+bil_MCNR3557   0.025 0.950
+bil_MZUSP5366  0.025 0.950
+bil_MZUSP10410 0.025 0.950
+bil_MZUSP29698 0.025 0.950
+bil_MZUSP39522 0.025 0.950
+bil_MZUSP42778 0.025 0.950
+bil_CHUNB36171 0.025 0.950
+bil_CHUNB36172 0.025 0.950
+> dim(B)
+[1] 31  2
+> 
+> 
+> 
+> ############ III. CONDUCT UNSUPERVISED GMM CLUSTERING ANALYSIS IN RMIXMOD
+> if( 1 == '0' ){print('Skipping unsupervised GMM analysis... ')} else {if(1 == '1' ){
++ date()
++ print('Conducting unsupervised GMM analysis of the data using Rmixmod... ')
++ #
++ if( 0 == '0'){print('Running unsupervised GMM using a single cluster number... ')
++ mydata_gower_gmm <-mixmodCluster(nmds_dims_df, nbCluster=2)
++ summary(mydata_gower_gmm)
++ pdf('gower_gmm_result.pdf')  ## SAVE THIS PLOT!
++ plot(mydata_gower_gmm)
++ dev.off()
++ mydata_gower_gmm['partition']
++ } else {print('Running unsupervised GMMs over a range of values for nbCluster, then selecting the best model using BIC... ')
++ mydata_gower_gmm <-mixmodCluster(nmds_dims_df, nbCluster=0)
++ summary(mydata_gower_gmm)
++ pdf('gower_gmm_result.pdf')  ## SAVE THESE PLOTS--THEY'RE AWESOME!!!
++ plot(mydata_gower_gmm)
++ plot(mydata_gower_gmm, c(1, 2))
++ plot(mydata_gower_gmm, c(1, 3))
++ plot(mydata_gower_gmm, c(1, 4))
++ plot(mydata_gower_gmm, c(2, 3))
++ plot(mydata_gower_gmm, c(2, 4))
++ plot(mydata_gower_gmm, c(3, 4))
++ dev.off()
++ mydata_gower_gmm['partition']}
++ 	}
++ }
+[1] "Conducting unsupervised GMM analysis of the data using Rmixmod... "
+[1] "Running unsupervised GMM using a single cluster number... "
+**************************************************************
+* Number of samples    =  35 
+* Problem dimension    =  4 
+**************************************************************
+*       Number of cluster =  2 
+*              Model Type =  Gaussian_pk_Lk_C 
+*               Criterion =  BIC(-291.2625)
+*              Parameters =  list by cluster
+*                  Cluster  1 : 
+                         Proportion =  0.6286 
+                              Means =  -0.1104 -0.0075 -0.0042 0.0040 
+                          Variances = |     0.0023    -0.0014    -0.0012     0.0008 |
+                                      |    -0.0014     0.0072    -0.0001    -0.0001 |
+                                      |    -0.0012    -0.0001     0.0052     0.0001 |
+                                      |     0.0008    -0.0001     0.0001     0.0046 |
+*                  Cluster  2 : 
+                         Proportion =  0.3714 
+                              Means =  0.1869 0.0128 0.0070 -0.0068 
+                          Variances = |     0.0012    -0.0007    -0.0007     0.0004 |
+                                      |    -0.0007     0.0038    -0.0001    -0.0000 |
+                                      |    -0.0007    -0.0001     0.0027     0.0000 |
+                                      |     0.0004    -0.0000     0.0000     0.0024 |
+*          Log-likelihood =  181.1848 
+**************************************************************
+ [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2
+> 
+> ####### IV. (SEMI-)SUPERVISED GMM-BASED DISCRIMINANT ANALYSIS IN RMIXMOD:
+> if( 0 == '0' ){print('Skipping GMM-based discriminant analysis in Rmixmod... ')} else {if(0 == '1' ){
++ ## Analysis:
++ ##    A. Learning:
++ mydata_known_learn <- mixmodLearn(as.data.frame(knowns), as.factor(known_labels), nbCVBlocks = 10)
++ mydata_known_learn['bestResult']
++ graphics.off()
++ quartz()
++ pdf('superRmixmod_learn_results.pdf')   ## SAVE THESE PLOTS--THEY'RE AWESOME!!!
++ plot(mydata_known_learn)
++ plot(mydata_known_learn, c(1, 2))
++ plot(mydata_known_learn, c(1, 3))
++ plot(mydata_known_learn, c(1, 4))
++ plot(mydata_known_learn, c(2, 3))
++ plot(mydata_known_learn, c(2, 4))
++ plot(mydata_known_learn, c(3, 4))
++ dev.off()
++ #
++ ##    B. Prediction:
++ ## My prior experience with this (supervised prediction on lizard morphological dataset)
++ ## suggests that prediction success when going from a set of knowns (1:1 or partial coverage)
++ ## to unknowns is usually not so good (~20%). Nevertheless, here goes:
++ mydata_unknown_prediction <- mixmodPredict(data = X, classificationRule = mydata_known_learn['bestResult'])
++ summary(mydata_unknown_prediction)
++ mean(as.integer(unknown_labels) == mydata_unknown_prediction['partition'])
++ 	}
++ }
+[1] "Skipping GMM-based discriminant analysis in Rmixmod... "
+> 
+> ####### V. (SEMI-)SUPERVISED BELIEF-BASED GMM ANALYSIS IN BGMM:
+> if( 3 == '0' ){print('Skipping belief-based GMM analysis in bgmm... ')} else if(3 == '1' ){
++ supervisedModel <- supervised(as.data.frame(knowns), class = as.factor(known_labels))
++ supervisedModel
++ # pdf('bgmm_supervised_result.pdf')
++ # plot(supervisedModel)
++ # dev.off()
++ } else if(3 == '2' ){
++ semisupervisedModel <- semisupervised(as.data.frame(X), as.data.frame(knowns), class = as.factor(known_labels), k = 2, P = B)
++ 
++ pdf('bgmm_semisupervised_result.pdf')
++ plot(semisupervisedModel)
++ dev.off()
++ z <- as.data.frame(semisupervisedModel$tij)
++ write.table(z, file='bgmm_semisupervised_posteriorProbs.txt', sep='	')} else if(3 == '3' ){
++ supervisedModel <- supervised(as.data.frame(knowns), class = as.factor(known_labels))
++ supervisedModel
++ # pdf('bgmm_supervised_result.pdf')
++ # plot(supervisedModel)
++ # dev.off()
++ semisupervisedModel <- semisupervised(as.data.frame(X), as.data.frame(knowns), class = as.factor(known_labels), k = 2, P = B)
++ 
++ pdf('bgmm_semisupervised_result.pdf')
++ plot(semisupervisedModel)
++ dev.off()
++ z <- as.data.frame(semisupervisedModel$tij)
++ write.table(z, file='bgmm_semisupervised_posteriorProbs.txt', sep='	')} else {print('Sorry, the belief, soft, and unsupervised routines in bgmm are not yet supported in GaussClust... ')}
+> 
+> 
+> 
+> 
+> ######################################### END ############################################
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  2.894   0.140   3.460 
