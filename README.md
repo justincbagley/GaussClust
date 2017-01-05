@@ -19,6 +19,8 @@ Alternatively, please provide the following link to this software repository in 
 
 The DOI for GaussClust v0.1.0, via [Zenodo](https://zenodo.org), is coming soon. :wink:
 
+## CONTENTS
+
 - [Introduction](https://github.com/justincbagley/GaussClust#introduction)
 - [Getting Started](https://github.com/justincbagley/GaussClust#getting-started)
 - [Troubleshooting](https://github.com/justincbagley/GaussClust#troubleshooting)
