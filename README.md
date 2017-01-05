@@ -41,7 +41,7 @@ The **bgmmSensTest** portion of the repository uses a simple sensitivity analysi
 
 Hopefully, the results of bgmmSensTest will show that varying knowns' plausibilities has very little effect on the posterior outcome of the assignments of knowns, and of of course this should also have very little effect on the unknowns! If, for example, results meet an arbitrary value of \<\<5% difference across all pairs of probability matrices (each derived from running GaussClust with a different 'test value' for the knowns' prior probs), then you can probably feel confident in fixing the prior probabilities of the knowns to a set value. Alternatively, results might be better presented from across the range of test values used in bgmmSensTest.
 
-_NOTE_: One difference between bgmmSensTest code and regular GaussClust runs is that bgmmSensTest calls a 'lite' version of GaussClust with reduced to-screen output (printing comments to screen mostly turned off). Users should only use this 'GaussClust_lite.sh' script with bgmmSensTest.sh, not by itself.
+_NOTE_: One difference between bgmmSensTest code and regular GaussClust runs is that bgmmSensTest calls a 'lite' version of GaussClust with reduced to-screen output (printing comments to screen mostly turned off). _Users should only use this 'GaussClust_lite.sh' script with bgmmSensTest.sh, not by itself._
 
 **Which GaussClust option is best for my kind of analysis?**
 
@@ -49,14 +49,18 @@ Specific examples are given in different Usage sections below, but in general yo
 
 **What's new in GaussClust?**
 
-While GaussClust is just passing its initial development stages, I have recently updated GaussClust in several ways, for example to use the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS, rather than using 'isoMDS' through labdsv (which turned out to be slightly problematic). See the TODO list below for other ways I am seeking to improve the software. *If it interests you, feel free to jump in and help with development!!* :memo::+1:
+While GaussClust is just passing its initial development stages, I have recently updated this software in several ways, for example to use the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS, rather than using 'isoMDS' through labdsv (which turned out to be slightly problematic). See the TODO list below for other ways I am seeking to improve the software. **_If it interests you, feel free to jump in and help with development!!_ :memo::+1:**
 
 
 ## GETTING STARTED
 
 ### Dependencies
-![alt tag](https://cloud.githubusercontent.com/assets/10584087/21243724/b12a94d2-c2df-11e6-9d20-5cf06877ad94.png)  Code in the GaussClust repository is largely dependent upon R and a series of R packages, as follows:
-- The [R](https://www.r-project.org) software environment (available from download mirrors from The Comprehensive R Archive Network (CRAN) such as https://cloud.r-project.org), as well as several R packages including:
+
+![alt tag](https://cloud.githubusercontent.com/assets/10584087/21243724/b12a94d2-c2df-11e6-9d20-5cf06877ad94.png)  
+
+Code in the GaussClust repository is largely dependent upon R and a series of R packages, as follows:
+- The [R](https://www.r-project.org) software environment
+  * available from download mirrors from The Comprehensive R Archive Network (CRAN), such as https://cloud.r-project.org
 - [bgmm](https://cran.r-project.org/web/packages/bgmm/index.html)
 - [Rmixmod](https://cran.r-project.org/web/packages/Rmixmod/index.html)
 - [StatMatch](https://cran.r-project.org/web/packages/StatMatch/index.html)
@@ -78,9 +82,9 @@ Perhaps the most important admonition I can make here is that users should be su
 One suggestion for doing the above is for users to (1) explore basic patterns in the data, (2) conduct outlier analyses and remove any problematic individuals or variables, and (3) conduct pilot analyses with basic multivariate methods and nominal species labels prior to conducting any analyses using GaussClust. However, it would probably be a good idea to collect data for at least two to three times the number of nominal taxa in the dataset, in the case of species delimitation and classification analyses (this is my arbitrary guess; of course, four times that number might be even better!).
 
 ### GaussClust Usage
-> :warning: **WARNING!:** _As of current development build, GaussClust will only work properly if you specify to retain 4 NMDS dimensions (-k 4). Other values for -k will give weird results or cause run(s) to fail! Please excuse this limitation and note that fixing this issue is on the [TODO list](https://github.com/justincbagley/GaussClust/blob/master/README.md#todo)!!; however, retaining 4 dimensions is common practice and may be adequate for your purposes (see note in k flag info in Usage below)._ 
+> :warning: **WARNING!:** _As of current development build, GaussClust will only work properly if you specify to retain 4 NMDS dimensions (-k 4). Other values for -k will give weird results or cause run(s) to fail! Please excuse this limitation and note that fixing this issue is on the [TODO list](https://github.com/justincbagley/GaussClust/blob/master/README.md#todo)!!; however, retaining 4 dimensions is common practice and may be adequate for your purposes (see k flag explanation in Usage below)._ 
 
-Assuming GaussClust.sh is present in the current working directory, display usage for the script by simply entering its name at the command line, as follows:
+Assuming GaussClust.sh is present in the current working directory, display usage for the script by simply entering its name at the command line and hitting return, as follows:
 ```
 $ ./GaussClust.sh
 
@@ -152,7 +156,7 @@ make the names a little longer if needed.
 ```
 
 ### Real-world GaussClust example \#1, with screen output:
-Below is an example of the usage for GaussClust (options above), using the example data files ("Enyalius_35.txt" and "probs_35.txt") located in the "example_data_files" folder of the distro. In this simplified example, we use GaussClust to conduct only unsupervised Gaussian clustering on 2 clusters (-c 2), on 4 dimensions of data retained from NMDS (-k 4). All screen output (e.g. to Terminal on mac) from the analysis is shown. When you run GaussClust, 'INFO' and date printed to screen along with information for each of the broader steps of the script (details from R go to an \*.Rout file, organized at the end of each run). Question-response lines output to screen are marked 'FLOW' and (to date) requrie yes/no answers. As you can see, the code runs with no error messages. **_NOTE: This run produced all directories and ouptut files present in the "Ex1_GaussClust" folder provided within the GaussClust distribution_. Look through the files to learn more about the structure of GaussClust output.**
+Below is an example of the usage for GaussClust (options above) in which the example data files ("Enyalius_35.txt" and "probs_35.txt"), located in the "example_data_files" folder of the distro, are used to conduct _only_ unsupervised Gaussian clustering on 2 clusters (-c 2), on 4 dimensions of data retained from NMDS (-k 4). All screen output (e.g. to Terminal on mac) from the analysis is shown. When you run GaussClust, 'INFO' and date printed to screen along with information for each of the broader steps of the script (details from R go to an \*.Rout file, organized at the end of each run). Question-response lines output to screen are marked 'FLOW' and (to date) requrie yes/no answers. As you can see, the code runs with no error messages. **_This run produced all directories and ouptut files present in the "Ex1_GaussClust" folder provided within the GaussClust distribution_. Look through the files to learn more about the structure of GaussClust output, including graphical results saved as PDF files.**
 ```
 $ ./GaussClust.sh -k 4 -u 1 -r 0 -d 0 -b 0 -p ./probs_35.txt -c 2 ./Enyalius_35.txt
 
@@ -174,7 +178,7 @@ INFO      | Wed Jan  4 19:12:03 CST 2017 | Bye.
 ```
 
 ### Another real-world GaussClust example, showing variations:
-Here, (1) we specify to keep 4 NMDS dimensions (-k 4); (2) conduct a regular unsupervised GMM analysis in Rmixmod, using multiple models across 5-20 clusters (-u 1 -r 5:20), which are compared to identify the best model using BIC; (3) call supervised discriminant analysis in Rmixmod (-d 1); (4) attempt supervised and semisupervised analysis in bgmm (-b 3 for 'both'); and (4) specify that analyses use or require 13 clusters (as needed; -c 13). Output is not redirected (e.g. by placing something like '> output.txt' at the end, so all output from the script is printed to screen (except for steps conducted in R).
+Here, (1) we specify to keep 4 NMDS dimensions (-k 4); (2) conduct a regular unsupervised GMM analysis in Rmixmod, using multiple models across 5-20 clusters (-u 1 -r 5:20), which are compared to identify the best model using BIC; (3) call supervised discriminant analysis in Rmixmod (-d 1); (4) attempt supervised and semisupervised analysis in bgmm (-b 3 for 'both'); and (4) specify that analyses use or require 13 clusters (as needed; -c 13). Output is not redirected (e.g. by placing something like '> output.txt' at the end, so all output from the script is printed to screen (except for steps conducted in R). Example files are not provided for this example, because this analysis is part of an on-going project in our lab.
 ```
 $ ./GaussClust.sh -k 4 -u 1 -r 5:20 -d 1 -b 3 -p B_206.txt -c 13 ./mydata.txt
 ```
@@ -182,22 +186,55 @@ $ ./GaussClust.sh -k 4 -u 1 -r 5:20 -d 1 -b 3 -p B_206.txt -c 13 ./mydata.txt
 ### bgmmSensTest Usage
 > :warning: **WARNING!:** _As of current development build, you should run bgmmSensTest.sh in a new sub-folder created within the GaussClust-master distro folder, so that GaussClust_lite.sh is present one enclosing folder up from the working directory for the analysis_. 
 
-The bgmmSensTest script doesn't print out usage options like GaussClust does; however, assuming you heed the warning above, the bgmm sensitivity test can then be run by adding appropriate values for test conditions following each equals sign in the bgmm_sens_test.cfg configuration file and then entering ```$ ./bgmmSensTest.sh``` at the command line while the data file (e.g. 'data.txt'), P matrix file (e.g. 'P.txt'), and configuration file are all present in the same working dir folder. Here is code from a brief, toy example of bgmmSensTest run setup and usage, drawing on fictional file names in parentheses above:
-```
-$ cd GaussClust-master
-$ mkdir sens_test1; cp ./data.txt ./P.txt ./bgmm_sens_test.cfg ./sens_test1/;
-$ cd ./sens_test1/
-$ ./bgmmSensTest.sh
-```
+The bgmmSensTest script doesn't print out usage options, as GaussClust does; however, assuming you heed the warning above, the bgmm sensitivity test can then be run by adding appropriate values for test conditions following each equals sign in the bgmm_sens_test.cfg configuration file and then entering ```$ ./bgmmSensTest.sh``` at the command line while the data file (e.g. 'data.txt'), P matrix file (e.g. 'P.txt'), and configuration file are all present in the same working dir folder. 
 
 ### Real-world bgmmSensTest example \#1, with screen output:
-I have produced a bgmmSensTest example using the same example data files as those used to test GaussClust above. I provide the example configuration file and screen output from a run on these files below. **_NOTE: This run produced all directories and ouptut files present in the "Ex2_bgmmSensTest" folder provided within the GaussClust distribution_. Look through the files to learn more about the structure of bgmmSensTest output.**
+I have produced a bgmmSensTest example using the same example data files as those used to test GaussClust above. Below, I provide the code for producing the example configuration file and screen output from a run on these files. **_This run produced all directories and ouptut files present in the "Ex2_bgmmSensTest" folder provided within the GaussClust distribution_. Look through the files to learn more about the structure of bgmmSensTest output, including graphical results output to PDF files.**
 
 ```
 $ cd GaussClust-master
+$ nano ./bgmm_sens_test.cfg  ## Use nano to edit the configuration file and save changes.
+$ cat ./bgmm_sens_test.cfg  ## Use cat to view the contents of the configuration file:
+######################  bgmmSensTest v0.1.0 Configuration File  ##########################
+
+## PARTIAL STRING FOR GaussClust OPTIONS k, u, r, d, and b  ##
+##--Must be a string listing each option flag in usual way (hyphen followed by lowercase 
+##--letter), followed by a space, and then an integer value. This is a 'partial' string
+##--because the flag (-p) and filename info for the matrix of plausibilities / prior 
+##--probabilities on knowns are not included, nor is the -c flag with the number of 
+##--clusters (this is handled below) or the original data file name (handled below as well). 
+##--Also RECALL: To get Usage for ./GaussClust.sh, simply type the script name at the CLI 
+##--and press enter. See the GaussClust script or its README for more information; however, 
+##--here are two examples of syntax that could be used here:
+##--	-k 4 -u 1 -r 0 -d 0 -b 3
+##--	-k 4 -u 1 -r 5:20 -d 1 -b 3
+
+	opt_string_part=-k 4 -u 1 -r 0 -d 0 -b 3
+
+## NUMBER OF COMPONENTS (e.g. GAUSSIAN COMPONENTS), OR CLUSTERS (-c) ##
+	
+	num_clusters=2
+	
+## FILE NAMES  ##
+	data_file=Enyalius_35.txt
+	probs_file=probs_35.txt
+
+## SENSITIVITY TEST SETTINGS  ##
+	target_diag_value=0.95
+	num_test_vals=6
+	test_val_min=0.5
+	test_val_max=0.95
+	test_val_inc=0.09
+	
+#
+#
+#
+######################################### END ############################################
+$ 
+$ ## Make a new directory for the example run and move the files into it:
 $ mkdir Ex2_bgmmSensTest; cp ./example_data_files/Enyalius_35.txt ./example_data_files/probs_35.txt ./bgmm_sens_test.cfg ./Ex2_bgmmSensTest/;
 $ cd ./Ex2_bgmmSensTest/
-$ ./bgmmSensTest.sh 
+$ ./bgmmSensTest.sh  ## Run the sensitivity analysis!
 
 ##########################################################################################
 #                           bgmmSensTest v0.1.0, December 2016                           #
@@ -222,11 +259,36 @@ INFO      | Wed Jan  4 19:13:54 CST 2017 | Bye.
 ```
 
 ### Troubleshooting
-How to troubleshoot the two most common problems encountered by users:
+How to troubleshoot some potentially common problems encountered by users:
 
-1. One problem you may run into is the 'permission denied' error ("-bash: ./GaussClust.sh: Permission denied"), which might be returned by the bash (or other) shell when attempting to execute the shell scripts in the repo. This indicates that permissions for .sh files were not correctly set up during [Installation](https://github.com/justincbagley/GaussClust#installation) above. Fix this by moving into the repository master folder and entering ```$ chmod u+x ./*.sh``` at the command line, then using the shell script(s) in the repo folder from that point forward.
+\1. One problem you may run into is the 'permission denied' error ("-bash: ./GaussClust.sh: Permission denied") returned by the bash (or other) shell when attempting to execute the shell scripts. This indicates that permissions for .sh files were not correctly set during [Installation](https://github.com/justincbagley/GaussClust#installation). Fix this by moving into the repository master folder and entering ```$ chmod u+x ./*.sh``` at the command line, then using the shell script(s) in the repo folder from that point forward.
 
-2. Sometimes, likelihood or Bayesian calculations in Rmixmod or bgmm fail because they, by chance, use a 'bad'/suboptimal random number seed. This is a rather trivial issue, but it can cause clustering analysis runs to fail. Fixing this requires simply re-running the analysis with a different seed (selected for you each time you run). For example, one common minor issue with bgmmSensTest analyses is that you are attempting to run x number of runs over x different test values, and the code creates separate daughter folders in which each run is conducted, but one run fails because one or all model likelihoods goes to infinity! You will notice this because 1) an error will be output to screen showing that the shell 'mv', or move, command failed to execute properly since it couldn't find the posterior probability txt file resulting from one of the runs (which should be present in a 'txt' folder in the run directory). This causes the bgmmSensTest analyses and figures to be incomplete. For example, if you don't rerun the analysis, then you will have one less heatmap-type plot than expected in the resulting "plots.pdf" output file.
+\2. Sometimes, likelihood or Bayesian calculations in Rmixmod or bgmm fail because they, by chance, use a 'bad'/suboptimal random number seed. This is a rather trivial issue, but it can cause clustering analysis runs to fail. Fixing this requires simply re-running the analysis with a different seed (selected for you each time you run). For example, one common minor issue with bgmmSensTest analyses is that you are attempting to run x number of runs over x different test values, and the code creates separate daughter folders in which each run is conducted, but one run fails because one or all model likelihoods goes to infinity! You will notice this because 1) an error will be output to screen showing that the shell 'mv', or move, command failed to execute properly since it couldn't find the posterior probability txt file resulting from one of the runs (which should be present in a 'txt' folder in the run directory). This causes the bgmmSensTest analyses and figures to be incomplete. For example, if you don't rerun the analysis, then you will have one less heatmap-type plot than expected in the resulting "plots.pdf" output file.
+
+\3. If you inadvertently attempted to run bgmmSensTest without passing a value other than zero for the -b flag in the configuration file, you will find a number of errors and problems with the results. For example, after running bgmmSensTest with "-b 0" in the first cfg file option, you will find that separate runs were conducted across a range of test values, but that a series of errors were printed to screen starting at the end of STEP \#3, in which cp, sed, cat, and rm failed. The first cp failure message will say that the \*\_posteriorProbs.txt results files could not be found, and later error messages will also state that no ./tij\*.txt file could be removed, etc. From the partial screen output below, you can see that the reporting gets a bit messy, indicating several things went wrong:
+```
+INFO      | Thu Jan  5 00:50:29 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
+cp: ./run0_0.5/R/*_posteriorProbs.txt: No such file or directory
+cp: ./run1_0.59/R/*_posteriorProbs.txt: No such file or directory
+cp: ./run2_0.68/R/*_posteriorProbs.txt: No such file or directory
+cp: ./run3_0.77/R/*_posteriorProbs.txt: No such file or directory
+cp: ./run4_0.86/R/*_posteriorProbs.txt: No such file or directory
+cp: ./run5_0.95/R/*_posteriorProbs.txt: No such file or directory
+sed: ./pairs.txt: No such file or directory
+cat: ./Rtop.tmp: No such file or directory
+rm: ./Rtop.tmp: No such file or directory
+INFO      | Thu Jan  5 00:50:32 CST 2017 | STEP #4: MAKE R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE FOR VISUALIZING AND COMPARING RESULTS... 
+INFO      | Thu Jan  5 00:50:32 CST 2017 | STEP #5: RUN THE R SCRIPT AND CONDUCT CLEANUP. 
+rm: ./tij*.txt: No such file or directory
+rm: ./*.tmp: No such file or directory
+rm: ./pairs*.txt: No such file or directory
+rm: ./diffProTests.txt: No such file or directory
+INFO      | Thu Jan  5 00:50:33 CST 2017 | Done conducting sensitivity test(s) examining the effect of varying the 'prior' probabilities of known observations in the beliefs matrix supplied to bgmm, using bgmmSensTest.
+INFO      | Thu Jan  5 00:50:33 CST 2017 | Bye.
+```
+
+Under this scenario, comparisons also will not be made between test runs and output files (e.g. PDFs) present in the "Ex2_bgmmSensTest" example run folder will not be created during your sensitivity analysis! Avoid these issues by always passing a non-zero option using the -b flag.
+
 
 ## REFERENCES
 - Edwards DL, Knowles LL (2014) Species detection and individual assignment in species delimitation: can integrative data increase efficacy? Proceedings of the Royal Society B, 281, 20132765. 
