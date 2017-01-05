@@ -67,7 +67,7 @@ _NOTE_: One difference between bgmmSensTest code and regular GaussClust runs is 
 - [gplots](https://cran.r-project.org/web/packages/gplots/index.html)
 
 ### Installation
-:computer: GaussClust uses UNIX shell and R scripts and thus is well suited for running on a variety of operating systems, but especially UNIX/LINUX-like systems. Most of these systems (Mac OSX, Ubuntu, Linux, etc.) come with the shell preinstalled, so GaussClust code should run "out-of-the-box" from most any folder on your machine.
+:computer: GaussClust uses UNIX shell and R scripts and thus is well suited for running on a variety of operating systems, but especially UNIX/LINUX-like systems. Most of these systems (Mac OSX, Ubuntu, Linux, etc.) come with the shell preinstalled, so GaussClust code should run "out-of-the-box" from most any folder on your machine. To 'install' GaussClust, all you need to do is download the repository, move into the repository folder and type ```$ chmod u+x ./*.sh``` into the command line interface (e.g. Mac Terminal), and it will be ready to run.
 
 ### Best practices for input data and format
 :warning: GaussClust calls R functions that are capable of robustly handling several weaknesses often present in real working datasets employed by researchers in systematics & biodiversity research, including (1) mixed data-types and (2) missing data. As one of its first steps, GaussClust also standardizes and reduces the dimensionality of the data using non-metric multidimensional scaling (NMDS), prior to running any Gaussian mixture models or discriminant analyses. This is ideal, because NMDS makes fewer assumptions about the data than other ordination methods such as PCA. However, it is critical that the data meet some standards for NMDS. 
@@ -156,19 +156,19 @@ Below is an example of the usage for GaussClust (options above), using the examp
 $ ./GaussClust.sh -k 4 -u 1 -r 0 -d 0 -b 0 -p ./probs_35.txt -c 2 ./Enyalius_35.txt
 
 ##########################################################################################
-#                            GaussClust v0.1.0, January 2017                             #
+#                             GaussClust v0.1.0, January 2016                              #
 ##########################################################################################
 
-INFO      | Wed Jan  4 14:37:43 CST 2017 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
-INFO      | Wed Jan  4 14:37:43 CST 2017 | STEP #2: MAKE GAUSSIAN CLUSTERING R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE... 
-INFO      | Wed Jan  4 14:37:43 CST 2017 | STEP #3: RUN THE R SCRIPT. 
-INFO      | Wed Jan  4 14:37:47 CST 2017 | STEP #4: CLEAN UP THE WORKSPACE. 
-INFO      | Wed Jan  4 14:37:47 CST 2017 |          Moving R output files to new folder named 'R'... 
-FLOW      | Wed Jan  4 14:37:47 CST 2017 |          Would you like to keep the Rscript output by GaussClust? (y/n) : y
-FLOW      | Wed Jan  4 14:37:57 CST 2017 |          Would you like to keep text files output by GaussClust? (y/n) : y
-INFO      | Wed Jan  4 14:37:57 CST 2017 |          Moving text files to new folder named 'txt'... 
-INFO      | Wed Jan  4 14:37:57 CST 2017 | Done conducting Gaussian clustering and related analyses using GaussClust.
-INFO      | Wed Jan  4 14:37:57 CST 2017 | Bye.
+INFO      | Wed Jan  4 19:11:52 CST 2017 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
+INFO      | Wed Jan  4 19:11:52 CST 2017 | STEP #2: MAKE GAUSSIAN CLUSTERING R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE... 
+INFO      | Wed Jan  4 19:11:52 CST 2017 | STEP #3: RUN THE R SCRIPT. 
+INFO      | Wed Jan  4 19:11:56 CST 2017 | STEP #4: CLEAN UP THE WORKSPACE. 
+INFO      | Wed Jan  4 19:11:56 CST 2017 |          Moving R output files to new folder named 'R'... 
+FLOW      | Wed Jan  4 19:11:56 CST 2017 |          Would you like to keep the Rscript output by GaussClust? (y/n) : y
+FLOW      | Wed Jan  4 19:12:02 CST 2017 |          Would you like to keep text files output by GaussClust? (y/n) : y
+INFO      | Wed Jan  4 19:12:03 CST 2017 |          Moving text files to new folder named 'txt'... 
+INFO      | Wed Jan  4 19:12:03 CST 2017 | Done conducting Gaussian clustering and related analyses using GaussClust.
+INFO      | Wed Jan  4 19:12:03 CST 2017 | Bye.
 
 ```
 
@@ -193,33 +193,39 @@ $ ./bgmmSensTest.sh
 I have produced a bgmmSensTest example using the same example data files as those used to test GaussClust above. I provide the example configuration file and screen output from a run on these files below. **_NOTE: This run produced all directories and ouptut files present in the "Ex2_bgmmSensTest" folder provided within the GaussClust distribution_. Look through the files to learn more about the structure of bgmmSensTest output.**
 
 ```
-$ cd 
+$ cd GaussClust-master
+$ mkdir Ex2_bgmmSensTest; cp ./example_data_files/Enyalius_35.txt ./example_data_files/probs_35.txt ./bgmm_sens_test.cfg ./Ex2_bgmmSensTest/;
+$ cd ./Ex2_bgmmSensTest/
 $ ./bgmmSensTest.sh 
 
 ##########################################################################################
 #                           bgmmSensTest v0.1.0, December 2016                           #
 ##########################################################################################
 
-INFO      | Wed Jan  4 14:43:00 CST 2017 | Starting bgmmSensTest analysis... 
-INFO      | Wed Jan  4 14:43:00 CST 2017 | STEP #1: SETUP AND USER INPUT. 
-INFO      | Wed Jan  4 14:43:00 CST 2017 |          Setting working directory to: /Users/justinbagley/Downloads/GaussClust-master/Ex2_bgmmSensTest 
-INFO      | Wed Jan  4 14:43:00 CST 2017 |          Reading in sensitivity test conditions and file names from configuration file. 
-INFO      | Wed Jan  4 14:43:00 CST 2017 | STEP #2: MAKE DIFFERENT INPUT FILES FOR THE TEST, VARYING TEST STAT ACROSS A RANGE OF VALUES. 
-INFO      | Wed Jan  4 14:43:00 CST 2017 | STEP #3: RUN ALGORITHM ACROSS TEST INPUT FILES, SAVE & COLLATE RESULTS. 
-INFO      | Wed Jan  4 14:43:00 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
-INFO      | Wed Jan  4 14:43:03 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
-INFO      | Wed Jan  4 14:43:06 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
-INFO      | Wed Jan  4 14:43:09 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
-INFO      | Wed Jan  4 14:43:13 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
-INFO      | Wed Jan  4 14:43:16 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
-INFO      | Wed Jan  4 14:43:19 CST 2017 | STEP #4: MAKE R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE FOR VISUALIZING AND COMPARING RESULTS... 
-INFO      | Wed Jan  4 14:43:19 CST 2017 | STEP #5: RUN THE R SCRIPT AND CONDUCT CLEANUP. 
-INFO      | Wed Jan  4 14:43:20 CST 2017 | Done conducting sensitivity test(s) examining the effect of varying the 'prior' probabilities of known observations in the beliefs matrix supplied to bgmm, using bgmmSensTest.
-INFO      | Wed Jan  4 14:43:20 CST 2017 | Bye.
+INFO      | Wed Jan  4 19:13:35 CST 2017 | Starting bgmmSensTest analysis... 
+INFO      | Wed Jan  4 19:13:35 CST 2017 | STEP #1: SETUP AND USER INPUT. 
+INFO      | Wed Jan  4 19:13:35 CST 2017 |          Setting working directory to: /Users/justinbagley/Documents/GaussClust/Ex2_bgmmSensTest 
+INFO      | Wed Jan  4 19:13:35 CST 2017 |          Reading in sensitivity test conditions and file names from configuration file. 
+INFO      | Wed Jan  4 19:13:35 CST 2017 | STEP #2: MAKE DIFFERENT INPUT FILES FOR THE TEST, VARYING TEST STAT ACROSS A RANGE OF VALUES. 
+INFO      | Wed Jan  4 19:13:35 CST 2017 | STEP #3: RUN ALGORITHM ACROSS TEST INPUT FILES, SAVE & COLLATE RESULTS. 
+INFO      | Wed Jan  4 19:13:35 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
+INFO      | Wed Jan  4 19:13:38 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
+INFO      | Wed Jan  4 19:13:41 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
+INFO      | Wed Jan  4 19:13:44 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
+INFO      | Wed Jan  4 19:13:47 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
+INFO      | Wed Jan  4 19:13:50 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
+INFO      | Wed Jan  4 19:13:53 CST 2017 | STEP #4: MAKE R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE FOR VISUALIZING AND COMPARING RESULTS... 
+INFO      | Wed Jan  4 19:13:53 CST 2017 | STEP #5: RUN THE R SCRIPT AND CONDUCT CLEANUP. 
+INFO      | Wed Jan  4 19:13:54 CST 2017 | Done conducting sensitivity test(s) examining the effect of varying the 'prior' probabilities of known observations in the beliefs matrix supplied to bgmm, using bgmmSensTest.
+INFO      | Wed Jan  4 19:13:54 CST 2017 | Bye.
 ```
 
 ### Troubleshooting
-Sometimes, GaussClust runs will fail because likelihood or Bayesian calculations in Rmixmod or bgmm fail. This can be caused by a 'bad' random number seed, which is a rather trivial issue that requires simply re-running the analysis with a different seed (selected for you each time you run). For example, one common minor issue with bgmmSensTest analyses is that you are attempting to run x number of runs over x different test values, and the code creates separate daughter folders in which each run is conducted, but one run fails because one or all model likelihoods goes to infinity! You will notice this because 1) an error will be output to screen showing that the shell 'mv', or move, command failed to execute properly since it couldn't find the posterior probability txt file resulting from one of the runs (which should be present in a 'txt' folder in the run directory). This causes the bgmmSensTest analyses and figures to be incomplete. For example, if you don't rerun the analysis, then you will have one less heatmap-type plot than expected in the resulting "plots.pdf" output file.
+How to troubleshoot the two most common problems encountered by users:
+
+1. One problem you may run into is the 'permission denied' error ("-bash: ./GaussClust.sh: Permission denied"), which might be returned by the bash (or other) shell when attempting to execute the shell scripts in the repo. This indicates that permissions for .sh files were not correctly set up during [Installation](https://github.com/justincbagley/GaussClust#installation) above. Fix this by moving into the repository master folder and entering ```$ chmod u+x ./*.sh``` at the command line, then using the shell script(s) in the repo folder from that point forward.
+
+2. Sometimes, likelihood or Bayesian calculations in Rmixmod or bgmm fail because they, by chance, use a 'bad'/suboptimal random number seed. This is a rather trivial issue, but it can cause clustering analysis runs to fail. Fixing this requires simply re-running the analysis with a different seed (selected for you each time you run). For example, one common minor issue with bgmmSensTest analyses is that you are attempting to run x number of runs over x different test values, and the code creates separate daughter folders in which each run is conducted, but one run fails because one or all model likelihoods goes to infinity! You will notice this because 1) an error will be output to screen showing that the shell 'mv', or move, command failed to execute properly since it couldn't find the posterior probability txt file resulting from one of the runs (which should be present in a 'txt' folder in the run directory). This causes the bgmmSensTest analyses and figures to be incomplete. For example, if you don't rerun the analysis, then you will have one less heatmap-type plot than expected in the resulting "plots.pdf" output file.
 
 ## REFERENCES
 - Edwards DL, Knowles LL (2014) Species detection and individual assignment in species delimitation: can integrative data increase efficacy? Proceedings of the Royal Society B, 281, 20132765. 
