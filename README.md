@@ -320,6 +320,7 @@ R GMM, clustering, and NMDS tutorials:
 Current:
 
 - **Make code work on -k values other than 4, so user is free to specify any number of retained NMDS dimensions!**
+- **Add example output graphics / screenshots to README!**
 - Explore different methods for BIC calculation (e.g. in mclust) during unsupervised clustering.
 - Explain defaults better.
 - Would be nice if not giving a flag meant the corresponding analysis was not run (equivalent to passing '0' for some of the options).
