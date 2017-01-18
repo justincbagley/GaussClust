@@ -1,19 +1,19 @@
 #!/bin/sh
 
 ##########################################################################################
-#                             GaussClust v0.1.0, January 2016                              #
+#                             GaussClust v0.1.0, January 2017                              #
 #   SHELL SCRIPT FOR AUTOMATING GAUSSIAN MIXTURE MODELING ON CONTINUOUS, DISCRETE, OR    #
 #   COMBINED GENETIC/MORPHOLOGICAL/ECOLOGICAL DATA, FOR SPECIES DELIMITATION AND         #
 #   CLASSIFICATION                                                                       #
 #   Copyright (c)2016 Justin C. Bagley, Universidade de Brasília, Brasília, DF, Brazil.  #
 #   See the README and license files on GitHub (http://github.com/justincbagley) for     #
-#   further information. Last update: January 3, 2016. For questions, please email       #
+#   further information. Last update: January 3, 2017. For questions, please email       #
 #   jcbagley@unb.br.                                                                     #
 ##########################################################################################
 
 echo "
 ##########################################################################################
-#                             GaussClust v0.1.0, January 2016                              #
+#                             GaussClust v0.1.0, January 2017                              #
 ##########################################################################################
 "
 echo "INFO      | $(date) | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... "
