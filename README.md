@@ -180,7 +180,7 @@ Below is an example of the usage for GaussClust.sh, in which the example data fi
 $ ./GaussClust.sh -k 4 -u 1 -r 0 -d 0 -b 0 -p ./probs_35.txt -c 2 ./Enyalius_35.txt
 
 ##########################################################################################
-#                             GaussClust v0.1.0, January 2016                              #
+#                             GaussClust v0.1.0, January 2017                              #
 ##########################################################################################
 
 INFO      | Wed Jan  4 19:11:52 CST 2017 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
