@@ -179,7 +179,7 @@ echo "
 ##--number of rows with known observations in the :
 	cd ./run0*/txt/
 	NUM_KNOWN_ROWS=$(grep "\"known" ./mydata_names_df.txt | wc -l)
-	cd $MY_PATH
+	cd ..; cd ..;
 
 	##--Make txt file with the logical testing code and place in variable and in Rscript:
 	sed 's/\([0-9]*\)\ \([0-9]*\)/identical(tijObjList\[\1\]\[\[1\]\]\[1\:'"$NUM_KNOWN_ROWS"'\,\]\,\ tijObjList\[\2\]\[\[1\]\]\[1\:'"$NUM_KNOWN_ROWS"'\,\])/g; s/\ //g' ./pairs.txt > ./logicalTests.txt
