@@ -31,7 +31,7 @@ The DOI for GaussClust v0.1.0, via [Zenodo](https://zenodo.org), is as follows: 
 - [Acknowledgements](https://github.com/justincbagley/GaussClust#acknowledgements)
 - [References](https://github.com/justincbagley/GaussClust#references)
 - [Other Readings](https://github.com/justincbagley/GaussClust#other-readings)
-- [TODO List](https://github.com/justincbagley/GaussClust#todo)
+- [TODO List](https://github.com/justincbagley/GaussClust#todo-list)
 
 
 ## INTRODUCTION
@@ -66,7 +66,7 @@ Specific examples are given in different Usage sections below, but in general yo
 
 **What's new in GaussClust?**
 
-While GaussClust is just passing its initial development stages, I have recently updated this software in several ways, for example to use the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS, rather than using 'isoMDS' through labdsv (which turned out to be slightly problematic). **See the [TODO list](https://github.com/justincbagley/GaussClust/blob/master/README.md#todo) below for other ways I am seeking to improve the software. _If it interests you, feel free to jump in and help with development!!_ :memo::+1:**
+While GaussClust is just passing its initial development stages, I have recently updated this software in several ways, for example to use the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS, rather than using 'isoMDS' through labdsv (which turned out to be slightly problematic). **See the [TODO list](https://github.com/justincbagley/GaussClust#todo-list) below for other ways I am seeking to improve the software. _If it interests you, feel free to jump in and help with development!!_ :memo::+1:**
 
 
 ## GETTING STARTED
