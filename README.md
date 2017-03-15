@@ -365,7 +365,7 @@ R GMM, clustering, and NMDS tutorials:
 - https://rstudio-pubs-static.s3.amazonaws.com/58843_d17d5721f5254ac3bbeea211466c0bb7.html
 
 ## TODO LIST
-Current:
+**Current:**
 
 - **Make code work on -k values other than 4, so user is free to specify any number of retained NMDS dimensions!**
 - **Add example output graphics / screenshots to README!**
@@ -376,7 +376,7 @@ Current:
 - Would be nice if not giving a flag meant the corresponding analysis was not run (equivalent to passing '0' for some of the options).
 - Provide warnings to user, with a particularly important example being to warn when the number of variables is less than k (number of clusters), in which case NMDS will surely fail to produce good results!
 
-Recently finished/fixed:
+**Recently finished/fixed:**
 
 - Solve two input file problem. **DONE!** :white_check_mark:
 - Make GaussClust script do more with bgmm, including semisupervised analysis using belief probs matrix. **DONE!** :white_check_mark:
