@@ -200,13 +200,16 @@ INFO      | Wed Jan  4 19:12:03 CST 2017 | Bye.
 **Read-world GaussClust example Results:**
 
 **Figure 1. Structure and examples of GaussClust results, based on "Ex1_GaussClust" example run.** Multiple PDF figures are output into the 'R' folder within the working directory, two of which are shown here. The first (_at left_), is a pairwise plot of Gower distances between observations, which shows a pronounced pattern of variation suggestive of multiple groups present in the dataset. The second figure (_at right_) shows the results of the unsupervised GMM analysis, comparing pairwise NMDS plots. Two clusters were strongly supported, and in a species delimitation context, this analysis would be interpreted as recovering two morphologically distinct populations or 'species'. **_Look in the "GaussClust.Rout" file in the R folder for more detailed results, including raw NMDS scores and details on clustering partitions etc.!_** 
-![alt tag](https://cloud.githubusercontent.com/assets/10584087/21687010/1f85da92-d32d-11e6-85b8-9e55e8ccfd56.png)
+
+<a href="https://cloud.githubusercontent.com/assets/10584087/21687010/1f85da92-d32d-11e6-85b8-9e55e8ccfd56.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687010/1f85da92-d32d-11e6-85b8-9e55e8ccfd56.png" title="source: J. C. Bagley" width=90% height=90% /></a>
 
 **Figure 2. Additional pairwise plots of NMDS results from GaussClust, including stress and patterns of variation in the dims with no clusters imposed.**
-![alt tag](https://cloud.githubusercontent.com/assets/10584087/21687009/1f7d79ce-d32d-11e6-800e-b2e7a0247205.png)
+
+<a href="https://cloud.githubusercontent.com/assets/10584087/21687009/1f7d79ce-d32d-11e6-800e-b2e7a0247205.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687009/1f7d79ce-d32d-11e6-800e-b2e7a0247205.png" title="source: J. C. Bagley" width=90% height=90% /></a>
 
 **Figure 3. A more complex unsupervised GMM result from GaussClust, produced during an analysis that supported 6 clusters in the data.**
-![alt tag](https://cloud.githubusercontent.com/assets/10584087/21687007/1f7b38b2-d32d-11e6-806b-353471e39ffc.png)
+
+<a href="https://cloud.githubusercontent.com/assets/10584087/21687007/1f7b38b2-d32d-11e6-806b-353471e39ffc.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687007/1f7b38b2-d32d-11e6-806b-353471e39ffc.png" title="source: J. C. Bagley" width=50% height=50% /></a>
 
 ### Another real-world GaussClust example, showing some variations:
 Here, (1) we specify to keep 4 NMDS dimensions (-k 4); (2) conduct a regular unsupervised GMM analysis in the Rmixmod R package (Lebret et al. 2015), using multiple models across 5-20 clusters (-u 1 -r 5:20), which are compared to identify the best model using BIC; (3) call supervised discriminant analysis in Rmixmod (-d 1); (4) attempt supervised and semisupervised analysis in bgmm (-b 3 for 'both'); and (4) specify that analyses use or require 13 clusters (as needed; -c 13). Output is not redirected (e.g. by placing something like '> output.txt' at the end, so all output from the script is printed to screen (except for steps conducted in R). Example files are not provided for this example, because this analysis is part of an on-going project in our lab.
@@ -294,14 +297,16 @@ INFO      | Wed Jan  4 19:13:54 CST 2017 | Bye.
 **Read-world bgmmSensTest example Results:**
 
 **Figure 4. Structure and examples of bgmmSensTest results, based on "Ex2_bgmmSensTest" example run.** This figures shows the file structure resulting from a sensitivity anlaysis using bgmmSensTest. Runs are conducted over a range of test values, each within a separately labeled folder (here runs 0-5, over 6 test values). The first (_below left_) inset shows output to the R folder within one individual test run folder, that for run0. The "bgmm_semisupervised_result.pdf" figure clearly supports two groups in the data. **_Look in the "comparePPMats.Rout" file for more details about this result (output to R console and saved to file) and comparisons among test runs!_** All the resulting posterior probabilities of assignment are compared by the Rscript generated during the analysis, and output files are placed in the working directory. One of these ("diffpro_unsort_ylim1.pdf") clearly shows that varying the prior probabilities of knowns results in \<5% difference across different pairs of result (posterior) matrices, on an appropriate 0-1 scale, suggesting that varying the on-diagonal probs of knowns has little effect on the results. 
-![alt tag](https://cloud.githubusercontent.com/assets/10584087/21687008/1f7b6698-d32d-11e6-8940-4034bdf87657.png)
+
+<a href="https://cloud.githubusercontent.com/assets/10584087/21687008/1f7b6698-d32d-11e6-8940-4034bdf87657.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687008/1f7b6698-d32d-11e6-8940-4034bdf87657.png" title="source: J. C. Bagley" width=90% height=90% /></a>
 
 **Figure 5.** (_see caption below_)
-![alt tag](https://cloud.githubusercontent.com/assets/10584087/21687006/1f7993ae-d32d-11e6-9f08-fc426f43bf99.png)
+
+<a href="https://cloud.githubusercontent.com/assets/10584087/21687006/1f7993ae-d32d-11e6-9f08-fc426f43bf99.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687006/1f7993ae-d32d-11e6-9f08-fc426f43bf99.png" title="source: J. C. Bagley" width=70% height=70% /></a>
 
 **Figure 6.** (_see caption below_)
-![alt tag](https://cloud.githubusercontent.com/assets/10584087/21687005/1f792a36-d32d-11e6-856c-c534c3f0b1a3.png)
 
+<a href="https://cloud.githubusercontent.com/assets/10584087/21687005/1f792a36-d32d-11e6-856c-c534c3f0b1a3.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687005/1f792a36-d32d-11e6-856c-c534c3f0b1a3.png" title="source: J. C. Bagley" width=70% height=70% /></a>
 
 ## TROUBLESHOOTING
 How to troubleshoot some potentially common problems encountered by users:
