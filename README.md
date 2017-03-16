@@ -302,7 +302,7 @@ INFO      | Wed Jan  4 19:13:54 CST 2017 | Bye.
 
 **Figure 5.** (_see caption below_)
 
-<a href="https://cloud.githubusercontent.com/assets/10584087/21687006/1f7993ae-d32d-11e6-9f08-fc426f43bf99.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687006/1f7993ae-d32d-11e6-9f08-fc426f43bf99.png" title="source: J. C. Bagley" width=70% height=70% align="center" /></a>
+<a href="https://cloud.githubusercontent.com/assets/10584087/21687006/1f7993ae-d32d-11e6-9f08-fc426f43bf99.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687006/1f7993ae-d32d-11e6-9f08-fc426f43bf99.png" title="source: J. C. Bagley" width=60% height=60% align="center" /></a>
 
 **Figure 6.** (_see caption below_)
 
