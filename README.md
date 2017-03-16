@@ -298,15 +298,15 @@ INFO      | Wed Jan  4 19:13:54 CST 2017 | Bye.
 
 **Figure 4. Structure and examples of bgmmSensTest results, based on "Ex2_bgmmSensTest" example run.** This figures shows the file structure resulting from a sensitivity anlaysis using bgmmSensTest. Runs are conducted over a range of test values, each within a separately labeled folder (here runs 0-5, over 6 test values). The first (_below left_) inset shows output to the R folder within one individual test run folder, that for run0. The "bgmm_semisupervised_result.pdf" figure clearly supports two groups in the data. **_Look in the "comparePPMats.Rout" file for more details about this result (output to R console and saved to file) and comparisons among test runs!_** All the resulting posterior probabilities of assignment are compared by the Rscript generated during the analysis, and output files are placed in the working directory. One of these ("diffpro_unsort_ylim1.pdf") clearly shows that varying the prior probabilities of knowns results in \<5% difference across different pairs of result (posterior) matrices, on an appropriate 0-1 scale, suggesting that varying the on-diagonal probs of knowns has little effect on the results. 
 
-<a href="https://cloud.githubusercontent.com/assets/10584087/21687008/1f7b6698-d32d-11e6-8940-4034bdf87657.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687008/1f7b6698-d32d-11e6-8940-4034bdf87657.png" title="source: J. C. Bagley" width=90% height=90% /></a>
+<a href="https://cloud.githubusercontent.com/assets/10584087/21687008/1f7b6698-d32d-11e6-8940-4034bdf87657.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687008/1f7b6698-d32d-11e6-8940-4034bdf87657.png" title="source: J. C. Bagley" width=90% height=90% align="center" /></a>
 
 **Figure 5.** (_see caption below_)
 
-<a href="https://cloud.githubusercontent.com/assets/10584087/21687006/1f7993ae-d32d-11e6-9f08-fc426f43bf99.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687006/1f7993ae-d32d-11e6-9f08-fc426f43bf99.png" title="source: J. C. Bagley" width=70% height=70% /></a>
+<a href="https://cloud.githubusercontent.com/assets/10584087/21687006/1f7993ae-d32d-11e6-9f08-fc426f43bf99.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687006/1f7993ae-d32d-11e6-9f08-fc426f43bf99.png" title="source: J. C. Bagley" width=70% height=70% align="center" /></a>
 
 **Figure 6.** (_see caption below_)
 
-<a href="https://cloud.githubusercontent.com/assets/10584087/21687005/1f792a36-d32d-11e6-856c-c534c3f0b1a3.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687005/1f792a36-d32d-11e6-856c-c534c3f0b1a3.png" title="source: J. C. Bagley" width=70% height=70% /></a>
+<a href="https://cloud.githubusercontent.com/assets/10584087/21687005/1f792a36-d32d-11e6-856c-c534c3f0b1a3.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687005/1f792a36-d32d-11e6-856c-c534c3f0b1a3.png" title="source: J. C. Bagley" width=70% height=70% align="center" /></a>
 
 ## TROUBLESHOOTING
 How to troubleshoot some potentially common problems encountered by users:
