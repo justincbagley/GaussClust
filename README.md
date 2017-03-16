@@ -306,7 +306,7 @@ INFO      | Wed Jan  4 19:13:54 CST 2017 | Bye.
 
 **Figure 6.** (_see caption below_)
 
-<a href="https://cloud.githubusercontent.com/assets/10584087/21687005/1f792a36-d32d-11e6-856c-c534c3f0b1a3.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687005/1f792a36-d32d-11e6-856c-c534c3f0b1a3.png" title="source: J. C. Bagley" width=70% height=70% align="center" /></a>
+<a href="https://cloud.githubusercontent.com/assets/10584087/21687005/1f792a36-d32d-11e6-856c-c534c3f0b1a3.png"><img src="https://cloud.githubusercontent.com/assets/10584087/21687005/1f792a36-d32d-11e6-856c-c534c3f0b1a3.png" title="source: J. C. Bagley" width=60% height=60% align="center" /></a>
 
 ## TROUBLESHOOTING
 How to troubleshoot some potentially common problems encountered by users:
