@@ -1,4 +1,5 @@
-# GaussClust v0.1.0 ![alt tag](https://cloud.githubusercontent.com/assets/10584087/21690324/5ea075fa-d339-11e6-8dbd-610db97c60d3.png)
+<a href="http://imgur.com/KleBQPV"><img src="http://i.imgur.com/KleBQPV.png" title="source: Justin C. Bagley" width=60% height=60% align="center" /></a>
+
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/251b2967a13a436e86884e97603e7d51)](https://www.codacy.com/app/justincbagley/GaussClust?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=justincbagley/GaussClust&amp;utm_campaign=Badge_Grade) [![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-green.svg?style=flat)](LICENSE)
 
 Clustering using Gaussian mixture modeling for species delimitation and classification
