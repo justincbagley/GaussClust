@@ -44,16 +44,24 @@ techniques in multivariate statistical learning." - Lebret et al. (2015)*
 
 This repository focuses on ways to use Gaussian Mixture Models (GMMs) to conduct clustering analyses to address problems in systematics, particularly in the delimitation of species, and classification of individuals to species, using univariate or multivariate data. Recent papers discuss the promise of such methods for species delimitation, with or without multiple data-types (e.g. genetic, morphological, ecological data), and with or without accounting for noise during clustering (Hausdorf & Hennig 2010; Edwards & Knowles 2014). The current development version of the repository focuses on GaussClust.sh, a shell script that customizes and runs R scripts to conduct various GMM analyses, and bgmmSensTest.sh and related code for exploring the sensitivity of belief-based GMM analysis to varying prior probabilities on known observations. As in the case of the author's other software on GitHub (e.g. [PIrANHA](https://github.com/justincbagley/PIrANHA)), GaussClust is fully command line-based and is available as open-source software according to the license. 
 
-As noted by Lebret et al. (2015), two foci of multivariate approaches related to clustering are (1) clustering proper, which aims to group observations (e.g. individuals) into groups or 'clusters' that are more similar to one another than to other clusters, and (2) classification methods where a discriminant function is used to assign new data to groups that are known a priori. GaussClust.sh primarily focuses on the former, but the latter also sneaks into clustering analyses and therefore is also included. The basic GaussClust workflow is most broadly divided into accomplishing three goals: (1) setting up and reading in the data, (2) creating an Rscript to conduct a set of user-directed GMM-based analyses, (3) running the Rscript and cleaning up the working directory. 
+As noted by Lebret et al. (2015), two foci of multivariate approaches related to clustering are **clustering** proper, which aims to group observations (e.g. individuals) into groups or 'clusters' that are more similar to one another than to other clusters, and **classification methods** where a discriminant function is used to assign new data to groups that are known a priori. GaussClust.sh primarily focuses on the former, but the latter also sneaks into clustering analyses and therefore is also included. The basic GaussClust workflow is most broadly divided into accomplishing three goals: 
+>1. setting up and reading in the data, 
+>2. creating an Rscript to conduct a set of user-directed GMM-based analyses, 
+>3. running the Rscript and cleaning up the working directory. 
 
-The code run by **GaussClust.sh** in R can be set up to accomplish at least three basic steps: I. scaling/standardization of the data by converting the raw data to Gower distances (Gower 1971) and conducting non-metric multidimensional scaling (NMDS) on the distances, II. checking and preparing the data for GMM analyses, and III. calling different GMM analyses. There are several types of NMDS and GMM analyses available using GaussClust, including:
+The code run by **GaussClust.sh** in R can be set up to accomplish at least three basic steps: 
+>1. scaling/standardization of the data by converting the raw data to Gower distances (Gower 1971) and conducting non-metric multidimensional scaling (NMDS) on the distances, 
+>2. checking and preparing the data for GMM analyses, and 
+>3. calling different GMM analyses. 
+
+There are several types of NMDS and GMM analyses available using GaussClust, including:
 - **NMDS:**
- - regular NMDS on a single value specified for the number of clusters in the data
- - NMDS model selection using BIC
+  * regular NMDS on a single value specified for the number of clusters in the data
+  * NMDS model selection using BIC
 - **GMMs (all starting from NMDS results):**
- - unsupervised GMM
- - supervised or semisupervised discriminant analysis
- - semisupervised belief-based GMMs
+  * unsupervised GMM
+  * supervised or semisupervised discriminant analysis
+  * semisupervised belief-based GMMs
 
 The [bgmm](https://cran.r-project.org/web/packages/bgmm/index.html) R package (Szczurek et al. 2010; Biecek et al. 2012) that is available when using GaussClust implements several GMM variants, including unsupervised, partially supervised (soft- or belief-based GMM), and supervised models. However, the authors develop and implement belief-based GMM, an approach that I believe is likely to be of special interest during species delimitation and taxonomic classification studies. Thus, use of bgmm in GaussClust presently focuses on belief-based modeling. During belief-based GMM analysis, bgmm expects to be passed the number of clusters, an X matrix of unknown observations, a knowns matrix of labeled observations, and a P matrix containing the plausibilities of the known observations (beliefs matrix is set to P), which is taken as prior knowledge that the observations (e.g. individuals) belong to a certain cluster (Biecek et al. 2012). A problem arises that it may be difficult to assign priors for known observations. Moreover, since belief-based GMM uses the labeled and unlabeled data to estimate mixtures, labels could be predicted that are different from the original cluster labels, which should be the most plausible ones (Biecek et al. 2012). The **bgmmSensTest** portion of the repository uses a simple sensitivity analysis to probe the effect of varying the prior probabilities given to known observations (e.g. labeled individuals) during belief-based GMM in bgmm. 
 
