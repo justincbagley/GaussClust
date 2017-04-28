@@ -6,13 +6,13 @@ Clustering using Gaussian mixture modeling for species delimitation and classifi
 
 ## LICENSE
 
-All code within the GaussClust v0.1.0 repository is available "AS IS" under a generous GNU license. See the [LICENSE](LICENSE) file for more information.
+All code within the GaussClust v0.1.1 repository is available "AS IS" under a generous GNU license. See the [LICENSE](LICENSE) file for more information.
 
 ## CITATION
 
 If you use scripts from this repository as part of your published research, I require that you cite the repository as follows (also see DOI information below): 
   
-- Bagley, J.C. 2017. GaussClust v0.1.0. GitHub repository, Available at: http://github.com/justincbagley/GaussClust.
+- Bagley, J.C. 2017. GaussClust v0.1.1. GitHub repository, Available at: http://github.com/justincbagley/GaussClust.
 
 Alternatively, please provide the following link to this software repository in your manuscript:
 
@@ -20,11 +20,11 @@ Alternatively, please provide the following link to this software repository in 
 
 ## DOI
 
-The DOI for GaussClust v0.1.0, via [Zenodo](https://zenodo.org), is as follows: [![DOI](https://zenodo.org/badge/76403119.svg)](https://zenodo.org/badge/latestdoi/76403119). Here are some examples of citing GaussClust using the DOI: 
+The DOI for GaussClust v0.1.1, via [Zenodo](https://zenodo.org), is as follows: [![DOI](https://zenodo.org/badge/76403119.svg)](https://zenodo.org/badge/latestdoi/76403119). Here are some examples of citing GaussClust using the DOI: 
   
-  Bagley, J.C. 2017. GaussClust v0.1.0. GitHub package, Available at: http://doi.org/10.5281/zenodo.231221.
+  Bagley, J.C. 2017. GaussClust v0.1.1. GitHub package, Available at: http://doi.org/10.5281/zenodo.231221.
 
-  Bagley, J.C. 2017. GaussClust v0.1.0. Zenodo, Available at: http://doi.org/10.5281/zenodo.231221.  
+  Bagley, J.C. 2017. GaussClust v0.1.1. Zenodo, Available at: http://doi.org/10.5281/zenodo.231221.  
 
 ## CONTENTS
 
@@ -73,11 +73,15 @@ _NOTE_: One difference between bgmmSensTest code and regular GaussClust runs is 
 
 **Which GaussClust script or option is best for my kind of analysis?**
 
-Specific examples are given in different Usage sections below, but in general you'll be best off using GaussClust to **delimit species** with an unsupervised GMM or semisupervised belief-based GMM, and it will be best to use the discriminant analysis for **classification**. **GaussClust.sh** is used for straightforward GMM analysis using any method discussed above. **bgmmSensTest.sh** is used with GaussClust_lite.sh to conduct a sensitivity analysis described here and in the script itself. That's pretty much it, though more options are planned for development in the near future!
+Specific examples are given in different Usage sections below, but in general you'll be best off using GaussClust to **delimit species** with an unsupervised GMM or semisupervised (belief-based or soft-labeled) GMM, and it will be best to use the discriminant analysis for **classification**. **GaussClust.sh** is used for straightforward GMM analysis using any method discussed above. **bgmmSensTest.sh** is used with GaussClust_lite.sh to conduct a sensitivity analysis described here and in the script itself. That's pretty much it, though more options are planned for development in the near future!
 
 **What's new in GaussClust?**
 
-While GaussClust is just passing its initial development stages, I have recently updated this software in several ways, for example to use the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS, rather than using 'isoMDS' through labdsv (which turned out to be slightly problematic). **See the [TODO list](https://github.com/justincbagley/GaussClust#todo-list) below for other ways I am seeking to improve the software. _If it interests you, feel free to jump in and help with development!!_ :memo::+1:**
+While GaussClust is just passing its initial development stages, I have recently updated this software in several ways. Some recent edits are listed below.
+- April 2017 - Fixed GaussClust so that belief-based GMM and soft-label GMM analyses are available as (working) options under the -b flag; updated to v0.1.1; prepped new release.
+- As of January 2017 - GaussClust now uses the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS, rather than using 'isoMDS' through labdsv (which turned out to be slightly problematic). 
+
+**See the [TODO list](https://github.com/justincbagley/GaussClust#todo-list) below for other ways I am seeking to improve the software. _If it interests you, feel free to jump in and help with development!!_ :memo::+1:**
 
 
 ## GETTING STARTED
@@ -394,11 +398,12 @@ R GMM, clustering, and NMDS tutorials:
 
 **Recently finished/fixed:**
 
+- Fixed final bgmm modeling steps in Rscript to properly run belief-based and soft-labeled GMM analyses. **DONE!** :white_check_mark:
 - Solve two input file problem. **DONE!** :white_check_mark:
 - Make GaussClust script do more with bgmm, including semisupervised analysis using belief probs matrix. **DONE!** :white_check_mark:
 - Change Usage section of README to include code for working with example files.  **Partially DONE!**
 - Find a better NMDS function than isoMDS in labdsv package. **DONE!** :white_check_mark:
 - Change bgmmSensTest from interactive to non-interactive, and make it produce PDF plots. **DONE!** :white_check_mark:
 
-January 9, 2017
-Justin C. Bagley, Tuscaloosa, AL, USA
+April 28, 2017
+Justin C. Bagley, Richmond, VA, USA
