@@ -5,10 +5,10 @@
 #   SHELL SCRIPT FOR AUTOMATING GAUSSIAN MIXTURE MODELING ON CONTINUOUS, DISCRETE, OR    #
 #   COMBINED GENETIC/MORPHOLOGICAL/ECOLOGICAL DATA, FOR SPECIES DELIMITATION AND         #
 #   CLASSIFICATION                                                                       #
-#   Copyright (c)2017 Justin C. Bagley, Universidade de Brasília, Brasília, DF, Brazil.  #
-#   See the README and license files on GitHub (http://github.com/justincbagley) for     #
-#   further information. Last update: April 28, 2017. For questions, please email        #
-#   jcbagley@unb.br.                                                                     #
+#  Copyright (c)2017 Justinc C. Bagley, Virginia Commonwealth University, Richmond, VA,  #
+#  USA; Universidade de Brasília, Brasília, DF, Brazil. See README and license on GitHub #
+#  (https://github.com/justincbagley) for further information. Last update: April 28,    #
+#  2017. For questions, please email jcbagley@vcu.edu.                                   #
 ##########################################################################################
 
 echo "
