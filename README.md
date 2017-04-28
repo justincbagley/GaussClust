@@ -121,14 +121,14 @@ Assuming GaussClust.sh is present in the current working directory, display usag
 $ ./GaussClust.sh
 
 ##########################################################################################
-#                            GaussClust v0.1.0, January 2017                             #
+#                             GaussClust v0.1.1, April 2017                              #
 ##########################################################################################
 
-INFO      | Wed Jan  4 14:50:29 CST 2017 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
+INFO      | Wed Apr 28 14:50:29 CST 2017 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
 
 Usage: ./GaussClust.sh [options] inputFile
   
-Options: -k nmdsDimensions (specify number of dimensions, k, to retain during NMDS on Gower distances) | -u unsuperGMM (0=no unsupervised GMM is carried out; 1=conduct unsupervised GMM using 'Rmixmod' R package, for comparative or individual purposes) | -r rangeNumClusters (optional numeric listing of a range, x:y, of the number of clusters to be modeled over during unsupervised GMM in Rmixmod) | -d GMMDiscrim (0=(semi-)supervised, GMM-based discriminant analysis is not carried out with 'mixmodelLearn' in Rmixmod; 1=conduct discriminant analysis) | -b beliefBasedMM (0=no mixture modeling is carried out using the 'bgmm' R package; 1=calls 'supervised' GMM analysis, 2=calls 'semisupervised' GMM analysis, and 3=calls both supervised and semisupervised analyses in bgmm) | -p probsMatrix (specify matrix of plausibilities, or weights of the prior probabilities for labeled observations, for bgmm; also sets belief matrix) | -c numComponents (specify number of components (e.g. Gaussian components) or 'clusters' to assign individuals to during regular GMM (single value, rather than a range; see -r above) or bgmm modeling)
+Options: -k nmdsDimensions (specify number of dimensions, k, to retain during NMDS on Gower distances) | -u unsuperGMM (0=no unsupervised GMM is carried out; 1=conduct unsupervised GMM using 'Rmixmod' R package, for comparative or individual purposes) | -r rangeNumClusters (optional numeric listing of a range, x:y, of the number of clusters to be modeled over during unsupervised GMM in Rmixmod) | -d GMMDiscrim (0=(semi-)supervised, GMM-based discriminant analysis is not carried out with 'mixmodelLearn' in Rmixmod; 1=conduct discriminant analysis) | -b beliefBasedMM (0=no mixture modeling is carried out using the 'bgmm' R package; 1=calls 'supervised' GMM analysis, 2=calls 'semisupervised' GMM analysis, 3=calls both supervised and semisupervised analyses, 4=calls 'belief' GMM analysis, and 5=calls 'soft' GMM analysis in bgmm) | -p probsMatrix (specify matrix of plausibilities, or weights of the prior probabilities for labeled observations, for bgmm; also sets belief matrix) | -c numComponents (specify number of components (e.g. Gaussian components) or 'clusters' to assign individuals to during regular GMM (single value, rather than a range; see -r above) or bgmm modeling)
 
 The -k flag sets the number of k dimensions to be retained during NMDS, which affects both
 regular Gaussian mixture modeling and also the different models that are implemented in
@@ -157,14 +157,14 @@ estimates a discriminant function from known labeled data and uses it to predict
 unknown samples that correspondto the same knowns, i.e. species or clusters. Set this flag 
 to '0' to skip this analysis.
 
-The -b flag allows users to request two belief-based Gaussian mixture modeling options 
-available in the 'bgmm' R package. The two currently supported models are specified in 
-different functions by passing the script a value of '1', which calls the 'supervised' 
-function for supervised GMM analysis, or '2', which calls the 'semisupervised' function 
-for semisupervised GMM analysis. You can also call both of these functions by passing a 
-value of '3' to this option. See the bgmm R site and documentation for more information 
-(available at: https://cran.r-project.org/web/packages/bgmm/index.html). Set this flag 
-to '0' to skip this analysis.
+The -b flag allows users to request four belief-based Gaussian mixture modeling options 
+available in the 'bgmm' R package. Passing the script a value of '1' calls the 'supervised' 
+function for supervised GMM analysis; passing a '2' calls the 'semisupervised' function 
+for semisupervised GMM analysis; a '3' calls both the supervised and semisupervised functions;
+a '4' calls the 'belief' function for belief-based GMM analysis; and a '5' calls the 'soft' 
+function for soft-labeled GMM analysis. See the bgmm R site and documentation for more 
+information (available at: https://cran.r-project.org/web/packages/bgmm/index.html). Set this 
+flag to '0' to skip the bgmm analysis altogether.
 
 The -p flag specifies the filename of the bgmm 'B' matrix file in the working dir.
 
