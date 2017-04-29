@@ -120,16 +120,16 @@ echo "INFO      | $(date) | STEP #3: RUN ALGORITHM ACROSS TEST INPUT FILES, SAVE
 
 ###### Prep some values as environmental variables for use in Rscript below:
 ##--Make environmental variable containing posterior probability (PP) matrix names:
-MY_PP_MATRICES=./tij_*.txt
-FUTURE_TIJ_OBJ_NAMES=$(echo $MY_PP_MATRICES | sed 's/\.\///g; s/.txt//g; s/\ /\,\ /g')		## This is used in the Rscript below.
+	MY_PP_MATRICES=./tij_*.txt
+	FUTURE_TIJ_OBJ_NAMES=$(echo $MY_PP_MATRICES | sed 's/\.\///g; s/.txt//g; s/\ /\,\ /g')		## This is used in the Rscript below.
 #
 ##--Account for possible odd or even value for $NUM_TEST_VALUES
-EVEN_CHECK=$(( $NUM_TEST_VALUES % 2 ))
-if [ $EVEN_CHECK -eq 0 ]; then
-	HALF_NUM_TEST_VALUES=$(calc $NUM_TEST_VALUES/2)
-else
-	HALF_NUM_TEST_VALUES=$(calc $(calc $NUM_TEST_VALUES +1)/2)
-fi
+	EVEN_CHECK=$(( $NUM_TEST_VALUES % 2 ))
+	if [ $EVEN_CHECK -eq 0 ]; then
+		HALF_NUM_TEST_VALUES=$(calc $NUM_TEST_VALUES/2)
+	else
+		HALF_NUM_TEST_VALUES=$(calc $(calc $NUM_TEST_VALUES +1)/2)
+	fi
 
 
 ###### Prep some text and code for math/arithmetic work in Rscript below:
