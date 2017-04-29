@@ -431,7 +431,7 @@ echo "INFO      | $(date) |          Moving R output files to new folder named '
 	mkdir R
 	mv ./*.pdf ./*.Rout ./*.RData ./R/
 	if [ "$CALL_BGMM" -gt "0" ]; then
-		mv ./bgmm_semisupervised_posteriorProbs.txt ./R/
+		mv ./*_posteriorProbs.txt ./R/
 	fi
 
 ## Next: some questions-based flow control for the cleanup...
