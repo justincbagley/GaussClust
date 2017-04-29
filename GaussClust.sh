@@ -137,6 +137,7 @@ fi
 	MY_NMDS3_VAR=$(echo "\$nmds_3")
 	MY_NMDS4_VAR=$(echo "\$nmds_4")
 	MY_TIJ_VAR=$(echo "\$tij")
+	MY_TAB_VAR=$(echo "\t")
 
 
 ############ MAKE R SCRIPT
@@ -300,7 +301,7 @@ X <- unknowns
 X
 dim(X)
 #
-B <- read.table('$MY_PROBS_MATRIX', header=TRUE, sep='\t')
+B <- read.table('$MY_PROBS_MATRIX', header=TRUE, sep='$MY_TAB_VAR')
 names(B) <- c(0:$NUM_COMPONENTS)
 row.names(B) <- B[,1]
 B <- B[,-c(1)]
@@ -380,7 +381,7 @@ semisupervisedModel
 	plot(semisupervisedModel)
 	dev.off()
 	z <- as.data.frame(semisupervisedModel$MY_TIJ_VAR)
-	write.table(z, file='bgmm_semisupervised_posteriorProbs.txt', sep='\t')} else if($CALL_BGMM == '3' ){
+	write.table(z, file='bgmm_semisupervised_posteriorProbs.txt', sep='$MY_TAB_VAR')} else if($CALL_BGMM == '3' ){
 supervisedModel <- supervised(as.data.frame(knowns), class = as.factor(known_labels))
 supervisedModel
 	##--Commented out because plotting supervised model results is not working currently.
@@ -393,21 +394,21 @@ semisupervisedModel
 	plot(semisupervisedModel)
 	dev.off()
 	z <- as.data.frame(semisupervisedModel$MY_TIJ_VAR)
-	write.table(z, file='bgmm_semisupervised_posteriorProbs.txt', sep='\t')} else if($CALL_BGMM == '4' ){
+	write.table(z, file='bgmm_semisupervised_posteriorProbs.txt', sep='$MY_TAB_VAR')} else if($CALL_BGMM == '4' ){
 modelBelief <- belief(X, knowns, B=as.matrix(B))
 modelBelief
 	pdf('bgmm_belief_result.pdf')
 	plot(modelBelief)
 	dev.off()
 	z <- as.data.frame(modelBelief$MY_TIJ_VAR)
-	write.table(z, file='bgmm_belief_posteriorProbs.txt', sep='\t')}else if($CALL_BGMM == '5' ){
+	write.table(z, file='bgmm_belief_posteriorProbs.txt', sep='$MY_TAB_VAR')}else if($CALL_BGMM == '5' ){
 modelSoft <- soft(X, knowns, P=as.matrix(B))
 modelSoft
 	pdf('bgmm_soft_result.pdf')
 	plot(modelSoft)
 	dev.off()
 	z <- as.data.frame(modelSoft$MY_TIJ_VAR)
-	write.table(z, file='bgmm_soft_posteriorProbs.txt', sep='\t')
+	write.table(z, file='bgmm_soft_posteriorProbs.txt', sep='$MY_TAB_VAR')
 }
 
 
