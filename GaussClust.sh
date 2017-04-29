@@ -380,8 +380,8 @@ semisupervisedModel
 	pdf('bgmm_semisupervised_result.pdf')
 	plot(semisupervisedModel)
 	dev.off()
-	z <- as.data.frame(semisupervisedModel$MY_TIJ_VAR)
-	write.table(z, file='bgmm_semisupervised_posteriorProbs.txt', sep='$MY_TAB_VAR')} else if($CALL_BGMM == '3' ){
+	tij_2 <- as.data.frame(semisupervisedModel$MY_TIJ_VAR)
+	write.table(tij_2, file='bgmm_semisupervised_posteriorProbs.txt', sep='$MY_TAB_VAR')} else if($CALL_BGMM == '3' ){
 supervisedModel <- supervised(as.data.frame(knowns), class = as.factor(known_labels))
 supervisedModel
 	##--Commented out because plotting supervised model results is not working currently.
@@ -393,22 +393,22 @@ semisupervisedModel
 	pdf('bgmm_semisupervised_result.pdf')
 	plot(semisupervisedModel)
 	dev.off()
-	z <- as.data.frame(semisupervisedModel$MY_TIJ_VAR)
-	write.table(z, file='bgmm_semisupervised_posteriorProbs.txt', sep='$MY_TAB_VAR')} else if($CALL_BGMM == '4' ){
+	tij_3 <- as.data.frame(semisupervisedModel$MY_TIJ_VAR)
+	write.table(tij_3, file='bgmm_semisupervised_posteriorProbs.txt', sep='$MY_TAB_VAR')} else if($CALL_BGMM == '4' ){
 modelBelief <- belief(X, knowns, B=as.matrix(B))
 modelBelief
 	pdf('bgmm_belief_result.pdf')
 	plot(modelBelief)
 	dev.off()
-	z <- as.data.frame(modelBelief$MY_TIJ_VAR)
-	write.table(z, file='bgmm_belief_posteriorProbs.txt', sep='$MY_TAB_VAR')}else if($CALL_BGMM == '5' ){
+	tij_4 <- as.data.frame(modelBelief$MY_TIJ_VAR)
+	write.table(tij_4, file='bgmm_belief_posteriorProbs.txt', sep='$MY_TAB_VAR')}else if($CALL_BGMM == '5' ){
 modelSoft <- soft(X, knowns, P=as.matrix(B))
 modelSoft
 	pdf('bgmm_soft_result.pdf')
 	plot(modelSoft)
 	dev.off()
-	z <- as.data.frame(modelSoft$MY_TIJ_VAR)
-	write.table(z, file='bgmm_soft_posteriorProbs.txt', sep='$MY_TAB_VAR')
+	tij_5 <- as.data.frame(modelSoft$MY_TIJ_VAR)
+	write.table(tij_5, file='bgmm_soft_posteriorProbs.txt', sep='$MY_TAB_VAR')
 }
 
 
