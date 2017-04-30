@@ -54,7 +54,7 @@ The code run by **GaussClust.sh** in R can be set up to accomplish at least thre
 >2. Checking and preparing the data for GMM analyses, and 
 >3. Calling different GMM analyses. 
 
-There are several types of NMDS and GMM analyses available using GaussClust, including:
+NMDS and GMM analyses available using GaussClust include:
 - **NMDS:**
   * regular NMDS on a single value specified for the number of clusters in the data
   * NMDS model selection using BIC
