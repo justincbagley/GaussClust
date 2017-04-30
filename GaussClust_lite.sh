@@ -382,21 +382,20 @@ modelBelief
 	pdf('bgmm_belief_result.pdf')
 	plot(modelBelief)
 	dev.off()
-	tij_4 <- as.data.frame(modelBelief$MY_TIJ_VAR)
+	tij_4 <- as.data.frame(modelBelief$MY_TIJ_VAR, row.names=c(1:length(modelBelief$MY_TIJ_VAR)), col.names=c(levels(known_labels)))
 	write.table(tij_4, file='bgmm_belief_posteriorProbs.txt', sep='$MY_TAB_VAR')}else if($CALL_BGMM == '5' ){
 modelSoft <- soft(X, knowns, P=as.matrix(B))
 modelSoft
 	pdf('bgmm_soft_result.pdf')
 	plot(modelSoft)
 	dev.off()
-	tij_5 <- as.data.frame(modelSoft$MY_TIJ_VAR)
+	tij_5 <- as.data.frame(modelSoft$MY_TIJ_VAR, row.names=c(1:length(modelSoft$MY_TIJ_VAR)), col.names=c(levels(known_labels)))
 	write.table(tij_5, file='bgmm_soft_posteriorProbs.txt', sep='$MY_TAB_VAR')
 }
 
 
 ##--Save R workspace to file in wd:
 save.image(file='GaussClustlite.workspace.RData')
-
 
 
 
