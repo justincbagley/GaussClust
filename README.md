@@ -189,7 +189,7 @@ input file contains a header with four-letter codes for each datacolumn, but use
 make the names a little longer if needed.
 ```
 
-### Real-world GaussClust example \#1:
+### Real-world GaussClust example \#1: unsupervised clustering.
 Below is an example of the usage for GaussClust.sh, in which the example data files ("Enyalius_35.txt" and "probs_35.txt"; see "example_data_files" folder of distro) are used to conduct _only_ unsupervised Gaussian clustering (-u 1) on 2 clusters (-c 2), based on 4 dimensions of data retained from NMDS (-k 4). All screen output (e.g. to Terminal on mac) from the analysis is shown. When you run GaussClust, 'INFO' and date printed to screen along with information for each of the broader steps of the script (details from R go to an \*.Rout file, organized at the end of each run). Question-response lines output to screen are marked 'FLOW' and (to date) requrie yes/no answers. As you can see, the code runs with no error messages. 
 
 **_This run produced all directories and ouptut files present in the "Ex1_GaussClust" folder provided within the GaussClust distribution_. Some of the folder and graphical output are shown in Figures 1-3 below. Look over these Figures, and through the files in the example folder to learn more about the structure of GaussClust output, including graphical results saved as PDF files.**
@@ -240,7 +240,7 @@ $ ./GaussClust.sh -k 4 -u 1 -r 5:20 -d 1 -b 3 -p B_206.txt -c 13 ./mydata.txt
 
 The bgmmSensTest script doesn't print out usage options, as GaussClust does; however, assuming you heed the warning above, the bgmm sensitivity test can then be run by adding appropriate values for test conditions following each equals sign in the bgmm_sens_test.cfg configuration file and then entering ```$ ./bgmmSensTest.sh``` at the command line while the data file (e.g. 'data.txt'), P matrix file (e.g. 'P.txt'), and configuration file are all present in the same working dir folder. 
 
-### Real-world bgmmSensTest example \#1:
+### Real-world GaussClust example \#2: a bgmmSensTest run.
 I have produced a bgmmSensTest example using the same example data files as those used to test GaussClust above. Below, I provide the code for producing the example configuration file and screen output from a run on these files. 
 
 **_This run produced all directories and ouptut files present in the "Ex2_bgmmSensTest" folder provided within the GaussClust distribution_. Some of the folder and graphical output are shown in Figures 4-6 below. Look over these Figures, and through the files in the example folder to learn more about the structure of GaussClust output, including graphical results saved as PDF files.**
