@@ -355,7 +355,7 @@ INFO      | Thu Jan  5 00:50:33 CST 2017 | Done conducting sensitivity test(s) e
 INFO      | Thu Jan  5 00:50:33 CST 2017 | Bye.
 ```
 
-Under this scenario, comparisons also will not be made between test runs, and output files (e.g. PDFs) present in the "Ex2_bgmmSensTest" example run folder will not be created during your sensitivity analysis! Avoid these issues by always passing a "2" or "3" option to the script using the -b flag.
+Under this scenario, comparisons also will not be made between test runs, and output files (e.g. PDFs) present in the "Ex2_bgmmSensTest" example run folder will not be created during your sensitivity analysis! Avoid these issues by always passing a "2", "3", "4", or "5" option to the script using the -b flag.
 
 
 ## ACKNOWLEDGEMENTS
