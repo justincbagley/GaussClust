@@ -78,8 +78,9 @@ Specific examples are given in different Usage sections below, but in general yo
 **What's new in GaussClust?**
 
 While GaussClust is just passing its initial development stages, I have recently updated this software in several ways. Some recent edits are listed below.
-- April 2017 - Fixed GaussClust so that belief-based GMM and soft-label GMM analyses are available as (working) options under the -b flag; updated to v0.1.1; prepped new release.
-- As of January 2017 - GaussClust now uses the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS, rather than using 'isoMDS' through labdsv (which turned out to be slightly problematic). 
+- April 29, 2017 - Fixed issue in GaussClust that broke bgmmSensTest when running with -b option >0.
+- April 28, 2017 - Fixed GaussClust so that belief-based GMM and soft-label GMM analyses are available as (working) options under the -b flag; updated to v0.1.1; prepped new release.
+- January 2017 - GaussClust now uses the 'metaMDS' function available in the [vegan](https://cran.r-project.org/web/packages/vegan/index.html) package to conduct NMDS, rather than using 'isoMDS' through labdsv (which turned out to be slightly problematic). 
 
 **See the [TODO list](https://github.com/justincbagley/GaussClust#todo-list) below for other ways I am seeking to improve the software. _If it interests you, feel free to jump in and help with development!!_ :memo::+1:**
 
@@ -184,7 +185,6 @@ contains labels (e.g. four-letter codes) for each known individual (e.g. by spec
 'NA' values for samples of unknown type, assigning individuals to species. The example 
 input file contains a header with four-letter codes for each datacolumn, but users can 
 make the names a little longer if needed.
-
 ```
 
 ### Real-world GaussClust example \#1:
@@ -192,24 +192,27 @@ Below is an example of the usage for GaussClust.sh, in which the example data fi
 
 **_This run produced all directories and ouptut files present in the "Ex1_GaussClust" folder provided within the GaussClust distribution_. Some of the folder and graphical output are shown in Figures 1-3 below. Look over these Figures, and through the files in the example folder to learn more about the structure of GaussClust output, including graphical results saved as PDF files.**
 ```
+$ mkdir Ex1_GaussClust; cp ./GaussClust.sh ./Ex1_GaussClust/;
+$ cd ./Ex1_GaussClust/
 $ ./GaussClust.sh -k 4 -u 1 -r 0 -d 0 -b 0 -p ./probs_35.txt -c 2 ./Enyalius_35.txt
 
 ##########################################################################################
-#                             GaussClust v0.1.0, January 2017                              #
+#                             GaussClust v0.1.1, April 2017                              #
 ##########################################################################################
 
-INFO      | Wed Jan  4 19:11:52 CST 2017 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
-INFO      | Wed Jan  4 19:11:52 CST 2017 | STEP #2: MAKE GAUSSIAN CLUSTERING R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE... 
-INFO      | Wed Jan  4 19:11:52 CST 2017 | STEP #3: RUN THE R SCRIPT. 
-INFO      | Wed Jan  4 19:11:56 CST 2017 | STEP #4: CLEAN UP THE WORKSPACE. 
-INFO      | Wed Jan  4 19:11:56 CST 2017 |          Moving R output files to new folder named 'R'... 
-FLOW      | Wed Jan  4 19:11:56 CST 2017 |          Would you like to keep the Rscript output by GaussClust? (y/n) : y
-FLOW      | Wed Jan  4 19:12:02 CST 2017 |          Would you like to keep text files output by GaussClust? (y/n) : y
-INFO      | Wed Jan  4 19:12:03 CST 2017 |          Moving text files to new folder named 'txt'... 
-INFO      | Wed Jan  4 19:12:03 CST 2017 | Done conducting Gaussian clustering and related analyses using GaussClust.
-INFO      | Wed Jan  4 19:12:03 CST 2017 | Bye.
-
+INFO      | Sat Apr 29 22:27:07 EDT 2017 | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... 
+INFO      | Sat Apr 29 22:27:07 EDT 2017 | STEP #2: MAKE GAUSSIAN CLUSTERING R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE... 
+INFO      | Sat Apr 29 22:27:07 EDT 2017 | STEP #3: RUN THE R SCRIPT. 
+INFO      | Sat Apr 29 22:27:11 EDT 2017 | STEP #4: CLEAN UP THE WORKSPACE. 
+INFO      | Sat Apr 29 22:27:11 EDT 2017 |          Moving R output files to new folder named 'R'... 
+FLOW      | Sat Apr 29 22:27:11 EDT 2017 |          Would you like to keep the Rscript output by GaussClust? (y/n) : y
+FLOW      | Sat Apr 29 22:27:15 EDT 2017 |          Would you like to keep text files output by GaussClust? (y/n) : y
+INFO      | Sat Apr 29 22:27:16 EDT 2017 |          Moving text files to new folder named 'txt'... 
+INFO      | Sat Apr 29 22:27:16 EDT 2017 | Done conducting clustering and classification using Gaussian mixture models (GMMs), and related analyses, 
+INFO      | Sat Apr 29 22:27:16 EDT 2017 | using GaussClust. 
+INFO      | Sat Apr 29 22:27:16 EDT 2017 | Bye.
 ```
+
 **Read-world GaussClust example Results:**
 
 **Figure 1. Structure and examples of GaussClust results, based on "Ex1_GaussClust" example run.** Multiple PDF figures are output into the 'R' folder within the working directory, two of which are shown here. The first (_at left_), is a pairwise plot of Gower distances between observations, which shows a pronounced pattern of variation suggestive of multiple groups present in the dataset. The second figure (_at right_) shows the results of the unsupervised GMM analysis, comparing pairwise NMDS plots. Two clusters were strongly supported, and in a species delimitation context, this analysis would be interpreted as recovering two morphologically distinct populations or 'species'. **_Look in the "GaussClust.Rout" file in the R folder for more detailed results, including raw NMDS scores and details on clustering partitions etc.!_** 
@@ -289,22 +292,22 @@ $ ./bgmmSensTest.sh  ## Run the sensitivity analysis!
 #                           bgmmSensTest v0.1.0, December 2016                           #
 ##########################################################################################
 
-INFO      | Wed Jan  4 19:13:35 CST 2017 | Starting bgmmSensTest analysis... 
-INFO      | Wed Jan  4 19:13:35 CST 2017 | STEP #1: SETUP AND USER INPUT. 
-INFO      | Wed Jan  4 19:13:35 CST 2017 |          Setting working directory to: /Users/justinbagley/Documents/GaussClust/Ex2_bgmmSensTest 
-INFO      | Wed Jan  4 19:13:35 CST 2017 |          Reading in sensitivity test conditions and file names from configuration file. 
-INFO      | Wed Jan  4 19:13:35 CST 2017 | STEP #2: MAKE DIFFERENT INPUT FILES FOR THE TEST, VARYING TEST STAT ACROSS A RANGE OF VALUES. 
-INFO      | Wed Jan  4 19:13:35 CST 2017 | STEP #3: RUN ALGORITHM ACROSS TEST INPUT FILES, SAVE & COLLATE RESULTS. 
-INFO      | Wed Jan  4 19:13:35 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
-INFO      | Wed Jan  4 19:13:38 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
-INFO      | Wed Jan  4 19:13:41 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
-INFO      | Wed Jan  4 19:13:44 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
-INFO      | Wed Jan  4 19:13:47 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
-INFO      | Wed Jan  4 19:13:50 CST 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
-INFO      | Wed Jan  4 19:13:53 CST 2017 | STEP #4: MAKE R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE FOR VISUALIZING AND COMPARING RESULTS... 
-INFO      | Wed Jan  4 19:13:53 CST 2017 | STEP #5: RUN THE R SCRIPT AND CONDUCT CLEANUP. 
-INFO      | Wed Jan  4 19:13:54 CST 2017 | Done conducting sensitivity test(s) examining the effect of varying the 'prior' probabilities of known observations in the beliefs matrix supplied to bgmm, using bgmmSensTest.
-INFO      | Wed Jan  4 19:13:54 CST 2017 | Bye.
+INFO      | Sat Apr 29 22:28:18 EDT 2017 | Starting bgmmSensTest analysis... 
+INFO      | Sat Apr 29 22:28:18 EDT 2017 | STEP #1: SETUP AND USER INPUT. 
+INFO      | Sat Apr 29 22:28:18 EDT 2017 |          Setting working directory to: /Users/justinbagley/GitHub/GaussClust-master-Apr_29_2new/Ex2_bgmmSensTest 
+INFO      | Sat Apr 29 22:28:18 EDT 2017 |          Reading in sensitivity test conditions and file names from configuration file. 
+INFO      | Sat Apr 29 22:28:18 EDT 2017 | STEP #2: MAKE DIFFERENT INPUT FILES FOR THE TEST, VARYING TEST STAT ACROSS A RANGE OF VALUES. 
+INFO      | Sat Apr 29 22:28:19 EDT 2017 | STEP #3: RUN ALGORITHM ACROSS TEST INPUT FILES, SAVE & COLLATE RESULTS. 
+INFO      | Sat Apr 29 22:28:19 EDT 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
+INFO      | Sat Apr 29 22:28:22 EDT 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
+INFO      | Sat Apr 29 22:28:26 EDT 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
+INFO      | Sat Apr 29 22:28:29 EDT 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
+INFO      | Sat Apr 29 22:28:32 EDT 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
+INFO      | Sat Apr 29 22:28:36 EDT 2017 | Running GaussClust_lite on test input files generated by 'bgmmSensTest.sh' ... 
+INFO      | Sat Apr 29 22:28:39 EDT 2017 | STEP #4: MAKE R SCRIPT CONTAINING ENVIRONMENTAL VARIABLES AND ANALYSIS CODE FOR VISUALIZING AND COMPARING RESULTS... 
+INFO      | Sat Apr 29 22:28:39 EDT 2017 | STEP #5: RUN THE R SCRIPT AND CONDUCT CLEANUP. 
+INFO      | Sat Apr 29 22:28:40 EDT 2017 | Done conducting sensitivity test(s) examining the effect of varying the 'prior' probabilities of known observations in the beliefs matrix supplied to bgmm, using bgmmSensTest.
+INFO      | Sat Apr 29 22:28:40 EDT 2017 | Bye.
 ```
 
 **Read-world bgmmSensTest example Results:**
@@ -398,12 +401,12 @@ R GMM, clustering, and NMDS tutorials:
 
 **Recently finished/fixed:**
 
-- Fixed final bgmm modeling steps in Rscript to properly run belief-based and soft-labeled GMM analyses. **DONE!** :white_check_mark:
+- Fixed final bgmm modeling steps in Rscript to properly run belief-based GMM and soft-labeled GMM analyses. **DONE!** :white_check_mark:
 - Solve two input file problem. **DONE!** :white_check_mark:
 - Make GaussClust script do more with bgmm, including semisupervised analysis using belief probs matrix. **DONE!** :white_check_mark:
 - Change Usage section of README to include code for working with example files.  **Partially DONE!**
 - Find a better NMDS function than isoMDS in labdsv package. **DONE!** :white_check_mark:
 - Change bgmmSensTest from interactive to non-interactive, and make it produce PDF plots. **DONE!** :white_check_mark:
 
-April 28, 2017
+April 29, 2017
 Justin C. Bagley, Richmond, VA, USA
