@@ -4,10 +4,9 @@
 #                           bgmmSensTest v0.1.0, December 2016                           #
 #   SHELL SCRIPT FOR CONDUCTING SIMPLE SENSITIVITY TESTING TO EXPLORE BELIEF-BASED       #
 #   GAUSSIAN MIXTURE MODEL ROBUSTNESS TO VARYING PRIORS ON KNOWN OBSERVATIONS (P MATRIX) #
-#   Copyright (c)2016 Justin C. Bagley, Universidade de Brasília, Brasília, DF, Brazil.  #
-#   See the README and license files on GitHub (http://github.com/justincbagley) for     #
-#   further information. Last update: December 28, 2016. For questions, please email     #
-#   jcbagley@unb.br.                                                                     #
+#  Copyright (c)2016-2019 Justinc C. Bagley. All rights reserved.                        #
+#  See README and license on GitHub (https://github.com/justincbagley) for further       #
+#  information. Last update: December 28, 2016. For questions, email jcbagley@vcu.edu.   #
 ##########################################################################################
 
 echo "
