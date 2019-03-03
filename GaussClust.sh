@@ -1,13 +1,19 @@
 #!/bin/sh
 
 ##########################################################################################
-#                             GaussClust v0.1.1, April 2017                              #
-#   SHELL SCRIPT FOR AUTOMATING GAUSSIAN MIXTURE MODELING ON CONTINUOUS, DISCRETE, OR    #
-#   COMBINED GENETIC/MORPHOLOGICAL/ECOLOGICAL DATA, FOR SPECIES DELIMITATION AND         #
-#   CLASSIFICATION                                                                       #
-#  Copyright (c)2017-2019 Justinc C. Bagley. All rights reserved.                        #
-#  See README and license on GitHub (https://github.com/justincbagley) for further       #
-#  information. Last update: April 28, 2017. For questions, email jcbagley@vcu.edu.      #
+# File: GaussClust.sh                                                                    #
+  version="v0.1.1"                                                                       #
+# Author: Justin C. Bagley                                                               #
+# Date: created by Justin Bagley Tue Dec 13 16:39:37 2016 -0600                          #
+# Last update: April 28, 2017                                                            #
+# Copyright (c) 2016-2019 Justin C. Bagley. All rights reserved.                         #
+# Please report bugs to <bagleyj@umsl.edu>                                               #
+#                                                                                        #
+# Description:                                                                           #
+# SHELL SCRIPT FOR AUTOMATING GAUSSIAN MIXTURE MODELING ON CONTINUOUS, DISCRETE, OR      #
+# COMBINED GENETIC/MORPHOLOGICAL/ECOLOGICAL DATA, FOR SPECIES DELIMITATION AND           #
+# CLASSIFICATION                                                                         #
+#                                                                                        #
 ##########################################################################################
 
 echo "
@@ -15,6 +21,8 @@ echo "
 #                             GaussClust v0.1.1, April 2017                              #
 ##########################################################################################
 "
+
+######################################## START ###########################################
 echo "INFO      | $(date) | STEP #1: SETUP. SETTING OPTIONS AND PATH VARIABLE... "
 
 ############ SCRIPT OPTIONS
@@ -114,16 +122,23 @@ contains labels (e.g. four-letter codes) for each known individual (e.g. by spec
 'NA' values for samples of unknown type, assigning individuals to species. The example 
 input file contains a header with four-letter codes for each datacolumn, but users can 
 make the names a little longer if needed.
+
+Created by Justin Bagley Tue Dec 13 16:39:37 2016 -0600
+Copyright (c) 2016-2019 Justin C. Bagley. All rights reserved.
 "
 
   exit 1
+fi
+
+if [[ "$1" == "-v" ]] || [[ "$1" == "--version" ]]; then
+	echo "$(basename $0) ${version}";
+	exit
 fi
 
 
 ## Make input file a mandatory parameter, and set the path variable to the current dir:
 	MY_INPUT_FILE="$1"
 	MY_PATH=`pwd -P`
-
 
 ##--FIX issues with echoing shell text containing dollar signs to R:
 	MY_POINTS_VAR=$(echo "\$points")	## Make points variable with '$points' text for Rscript...
