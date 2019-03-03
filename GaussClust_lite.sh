@@ -40,86 +40,168 @@ while getopts 'k:u:r:d:b:p:c:' opt ; do
   esac
 done
 
+Usage="Usage: $(basename "$0") [Help: -h help] [Options: -k u r d b p c] [stdin:] <inputFile>
+ ## Help:
+  -h   help text (also: -help)
+ ## Options: 
+  -k nmdsDimensions (def: 4) specify number of dimensions, k, to retain during NMDS on Gower 
+     distances
+  -u unsuperGMM (def: 1) 0=no unsupervised GMM is carried out; 1=conduct unsupervised GMM 
+     using 'Rmixmod' R package, for comparative or individual purposes
+  -r rangeNumClusters (def: 0) optional numeric listing of a range, x:y, of the number of 
+     clusters to be modeled over during unsupervised GMM in Rmixmod
+  -d GMMDiscrim (def: 1) 0=(semi-)supervised, GMM-based discriminant analysis is not carried 
+     out with 'mixmodelLearn' in Rmixmod; 1=conduct discriminant analysis
+  -b beliefBasedMM (def: 0) 0=no mixture modeling is carried out using the 'bgmm' R package; 
+     1=calls 'supervised' GMM analysis, 2=calls 'semisupervised' GMM analysis, 3=calls both 
+     supervised and semisupervised analyses, 4=calls 'belief' GMM analysis, and 5=calls 
+     'soft' GMM analysis in bgmm
+  -p probsMatrix (def: probs.txt) specify matrix of plausibilities, or weights of the prior 
+     probabilities for labeled observations, for bgmm; also sets belief matrix
+  -c numComponents (specify number of components (e.g. Gaussian components) or 'clusters' 
+     to assign individuals to during regular GMM (single value, rather than a range; see -r 
+     above or bgmm modeling)
+ ## Input:
+  Input file: Script expects as <inputFile> a single plain-text data table with a header and 
+  several columns of information followed by columns containing single-type or mixed data
+  (e.g. categorical, discrete, or continuous data for different morphological characters 
+  measured) for the sample. The first column will be named 'samples' and typically contain 
+  sample IDs/codes for each individual (preferably with a species-specific abbreviation 
+  followed by a museum voucher number or individual code). The second column is headed as 
+  'type' and specifies whether each individual ID is 'known' or 'unknown'. The third column 
+  contains labels (e.g. four-letter codes) for each known individual (e.g. by species), and
+  'NA' values for samples of unknown type, assigning individuals to species. The example 
+  input file contains a header with four-letter codes for each datacolumn, but users can 
+  make the names a little longer if needed.
+ CITATION
+ Bagley, J.C. 2017. GaussClust v0.1.1. GitHub package, Available at: 
+	<http://github.com/justincbagley/GaussClust>.
+Created by Justin Bagley Tue Dec 13 16:39:37 2016 -0600
+Copyright (c) 2016-2019 Justin C. Bagley. All rights reserved.
+"
+
+
+verboseUsage="Usage: $(basename "$0") [Help: -h help H Help] [Options: -k u r d b p c] [stdin:] <inputFile>
+ ## Help:
+  -h   help text (also: -help)
+  -H   verbose help text (also: -Help)
+ ## Options: 
+  -k nmdsDimensions (def: 4) specify number of dimensions, k, to retain during NMDS on Gower 
+     distances
+  -u unsuperGMM (def: 1) 0=no unsupervised GMM is carried out; 1=conduct unsupervised GMM 
+     using 'Rmixmod' R package, for comparative or individual purposes
+  -r rangeNumClusters (def: 0) optional numeric listing of a range, x:y, of the number of 
+     clusters to be modeled over during unsupervised GMM in Rmixmod
+  -d GMMDiscrim (def: 1) 0=(semi-)supervised, GMM-based discriminant analysis is not carried 
+     out with 'mixmodelLearn' in Rmixmod; 1=conduct discriminant analysis
+  -b beliefBasedMM (def: 0) 0=no mixture modeling is carried out using the 'bgmm' R package; 
+     1=calls 'supervised' GMM analysis, 2=calls 'semisupervised' GMM analysis, 3=calls both 
+     supervised and semisupervised analyses, 4=calls 'belief' GMM analysis, and 5=calls 
+     'soft' GMM analysis in bgmm
+  -p probsMatrix (def: probs.txt) specify matrix of plausibilities, or weights of the prior 
+     probabilities for labeled observations, for bgmm; also sets belief matrix
+  -c numComponents (specify number of components (e.g. Gaussian components) or 'clusters' 
+     to assign individuals to during regular GMM (single value, rather than a range; see -r 
+     above or bgmm modeling)
+ ## Input:
+  Input file: Script expects as <inputFile> a single plain-text data table with a header and 
+  several columns of information followed by columns containing single-type or mixed data
+  (e.g. categorical, discrete, or continuous data for different morphological characters 
+  measured) for the sample. The first column will be named 'samples' and typically contain 
+  sample IDs/codes for each individual (preferably with a species-specific abbreviation 
+  followed by a museum voucher number or individual code). The second column is headed as 
+  'type' and specifies whether each individual ID is 'known' or 'unknown'. The third column 
+  contains labels (e.g. four-letter codes) for each known individual (e.g. by species), and
+  'NA' values for samples of unknown type, assigning individuals to species. The example 
+  input file contains a header with four-letter codes for each datacolumn, but users can 
+  make the names a little longer if needed.
+ DETAILS
+ The -k flag sets the number of k dimensions to be retained during NMDS, which affects both
+ regular Gaussian mixture modeling and also the different models that are implemented in
+ the bgmm R package. Like file name, there is no default value; however, k=4 is recommended
+ by the authors based on discussion in Edwards and Knowles (Proc. Roy. Soc. B. 2014) and 
+ Hausdorf and Hennig (Syst. Biol. 2014). (By contrast, k=2 would be normal for most other
+ ecological data, but may not contain sufficient information for interspecific datasets.)
+ 
+ The -u flag calls the unsupervised Gaussian mixture modeling method implemented in the 
+ 'mixmodCluster' function of the Rmixmod R package. See the Rmixmod R site and documentation
+ for additional information on this package (available at: 
+ https://cran.r-project.org/web/packages/Rmixmod/index.html). Set this flag to '0' to
+ skip this analysis.
+ 
+ The -r flag gives the user the ability to conduct unsupervised modeling (called using -u 
+ above) over a range of nbCluster values. In the case that rangeNumClusters is specified 
+ (e.g. as '5:20'), Rmixmod will calculate unsupervised GMMs over this range and select the 
+ best model using the Bayesian information criterion (BIC). If a range of values is not 
+ specified for -r, then a GMM analysis in Rmixmod will use the number of components/clusters 
+ specified using the -c flag (see below).
+ 
+ The -d flag calls the supervised or semi-supervised discriminant analysis method implemented 
+ in the 'mixmodLearn' and 'mixmodPredict' functions of Rmixmod. The discriminant analysis is
+ based on GMMs and is conducted in a two-step (A, Learning; B, Prediction) procedure, which 
+ estimates a discriminant function from known labeled data and uses it to predict (classify) 
+ unknown samples that correspondto the same knowns, i.e. species or clusters. Set this flag 
+ to '0' to skip this analysis.
+ 
+ The -b flag allows users to request four belief-based Gaussian mixture modeling options 
+ available in the 'bgmm' R package. Passing the script a value of '1' calls the 'supervised' 
+ function for supervised GMM analysis; passing a '2' calls the 'semisupervised' function 
+ for semisupervised GMM analysis; a '3' calls both the supervised and semisupervised functions;
+ a '4' calls the 'belief' function for belief-based GMM analysis; and a '5' calls the 'soft' 
+ function for soft-labeled GMM analysis. See the bgmm R site and documentation for more 
+ information (available at: https://cran.r-project.org/web/packages/bgmm/index.html). Set this 
+ flag to '0' to skip the bgmm analysis altogether.
+ 
+ The -p flag specifies the filename of the bgmm 'B' matrix file in the working dir.
+ 
+ The -c flag specifies the number of components or 'clusters' that will be modeled during
+ regular GMM or bgmm modeling (except see other option available using -r flag above). This 
+ corresponds to 'k' or the number of columns in 'B', based on definitions in the bgmm 
+ documentation.
+ CITATION
+ Bagley, J.C. 2017. GaussClust v0.1.1. GitHub package, Available at: 
+	<http://github.com/justincbagley/GaussClust>.
+ REFERENCES
+ Biecek P, Szczurek E, Vingron M, Tiuryn J (2012) The R package bgmm: mixture modeling with 
+	uncertain knowledge. Journal of Statistical Software, 47, 1-31.
+ Edwards DL, Knowles LL (2014) Species detection and individual assignment in species 
+	delimitation: can integrative data increase efficacy? Proceedings of the Royal Society 
+	B, 281, 20132765.
+ Gower JC (1971) A general coefficient of similarity and some of its properties. Biometrics, 
+	27, 857–871. doi:10.2307/2528823
+ Hausdorf B, Hennig C (2010). Species delimitation using dominant and codominant multilocus 
+	markers. Systematic Biology, 59, 491-503.
+ Lebret R, Iovleff S, Langrognet F, Biernacki C, Celeux G, Govaert G (2015) Rmixmod: the R 
+	package of the model-based unsupervised, supervised, and semi-supervised classification 
+	Mixmod Library. Journal of Statistical Software, 67(6). doi:10.18637/jss.v067.i06
+ Szczurek E, Biecek P, Tiuryn J, Vingron M (2010) Introducing knowledge into differential 
+	expression analysis. Journal of Computational Biology, 17, 953-967.
+Created by Justin Bagley Tue Dec 13 16:39:37 2016 -0600
+Copyright (c) 2016-2019 Justin C. Bagley. All rights reserved.
+"
+
 ## SCRIPT USAGE ##
 ##--Check for mandatory positional parameters and echo usage, then wait for commands...
 shift $((OPTIND-1))
 if [ $# -lt 1 ]; then
-  echo "
-Usage: $0 [options] inputFile
-  "
-  echo "Options: -k nmdsDimensions (specify number of dimensions, k, to retain during NMDS on \
-Gower distances) | -u unsuperGMM (0=no unsupervised GMM is carried out; 1=conduct unsupervised GMM \
-using 'Rmixmod' R package, for comparative or individual purposes) | -r rangeNumClusters (optional \
-numeric listing of a range, x:y, of the number of clusters to be modeled over during unsupervised GMM \
-in Rmixmod) | -d GMMDiscrim (0=(semi-)supervised, GMM-based discriminant analysis is not carried out \
-with 'mixmodelLearn' in Rmixmod; 1=conduct discriminant analysis) | -b beliefBasedMM (0=no mixture \
-modeling is carried out using the 'bgmm' R package; 1=calls 'supervised' GMM analysis, 2=calls \
-'semisupervised' GMM analysis, 3=calls both supervised and semisupervised analyses, 4=calls 'belief' \
-GMM analysis, and 5=calls 'soft' GMM analysis in bgmm) | -p probsMatrix (specify matrix of \
-plausibilities, or weights of the prior probabilities for labeled observations, for bgmm; also \
-sets belief matrix) | -c numComponents (specify number of components (e.g. Gaussian components) or \
-'clusters' to assign individuals to during regular GMM (single value, rather than a range; see -r \
-above) or bgmm modeling)
-
-The -k flag sets the number of k dimensions to be retained during NMDS, which affects both
-regular Gaussian mixture modeling and also the different models that are implemented in
-the bgmm R package. Like file name, there is no default value; however, k=4 is recommended
-by the authors based on discussion in Edwards and Knowles (Proc. Roy. Soc. B. 2014) and 
-Hausdorf and Hennig (Syst. Biol. 2014). (By contrast, k=2 would be normal for most other
-ecological data, but may not contain sufficient information for interspecific datasets.)
-
-The -u flag calls the unsupervised Gaussian mixture modeling method implemented in the 
-'mixmodCluster' function of the Rmixmod R package. See the Rmixmod R site and documentation
-for additional information on this package (available at: 
-https://cran.r-project.org/web/packages/Rmixmod/index.html). Set this flag to '0' to
-skip this analysis.
-
-The -r flag gives the user the ability to conduct unsupervised modeling (called using -u 
-above) over a range of nbCluster values. In the case that rangeNumClusters is specified 
-(e.g. as '5:20'), Rmixmod will calculate unsupervised GMMs over this range and select the 
-best model using the Bayesian information criterion (BIC). If a range of values is not 
-specified for -r, then a GMM analysis in Rmixmod will use the number of components/clusters 
-specified using the -c flag (see below).
-
-The -d flag calls the supervised or semi-supervised discriminant analysis method implemented 
-in the 'mixmodLearn' and 'mixmodPredict' functions of Rmixmod. The discriminant analysis is
-based on GMMs and is conducted in a two-step (A, Learning; B, Prediction) procedure, which 
-estimates a discriminant function from known labeled data and uses it to predict (classify) 
-unknown samples that correspondto the same knowns, i.e. species or clusters. Set this flag 
-to '0' to skip this analysis.
-
-The -b flag allows users to request four belief-based Gaussian mixture modeling options 
-available in the 'bgmm' R package. Passing the script a value of '1' calls the 'supervised' 
-function for supervised GMM analysis; passing a '2' calls the 'semisupervised' function 
-for semisupervised GMM analysis; a '3' calls both the supervised and semisupervised functions;
-a '4' calls the 'belief' function for belief-based GMM analysis; and a '5' calls the 'soft' 
-function for soft-labeled GMM analysis. See the bgmm R site and documentation for more 
-information (available at: https://cran.r-project.org/web/packages/bgmm/index.html). Set this 
-flag to '0' to skip the bgmm analysis altogether.
-
-The -p flag specifies the filename of the bgmm 'B' matrix file in the working dir.
-
-The -c flag specifies the number of components or 'clusters' that will be modeled during
-regular GMM or bgmm modeling (except see other option available using -r flag above). This 
-corresponds to 'k' or the number of columns in 'B', based on definitions in the bgmm 
-documentation.
-
-Input file: Script expects as inputFile a single plain-text data table with a header and 
-several columns of information followed by columns containing single-type or mixed data
-(e.g. categorical, discrete, or continuous data for different morphological characters 
-measured) for the sample. The first column will be named 'samples' and typically contain 
-sample IDs/codes for each individual (preferably with a species-specific abbreviation 
-followed by a museum voucher number or individual code). The second column is headed as 
-'type' and specifies whether each individual ID is 'known' or 'unknown'. The third column 
-contains labels (e.g. four-letter codes) for each known individual (e.g. by species), and
-'NA' values for samples of unknown type, assigning individuals to species. The example 
-input file contains a header with four-letter codes for each datacolumn, but users can 
-make the names a little longer if needed.
-"
-
+  echo "$Usage"
   exit 1
 fi
 
+if [[ "$1" == "-h" ]] || [[ "$1" == "-help" ]]; then
+	echo "$Usage";
+	exit
+fi
+
+if [[ "$1" == "-H" ]] || [[ "$1" == "--Help" ]]; then
+	echo "$verboseUsage";
+	exit
+fi
+
+if [[ "$1" == "-v" ]] || [[ "$1" == "--version" ]]; then
+	echo "$(basename $0) ${version}";
+	exit
+fi
 
 ## Make input file a mandatory parameter, and set the path variable to the current dir:
 	MY_INPUT_FILE="$1"
