@@ -1,13 +1,24 @@
 #!/bin/sh
 
 ##########################################################################################
-#                           bgmmSensTest v0.1.0, December 2016                           #
-#   SHELL SCRIPT FOR CONDUCTING SIMPLE SENSITIVITY TESTING TO EXPLORE BELIEF-BASED       #
-#   GAUSSIAN MIXTURE MODEL ROBUSTNESS TO VARYING PRIORS ON KNOWN OBSERVATIONS (P MATRIX) #
-#  Copyright (c)2016-2019 Justinc C. Bagley. All rights reserved.                        #
-#  See README and license on GitHub (https://github.com/justincbagley) for further       #
-#  information. Last update: December 28, 2016. For questions, email jcbagley@vcu.edu.   #
+# File: bgmmSensTest.sh                                                                  #
+  VERSION="v0.1.0"                                                                       #
+# Author: Justin C. Bagley                                                               #
+# Date: created by Justin Bagley on Wed Jan 4 09:09:34 2017 -0600                        #
+# Last update: March 3, 2019                                                             #
+# Copyright (c) 2017-2019 Justin C. Bagley. All rights reserved.                         #
+# Please report bugs to <bagleyj@umsl.edu>.                                              #
+#                                                                                        #
+# Description:                                                                           #
+#  SHELL SCRIPT FOR CONDUCTING SIMPLE SENSITIVITY TESTING TO EXPLORE BELIEF-BASED        #
+#  GAUSSIAN MIXTURE MODEL ROBUSTNESS TO VARYING PRIORS ON KNOWN OBSERVATIONS (P MATRIX)  #
+#                                                                                        #
 ##########################################################################################
+
+if [[ "$1" == "-v" ]] || [[ "$1" == "--version" ]]; then
+	echo "$(basename $0) $VERSION";
+	exit
+fi
 
 echo "
 ##########################################################################################
@@ -20,7 +31,8 @@ echo "INFO      | $(date) | Starting bgmmSensTest analysis... "
 echo "INFO      | $(date) | STEP #1: SETUP AND USER INPUT. "
 ###### Set paths and filetypes as different variables:
 ##--Set new path/dir environmental variable to the current directory:
-	MY_PATH=`pwd -P`
+#	MY_PATH=`pwd -P`
+	MY_PATH="$(pwd -P)"
 echo "INFO      | $(date) |          Setting working directory to: $MY_PATH "
 	CR=$(printf '\r')
 	calc () {
@@ -31,15 +43,15 @@ echo "INFO      | $(date) |          Reading in sensitivity test conditions and 
 ###### Use grep and awk to read in information from the user about the desired sensitivity
 ##--test conditions, by pulling the required information from the 'bgmm_sens_test.cfg'
 ##--configuration file supplied by the user, present in current working directory.	
-	OPT_STRING_PART="$(grep -n "opt_string_part" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')"
-	NUM_COMPONENTS="$(grep -n "num_clusters" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')"
-	MY_DATA_FILE="$(grep -n "data_file" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')"
-	MY_PROBS_FILE="$(grep -n "probs_file" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')"
-	TARGET_VALUE="$(grep -n "target_diag_value" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')"
-	NUM_TEST_VALUES="$(grep -n "num_test_vals" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')"
-	TEST_MIN="$(grep -n "test_val_min" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')"
-	TEST_MAX="$(grep -n "test_val_max" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')"
-	TEST_INC="$(grep -n "test_val_inc" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')"
+	OPT_STRING_PART="$(grep -n "opt_string_part" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')";
+	NUM_COMPONENTS="$(grep -n "num_clusters" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')";
+	MY_DATA_FILE="$(grep -n "data_file" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')";
+	MY_PROBS_FILE="$(grep -n "probs_file" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')";
+	TARGET_VALUE="$(grep -n "target_diag_value" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')";
+	NUM_TEST_VALUES="$(grep -n "num_test_vals" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')";
+	TEST_MIN="$(grep -n "test_val_min" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')";
+	TEST_MAX="$(grep -n "test_val_max" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')";
+	TEST_INC="$(grep -n "test_val_inc" ./bgmm_sens_test.cfg | awk -F"=" '{print $NF}')";
 
 
 echo "INFO      | $(date) | STEP #2: MAKE DIFFERENT INPUT FILES FOR THE TEST, VARYING TEST STAT ACROSS A RANGE OF VALUES. "
@@ -55,27 +67,27 @@ echo "INFO      | $(date) | STEP #2: MAKE DIFFERENT INPUT FILES FOR THE TEST, VA
 makeInputFiles () {
 count=0
 
-		INPUT_NCOL=$(cat $MY_PROBS_FILE | awk '{print NF}' | head -n1)
-		NCOL_DROPONE=$(calc $INPUT_NCOL - 1)
+		INPUT_NCOL=$(cat $MY_PROBS_FILE | awk '{print NF}' | head -n1);
+		NCOL_DROPONE=$(calc $INPUT_NCOL - 1);
 
-		AFTER_DECI="$(echo $TARGET_VALUE | sed 's/0\.//g')"
+		AFTER_DECI="$(echo $TARGET_VALUE | sed 's/0\.//g')";
 
 		OFF_DIAG_VALUES=$(grep -n ''$TARGET_VALUE'\t' $MY_PROBS_FILE | \
 		sed 's/^[0-9\:A-Za-z\_\-]*[	]*//g; s/0\.$AFTER_DECI //g' | head | \
-		sed 's/[0-9\.]*   //g' | head -n1)
+		sed 's/[0-9\.]*   //g' | head -n1);
 		
-		NEW_OFF_DIAG_VALUES=$(calc $(calc 1 - $TARGET_VALUE) / $NCOL_DROPONE)
+		NEW_OFF_DIAG_VALUES=$(calc $(calc 1 - $TARGET_VALUE) / $NCOL_DROPONE);
 		
 	(
 		for i in $(seq $TEST_MIN $TEST_INC $TEST_MAX); do
-			IFIX="$(echo $i | sed 's/0\.//g')"
+			IFIX="$(echo $i | sed 's/0\.//g')";
 			sed 's/0\.$AFTER_DECI	/0\.'$IFIX'	/g' $MY_PROBS_FILE | sed 's/$OFF_DIAG_VALUES/$NEW_OFF_DIAG_VALUES/g' > ./run"$count"_$i.txt
-			MY_RUN_TXT_FILE=./run*.txt		## There will only be one of these, which we will use and then move into a folder so that it does not conflict with the next txt file generated by this loop.
+			MY_RUN_TXT_FILE=./run*.txt;		## There will only be one of these, which we will use and then move into a folder so that it does not conflict with the next txt file generated by this loop.
 
-					basename=$(echo $MY_RUN_TXT_FILE | sed 's/\.\///g; s/\.txt//g')
+					basename=$(echo $MY_RUN_TXT_FILE | sed 's/\.\///g; s/\.txt//g');
 			
-			mkdir $basename
-			mv $MY_RUN_TXT_FILE ./$basename/
+			mkdir $basename;
+			mv $MY_RUN_TXT_FILE ./$basename/;
 
 		count=$((count+1))
        
@@ -99,7 +111,7 @@ echo "INFO      | $(date) | STEP #3: RUN ALGORITHM ACROSS TEST INPUT FILES, SAVE
 		for j in ./*/; do
 			cp ../GaussClust_lite.sh $MY_DATA_FILE $j; 
 			cd $j;
-			MY_LOCAL_PROBS_FILE=./run*.txt
+			MY_LOCAL_PROBS_FILE=./run*.txt;
 			./GaussClust_lite.sh $OPT_STRING_PART -p $MY_LOCAL_PROBS_FILE -c $NUM_COMPONENTS $MY_DATA_FILE;
 			cd ..;
 		done
@@ -112,22 +124,22 @@ echo "INFO      | $(date) | STEP #3: RUN ALGORITHM ACROSS TEST INPUT FILES, SAVE
 	(
 		for k in ./*/; do
 			FOLDERNAME=$(echo $k | sed 's/\.\/run[0-9]*\_//g; s/\/$//g');
-			cp "$k"R/*_posteriorProbs.txt ./tij_$FOLDERNAME.txt
+			cp "$k"R/*_posteriorProbs.txt ./tij_$FOLDERNAME.txt;
 		done
 	)
 
 
 ###### Prep some values as environmental variables for use in Rscript below:
 ##--Make environmental variable containing posterior probability (PP) matrix names:
-	MY_PP_MATRICES=./tij_*.txt
-	FUTURE_TIJ_OBJ_NAMES=$(echo $MY_PP_MATRICES | sed 's/\.\///g; s/.txt//g; s/\ /\,\ /g')		## This is used in the Rscript below.
+	MY_PP_MATRICES=./tij_*.txt;
+	FUTURE_TIJ_OBJ_NAMES=$(echo $MY_PP_MATRICES | sed 's/\.\///g; s/.txt//g; s/\ /\,\ /g'); 	## This is used in the Rscript below.
 #
 ##--Account for possible odd or even value for $NUM_TEST_VALUES
 	EVEN_CHECK=$(( $NUM_TEST_VALUES % 2 ))
 	if [ $EVEN_CHECK -eq 0 ]; then
-		HALF_NUM_TEST_VALUES=$(calc $NUM_TEST_VALUES/2)
+		HALF_NUM_TEST_VALUES=$(calc $NUM_TEST_VALUES/2);
 	else
-		HALF_NUM_TEST_VALUES=$(calc $(calc $NUM_TEST_VALUES +1)/2)
+		HALF_NUM_TEST_VALUES=$(calc $(calc $NUM_TEST_VALUES +1)/2);
 	fi
 
 
@@ -140,19 +152,19 @@ echo "INFO      | $(date) | STEP #3: RUN ALGORITHM ACROSS TEST INPUT FILES, SAVE
 	for a; do     shift;     for b; do         printf "%s %s %s %s\n" "$a" "$b" "$a" "$b";     done; done > pairs_x2.txt
 
 ##--Make code for subtracting matrices to get pairwise difference matrices:
-	sed 's/\(^[0-9]*\)\ /\1/' pairs_x2.txt > pairs1.tmp
-	sed 's/^/dif\_m/g' pairs1.tmp > pairs2.tmp
-	sed 's/\ \([0-9]*\)\ \([0-9*]\)/\ \<\-\ m\1\ \-\ m\2\;\ /' pairs2.tmp > pairs3.tmp
-	MAKE_PAIR_DIFF_MATRICES=$(cat ./pairs3.tmp)	## THIS goes into the Rscript section (STEP #4 below) as a one-liner, using only the name of the environmental variable. All text stored within this variable will be echoed into the script by the shell, and then the script is run at the end.
+	sed 's/\(^[0-9]*\)\ /\1/' pairs_x2.txt > pairs1.tmp;
+	sed 's/^/dif\_m/g' pairs1.tmp > pairs2.tmp;
+	sed 's/\ \([0-9]*\)\ \([0-9*]\)/\ \<\-\ m\1\ \-\ m\2\;\ /' pairs2.tmp > pairs3.tmp;
+	MAKE_PAIR_DIFF_MATRICES=$(cat ./pairs3.tmp);	## THIS goes into the Rscript section (STEP #4 below) as a one-liner, using only the name of the environmental variable. All text stored within this variable will be echoed into the script by the shell, and then the script is run at the end.
 
 ##--Make code for summing all difference matrices:
-	sed 's/\([0-9]*\)\ /dif_m\1/; s/$/\ /' ./pairs.txt | sed 's/\,\ $'$CR'^$//' > pairs4.tmp
-	MY_PAIRS=$(cat ./pairs4.tmp)
-	SUM_ALL_DIFF_MATRICES=$(echo $MY_PAIRS | sed 's/\ /\,\ /g')	## THIS goes into the Rscript section as 'sum(c($SUM_ALL_DIFF_MATRICES))' to sum all difference matrices, for overall comparison.
+	sed 's/\([0-9]*\)\ /dif_m\1/; s/$/\ /' ./pairs.txt | sed 's/\,\ $'$CR'^$//' > pairs4.tmp;
+	MY_PAIRS=$(cat ./pairs4.tmp);
+	SUM_ALL_DIFF_MATRICES=$(echo $MY_PAIRS | sed 's/\ /\,\ /g');	## THIS goes into the Rscript section as 'sum(c($SUM_ALL_DIFF_MATRICES))' to sum all difference matrices, for overall comparison.
 
 ##--Make code for summing original tij matrices:
-	MATRIX_NUMBERS=$(echo $(seq 6) | sed 's/\([0-9*]\)/m\1/g')
-	SUM_TIJ_MATRICES=$(echo $MATRIX_NUMBERS | sed 's/\ /\,\ /g')	## THIS goes into the Rscript section as 'sum(c($SUM_TIJ_MATRICES))'
+	MATRIX_NUMBERS=$(echo $(seq 6) | sed 's/\([0-9*]\)/m\1/g');
+	SUM_TIJ_MATRICES=$(echo $MATRIX_NUMBERS | sed 's/\ /\,\ /g');	## THIS goes into the Rscript section as 'sum(c($SUM_TIJ_MATRICES))'
 
 ##--Make code for calculating difference proportion of total (from original two tij matrices)
 ##--for each pairwise difference matrix. We will make the R code by using sed to modify the 
@@ -161,7 +173,7 @@ echo "INFO      | $(date) | STEP #3: RUN ALGORITHM ACROSS TEST INPUT FILES, SAVE
 ##--symbols (pound signs) in the code the shell doesn't handle those so well. So we will 
 ##--write the code to an Rscript, which we will then source from within the Rscript below,
 ##--using the 'source' function. First, let's write the code into a txt file:
-	sed 's/\([0-9]*\)\ \([0-9]*\)/'$CR'x\ \<\-\ sum(dif_m\1\2)'$CR'y\ \<\-\ sum(m\1\,\ m\2)'$CR'diffpro_m\1\2\ \<\-\ x\/y'$CR'diffpro_m\1\2'$CR''$CR'/g' ./pairs.txt > ./diffProTests.txt
+	sed 's/\([0-9]*\)\ \([0-9]*\)/'$CR'x\ \<\-\ sum(dif_m\1\2)'$CR'y\ \<\-\ sum(m\1\,\ m\2)'$CR'diffpro_m\1\2\ \<\-\ x\/y'$CR'diffpro_m\1\2'$CR''$CR'/g' ./pairs.txt > ./diffProTests.txt ;
 
 ##--Now we have modified the pairs into a set of R code in a local txt file, so we need to 
 ##--make an appropriate header for the Rscript (I will just echo it) and then concatenate 
@@ -170,7 +182,7 @@ echo "
 #!/usr/bin/env Rscript
 " > Rtop.tmp
 
-	cat ./Rtop.tmp ./diffProTests.txt > ./diffProTests.r
+	cat ./Rtop.tmp ./diffProTests.txt > ./diffProTests.r ;
 
 #
 ##--Make code for logical testing of whether tij matrices are identical in their portions
@@ -181,14 +193,14 @@ echo "
 	cd ..; cd ..;
 
 	##--Make txt file with the logical testing code and place in variable and in Rscript:
-	sed 's/\([0-9]*\)\ \([0-9]*\)/identical(tijObjList\[\1\]\[\[1\]\]\[1\:'"$NUM_KNOWN_ROWS"'\,\]\,\ tijObjList\[\2\]\[\[1\]\]\[1\:'"$NUM_KNOWN_ROWS"'\,\])/g; s/\ //g' ./pairs.txt > ./logicalTests.txt
-	IDENT_MATRIX_TESTS=$(cat ./logicalTests.txt | sed 's/)/)\;/g')	## Place logical testing code into environmental variable.
-	cat ./Rtop.tmp ./logicalTests.txt > ./logicalTests.r			## Make final Rscript for this code, which you will source in the compareProbs script below.
-	rm ./Rtop.tmp
+	sed 's/\([0-9]*\)\ \([0-9]*\)/identical(tijObjList\[\1\]\[\[1\]\]\[1\:'"$NUM_KNOWN_ROWS"'\,\]\,\ tijObjList\[\2\]\[\[1\]\]\[1\:'"$NUM_KNOWN_ROWS"'\,\])/g; s/\ //g' ./pairs.txt > ./logicalTests.txt ;
+	IDENT_MATRIX_TESTS=$(cat ./logicalTests.txt | sed 's/)/)\;/g'); 	## Place logical testing code into environmental variable.
+	cat ./Rtop.tmp ./logicalTests.txt > ./logicalTests.r ;			## Make final Rscript for this code, which you will source in the compareProbs script below.
+	rm ./Rtop.tmp;
 
 ##--Make code for combining all difference proportion of total ('diffpro_') calculations
 ##--in order to plot them:
-	COMBINE_DIFF_PROPS=$(echo $MY_PAIRS | sed 's/\ /\,\ /g; s/dif/diffpro/g')	## THIS goes into the Rscript section as 'sum(c($SUM_ALL_DIFF_MATRICES))' to sum all difference matrices, for overall comparison.
+	COMBINE_DIFF_PROPS=$(echo $MY_PAIRS | sed 's/\ /\,\ /g; s/dif/diffpro/g');	## THIS goes into the Rscript section as 'sum(c($SUM_ALL_DIFF_MATRICES))' to sum all difference matrices, for overall comparison.
 
 
 
@@ -329,13 +341,13 @@ dev.off()
 
 ############ FINAL STEPS:
 echo "INFO      | $(date) | STEP #5: RUN THE R SCRIPT AND CONDUCT CLEANUP. "
-	R CMD BATCH ./comparePPMats.R
+	R CMD BATCH ./comparePPMats.R ;
 
 ##--Cleanup remaining unnecessary files:
-	rm ./tij*.txt
-	rm ./*.tmp
-	rm ./pairs*.txt
-	rm ./diffProTests.txt ./logicalTests.txt
+	rm ./tij*.txt;
+	rm ./*.tmp;
+	rm ./pairs*.txt;
+	rm ./diffProTests.txt ./logicalTests.txt;
 
 echo "INFO      | $(date) | Done conducting sensitivity test(s) examining the effect of varying the 'prior' probabilities of known \
 observations in the beliefs matrix supplied to bgmm, using bgmmSensTest."
