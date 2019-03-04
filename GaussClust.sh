@@ -2,12 +2,12 @@
 
 ##########################################################################################
 # File: GaussClust.sh                                                                    #
-  version="v0.1.1"                                                                       #
+  VERSION="v0.1.1"                                                                       #
 # Author: Justin C. Bagley                                                               #
-# Date: created by Justin Bagley Tue Dec 13 16:39:37 2016 -0600                          #
+# Date: created by Justin Bagley on Tue Dec 13 16:39:37 2016 -0600                       #
 # Last update: April 28, 2017                                                            #
 # Copyright (c) 2016-2019 Justin C. Bagley. All rights reserved.                         #
-# Please report bugs to <bagleyj@umsl.edu>                                               #
+# Please report bugs to <bagleyj@umsl.edu>.                                              #
 #                                                                                        #
 # Description:                                                                           #
 # SHELL SCRIPT FOR AUTOMATING GAUSSIAN MIXTURE MODELING ON CONTINUOUS, DISCRETE, OR      #
@@ -47,7 +47,7 @@ while getopts 'k:u:r:d:b:p:c:' opt ; do
   esac
 done
 
-Usage="Usage: $(basename "$0") [Help: -h help] [Options: -k u r d b p c] [stdin:] <inputFile>
+USAGE="Usage: $(basename "$0") [Help: -h help] [Options: -k u r d b p c] [stdin:] <inputFile>
  ## Help:
   -h   help text (also: -help)
 
@@ -87,12 +87,11 @@ Usage="Usage: $(basename "$0") [Help: -h help] [Options: -k u r d b p c] [stdin:
  Bagley, J.C. 2017. GaussClust v0.1.1. GitHub package, Available at: 
 	<http://github.com/justincbagley/GaussClust>.
 
-Created by Justin Bagley Tue Dec 13 16:39:37 2016 -0600
+Created by Justin Bagley on Tue Dec 13 16:39:37 2016 -0600
 Copyright (c) 2016-2019 Justin C. Bagley. All rights reserved.
 "
 
-
-verboseUsage="Usage: $(basename "$0") [Help: -h help H Help] [Options: -k u r d b p c] [stdin:] <inputFile>
+VERBOSE_USAGE="Usage: $(basename "$0") [Help: -h help H Help] [Options: -k u r d b p c] [stdin:] <inputFile>
  ## Help:
   -h   help text (also: -help)
   -H   verbose help text (also: -Help)
@@ -193,30 +192,30 @@ verboseUsage="Usage: $(basename "$0") [Help: -h help H Help] [Options: -k u r d 
  Szczurek E, Biecek P, Tiuryn J, Vingron M (2010) Introducing knowledge into differential 
 	expression analysis. Journal of Computational Biology, 17, 953-967.
 
-Created by Justin Bagley Tue Dec 13 16:39:37 2016 -0600
+Created by Justin Bagley on Tue Dec 13 16:39:37 2016 -0600
 Copyright (c) 2016-2019 Justin C. Bagley. All rights reserved.
 "
 
 ## SCRIPT USAGE ##
-##--Check for mandatory positional parameters and echo usage, then wait for commands...
+##--Check for mandatory positional parameters and echo $USAGE, then wait for commands...
 shift $((OPTIND-1))
 if [ $# -lt 1 ]; then
-  echo "$Usage"
+  echo "$USAGE"
   exit 1
 fi
 
 if [[ "$1" == "-h" ]] || [[ "$1" == "-help" ]]; then
-	echo "$Usage";
+	echo "$USAGE";
 	exit
 fi
 
 if [[ "$1" == "-H" ]] || [[ "$1" == "--Help" ]]; then
-	echo "$verboseUsage";
+	echo "$VERBOSE_USAGE";
 	exit
 fi
 
 if [[ "$1" == "-v" ]] || [[ "$1" == "--version" ]]; then
-	echo "$(basename $0) ${version}";
+	echo "$(basename $0) $VERSION";
 	exit
 fi
 
